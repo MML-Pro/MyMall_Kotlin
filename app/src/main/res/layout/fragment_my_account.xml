@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/lightGray"
+    tools:context=".ui.my_account.MyAccountFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lightGray"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/profileDataLayout"
+            layout="@layout/profile_data_layout" />
+
+        <include
+            android:id="@+id/orderStatusLayout"
+            layout="@layout/order_status_layout" />
+
+        <include
+            android:id="@+id/yourRecentOrdersLayout"
+            layout="@layout/your_recent_orders_layout" />
+
+        <include
+            android:id="@+id/myAddressLayout"
+            layout="@layout/my_address_layout" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/signOutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Sign out"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="@dimen/_12ssp"
+            android:textAllCaps="false">
+
+        </com.google.android.material.button.MaterialButton>
+
+    </LinearLayout>
+
+</ScrollView>

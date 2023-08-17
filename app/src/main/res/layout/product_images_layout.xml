@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addToWishListFAB"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPagerIndicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productImagesViewPager"
+        app:rippleColor="@color/colorPrimary"
+        app:srcCompat="@drawable/my_wishlist"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:tint="@color/fabColor"
+        app:tint="@color/fabColor"
+        android:focusable="true" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/productImagesViewPager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_250sdp"
+        android:layout_marginTop="24dp">
+
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/viewPagerIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productImagesViewPager"
+        app:tabBackground="@drawable/dot_selector"
+        app:tabIndicatorHeight="0dp"
+        app:tabRippleColor="@null" />
+
+
+    <TextView
+        android:id="@+id/productName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/arial"
+        android:text="Product Title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toStartOf="@+id/cod_image_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPagerIndicator" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/slider_background"
+        android:backgroundTint="@color/success"
+        android:orientation="horizontal"
+        android:padding="@dimen/_1sdp">
+
+        <TextView
+            android:id="@+id/averageRatingMiniViewTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:fontFamily="@font/arial"
+            android:text="4.5"
+            android:textColor="@color/white"
+            android:textStyle="bold">
+
+        </TextView>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:src="@drawable/star">
+
+        </ImageView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/productTotalRatingMiniViewTV"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/arial"
+        android:text="total ratings:"
+        android:textSize="@dimen/_12ssp" />
+
+    <TextView
+        android:id="@+id/productPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/arial"
+        android:text="Rs 4.9999/-"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_24ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+    <TextView
+        android:id="@+id/productCuttedPrice"
+        app:layout_constraintBottom_toBottomOf="@+id/productPrice"
+        app:layout_constraintStart_toEndOf="@+id/productPrice"
+        app:layout_constraintTop_toTopOf="@+id/productPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Rs 5.9999/-"
+        android:textColor="@color/black" />
+
+    <View
+        android:id="@+id/divider3"
+        app:layout_constraintBottom_toBottomOf="@+id/productCuttedPrice"
+        app:layout_constraintEnd_toEndOf="@+id/productCuttedPrice"
+        app:layout_constraintStart_toStartOf="@+id/productCuttedPrice"
+        app:layout_constraintTop_toTopOf="@+id/productCuttedPrice"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#80000000" />
+
+    <ImageView
+        android:id="@+id/cod_image_view"
+        app:layout_constraintBottom_toBottomOf="@+id/productTotalRatingMiniViewTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addToWishListFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/cod_indicator" />
+
+    <TextView
+        android:id="@+id/textView9"
+        app:layout_constraintBottom_toBottomOf="@+id/cod_image_view"
+        app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
+        app:layout_constraintStart_toStartOf="@+id/cod_image_view"
+        app:layout_constraintTop_toTopOf="@+id/cod_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="COD"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10ssp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/codIndicatorTV"
+        app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
+        app:layout_constraintStart_toStartOf="@+id/cod_image_view"
+        app:layout_constraintTop_toBottomOf="@+id/cod_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Available"
+        android:textColor="@color/black"
+        android:textSize="6pt" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

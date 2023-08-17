@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <color name="colorPrimary">#47a47f</color>
+    <color name="colorPrimaryDark">#388364</color>
+    <color name="colorAccent">@color/white</color>
+
+    <color name="errorRed">#CE0000</color>
+    <color name="darkRed">#9f0000</color>
+
+
+    <color name="btnRed">#9f0000</color>
+
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="success">#11A10C</color>
+    <color name="dimgrey">#696969</color>
+    <color name="lightGray">#d6d6d6</color>
+
+    <color name="lightGray02">#F9F9F9</color>
+    <color name="mediumGray">#D1D1D1</color>
+    <color name="lightMediumGray">#80D1D1D1</color>
+    <color name="gray">#A9000000</color>
+    <color name="lighterGray">#ddd</color>
+
+    <color name="fabColor">#9e9e9e</color>
+
+    <color name="ratingColor">#FFDF00</color>
+
+    <color name="myRewardsToolBarAndStatusBarColor">#5B04B1</color>
+
+    <color name="placeholderColor">@color/mediumGray</color>
+
+    <color name="couponValidityColor">#3606b6</color>
+
+    <color name="couponRed">#FF3030</color>
+
+
+</resources>

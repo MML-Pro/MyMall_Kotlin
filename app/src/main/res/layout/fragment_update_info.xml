@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent" >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:context=".ui.edit_user_info.UpdateInfoFragment">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profileImage"
+            android:layout_width="@dimen/_85sdp"
+            android:layout_height="@dimen/_85sdp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="32dp"
+            android:scaleType="fitXY"
+            android:elevation="2dp"
+            android:src="@drawable/account"
+            app:shapeAppearanceOverlay="@style/circleImageViewStyle"
+            app:strokeWidth="1dp">
+
+
+        </com.google.android.material.imageview.ShapeableImageView>
+
+        <Button
+            android:id="@+id/changePhotoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"
+            android:text="Change Photo"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/profileImage"
+            app:layout_constraintStart_toStartOf="@+id/profileImage"
+            app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+
+        <Button
+            android:id="@+id/removePhotoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:background="@android:color/transparent"
+            android:stateListAnimator="@null"
+            android:text="Remove Photo"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/nameEditText"
+            app:layout_constraintEnd_toEndOf="@+id/changePhotoButton"
+            app:layout_constraintStart_toStartOf="@+id/changePhotoButton"
+            app:layout_constraintTop_toBottomOf="@+id/changePhotoButton" />
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="text"
+            />
+
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:ems="10"
+            android:hint="email address"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/updateButton" />
+
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Update"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_16ssp" />
+
+
+    </LinearLayout>
+
+</ScrollView>

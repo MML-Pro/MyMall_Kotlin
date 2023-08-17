@@ -1,0 +1,40 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyMallKotlin" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.MyMallKotlin" parent="Base.Theme.MyMallKotlin" />
+
+    <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>-->
+<!--        <item name="colorOnPrimary">@color/white</item>-->
+
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+    </style>
+
+    <style name="circleImageViewStyle" >
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+        <item name="backgroundColor">@color/colorPrimary</item>
+        <item name="contentPadding">0dp</item>
+    </style>
+
+    <style name="SliderBannerStyle">
+
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_12sdp</item>
+        <item name="android:elevation">@dimen/_4sdp</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="contentPadding">0dp</item>
+
+    </style>
+
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#bdbdbd</item>
+<!--        <item name="colorControlActivated">@color/ratingColor</item>-->
+    </style>
+</resources>

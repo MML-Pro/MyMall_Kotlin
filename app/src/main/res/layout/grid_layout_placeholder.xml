@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_6sdp"
+    android:background="@drawable/slider_background"
+    android:elevation="6dp">
+
+    <LinearLayout
+        android:id="@+id/firstPlaceholder"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/titleTV"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:background="@color/placeholderColor"
+            app:layout_constraintBottom_toBottomOf="@+id/viewAllButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/viewAllButton" />
+
+        <TextView
+            android:id="@+id/viewAllButton"
+            android:layout_marginTop="4dp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@color/placeholderColor"
+            android:backgroundTint="@color/mediumGray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:columnCount="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstPlaceholder">
+
+        <include
+            android:id="@+id/firstInclude"
+            layout="@layout/hr_scroll_item_placeholder"
+            app:layout_columnWeight="1">
+
+        </include>
+
+        <include
+            android:id="@+id/secondInclude"
+            layout="@layout/hr_scroll_item_placeholder"
+            app:layout_columnWeight="1">
+
+        </include>
+
+        <include
+            android:id="@+id/thirdInclude"
+            layout="@layout/hr_scroll_item_placeholder"
+            app:layout_columnWeight="1">
+
+        </include>
+
+        <include
+            android:id="@+id/fourthInclude"
+            layout="@layout/hr_scroll_item_placeholder"
+            app:layout_columnWeight="1">
+
+        </include>
+
+
+    </androidx.gridlayout.widget.GridLayout>
+
+
+    <View
+        android:id="@+id/divider14"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"
+        app:layout_column="4"
+        app:layout_constraintBottom_toBottomOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="@+id/gridLayout"
+        app:layout_constraintStart_toStartOf="@id/gridLayout"
+        app:layout_constraintTop_toTopOf="@+id/gridLayout"
+        app:layout_row="1" />
+
+    <View
+        android:id="@+id/divider15"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/lightGray"
+        app:layout_constraintBottom_toBottomOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="@+id/gridLayout"
+        app:layout_constraintStart_toStartOf="@+id/gridLayout"
+        app:layout_constraintTop_toTopOf="@+id/gridLayout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

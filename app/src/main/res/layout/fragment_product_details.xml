@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:elevation="3dp"
+    tools:context=".ui.product_details.ProductDetailsFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/product_image_view_pager"
+                layout="@layout/product_images_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+
+            <include
+                android:id="@+id/rewardWithProductLayout"
+                layout="@layout/reward_with_product_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/couponRedemptionLayout">
+
+            </include>
+
+            <include
+                android:id="@+id/productDescriptionLayout"
+                layout="@layout/product_description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/rewardWithProductLayout">
+
+            </include>
+
+            <include
+                android:id="@+id/product_details_only"
+                layout="@layout/product_details_only_layout">
+            </include>
+
+            <include
+                android:id="@+id/ratings_layout"
+                layout="@layout/ratings_layout" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+
+        android:id="@+id/linearLayout7"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <LinearLayout
+            android:id="@+id/addToCartButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawablePadding="6dp"
+                android:fontFamily="@font/arial"
+                android:gravity="center"
+                android:text="ADD TO CART"
+                android:textAlignment="center"
+                android:drawableTint="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold"
+                app:drawableEndCompat="@drawable/cart_white">
+
+
+            </TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buyNowButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:cornerRadius="0dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:stateListAnimator="@null"
+            >
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawablePadding="6dp"
+                android:fontFamily="@font/arial"
+                android:gravity="center"
+                android:text="BUY NOW"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="@color/white">
+
+
+            </TextView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
