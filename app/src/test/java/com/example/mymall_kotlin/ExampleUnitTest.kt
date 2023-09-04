@@ -1,4 +1,4 @@
-package com.example.mymall_kotlin
+package com.blogspot.mido_mymall
 
 import org.junit.Test
 

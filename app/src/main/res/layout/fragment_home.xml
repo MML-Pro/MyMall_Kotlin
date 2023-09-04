@@ -5,18 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.home.HomeFragment">
+    android:background="@color/homeBackgroundColor"
+    android:backgroundTint="@color/homeBackgroundColor"
+    tools:context="com.blogspot.mido_mymall.ui.home.HomeFragment">
 
     <LinearLayout
         android:id="@+id/homeFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".ui.home.HomeFragment">
+        tools:context="com.blogspot.mido_mymall.ui.home.HomeFragment">
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerLayout"

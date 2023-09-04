@@ -38,5 +38,22 @@
 
     <color name="couponRed">#FF3030</color>
 
+    <color name="homeBackgroundColor">@color/white</color>
+
+    <color name="categoryBackgroundColor">@color/white</color>
+
+    <color name="viewAllButtonColor">@color/lighterGray</color>
+
+    <color name="viewAllTextColor">@color/black</color>
+
+    <color name="detailsBackgroundColor">@color/white</color>
+
+    <color name="viewPagerIndicatorBackground">@color/white</color>
+
+    <color name="productDetailsTextColor">@color/black</color>
+
+    <color name="ratingNumberTextColor">#727272</color>
+    <color name="tabTextColor">#919191</color>
+
 
 </resources>

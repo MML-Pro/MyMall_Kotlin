@@ -16,10 +16,11 @@
         android:layout_height="@dimen/_65sdp"
         app:contentPadding="0dp"
         android:contentDescription="@string/nav_header_desc"
-        android:src="@drawable/profile_placeholder"
+        android:src="@drawable/account"
         app:layout_constraintBottom_toTopOf="@+id/mainUserName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/mainUserName"
@@ -41,18 +42,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
-        android:id="@+id/add_profile_icon"
-        android:layout_width="@dimen/_15sdp"
-        android:layout_height="@dimen/_15sdp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/btn_bg"
-        android:elevation="@dimen/_5sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/mainProfileImage"
-        app:layout_constraintEnd_toEndOf="@+id/mainProfileImage"
-        app:layout_constraintHorizontal_bias="0.857"
-        app:layout_constraintStart_toStartOf="@+id/mainProfileImage"
-        app:layout_constraintTop_toTopOf="@+id/mainProfileImage"
-        app:layout_constraintVertical_bias="0.761"
-        app:srcCompat="@drawable/close_cross" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/add_profile_icon"-->
+<!--        android:layout_width="@dimen/_15sdp"-->
+<!--        android:layout_height="@dimen/_15sdp"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:background="@drawable/btn_bg"-->
+<!--        android:elevation="@dimen/_5sdp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/mainProfileImage"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/mainProfileImage"-->
+<!--        app:layout_constraintHorizontal_bias="0.857"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/mainProfileImage"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/mainProfileImage"-->
+<!--        app:layout_constraintVertical_bias="0.761"-->
+<!--        app:srcCompat="@drawable/close_cross" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

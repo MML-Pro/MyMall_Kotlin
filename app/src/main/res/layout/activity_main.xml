@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".ui.MainActivity"
+    tools:context="com.blogspot.mido_mymall.ui.MainActivity"
     tools:openDrawer="start">
 
     <ViewStub
@@ -26,11 +26,10 @@
             android:layout_height="wrap_content"
             app:liftOnScroll="true">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary">
+                android:layout_height="?attr/actionBarSize">
 
 
                 <ImageView
@@ -43,7 +42,7 @@
 
                 </ImageView>
 
-            </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 

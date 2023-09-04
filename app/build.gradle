@@ -9,13 +9,13 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mymall_kotlin'
-    compileSdk 33
+    namespace 'com.blogspot.mido_mymall'
+    compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.mymall_kotlin"
+        applicationId "com.blogspot.mido_mymall"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -55,11 +55,11 @@ dependencies {
     implementation("androidx.gridlayout:gridlayout:1.0.0")
 
 
-    def hilt_version="2.45"
+    def hilt_version="2.47"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    def navigation_version = "2.6.0"
+    def navigation_version = "2.7.1"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
@@ -67,18 +67,22 @@ dependencies {
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
 
     implementation 'com.google.firebase:firebase-auth-ktx:22.1.1'
-    implementation 'com.google.android.gms:play-services-auth:20.6.0'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
 
     implementation platform("com.google.firebase:firebase-bom:32.0.0")
 
     implementation 'com.google.firebase:firebase-core:21.1.1'
-    implementation 'com.google.firebase:firebase-firestore:24.7.0'
+    implementation 'com.google.firebase:firebase-firestore:24.7.1'
     implementation("com.google.firebase:firebase-storage-ktx")
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    kapt 'com.github.bumptech.glide:compiler:4.15.1'
+
+
+
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 

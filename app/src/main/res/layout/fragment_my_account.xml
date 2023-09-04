@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@color/lightGray"
-    tools:context=".ui.my_account.MyAccountFragment">
+    tools:context="com.blogspot.mido_mymall.ui.my_account.MyAccountFragment">
 
 
     <LinearLayout

@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.product_details.ProductSpecificationsFragment">
-
+    android:background="@color/detailsBackgroundColor"
+    tools:context="com.blogspot.mido_mymall.ui.product_details.ProductSpecificationsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/detailsBackgroundColor"
         android:id="@+id/productSpecsRV"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

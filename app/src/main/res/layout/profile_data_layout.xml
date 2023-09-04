@@ -22,7 +22,7 @@
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
         android:elevation="@dimen/_4sdp"
-        android:src="@drawable/ic_account_circle_24px"
+        android:src="@drawable/account"
         app:civ_border_color="@color/white"
         app:civ_border_width="@dimen/_3sdp"
         app:civ_circle_background_color="@color/white"

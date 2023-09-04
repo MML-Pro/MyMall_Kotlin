@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.my_wish_list.MyWishlistFragment">
+    tools:context="com.blogspot.mido_mymall.ui.my_wish_list.MyWishlistFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView

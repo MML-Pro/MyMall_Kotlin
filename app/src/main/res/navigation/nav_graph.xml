@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.mymall_kotlin.ui.credentials.SignInFragment"
+        android:name="com.blogspot.mido_mymall.ui.credentials.SignInFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_signin">
         <action
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.mymall_kotlin.ui.credentials.SignUpFragment"
+        android:name="com.blogspot.mido_mymall.ui.credentials.SignUpFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_signup">
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.mymall_kotlin.ui.home.HomeFragment"
+        android:name="com.blogspot.mido_mymall.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
@@ -92,14 +92,14 @@
     </fragment>
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.example.mymall_kotlin.ui.credentials.ResetPasswordFragment"
+        android:name="com.blogspot.mido_mymall.ui.credentials.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" />
 
 
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.example.mymall_kotlin.ui.category.CategoryFragment"
+        android:name="com.blogspot.mido_mymall.ui.category.CategoryFragment"
         android:label="fragment_category"
         tools:layout="@layout/fragment_category">
         <argument
@@ -111,7 +111,7 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="com.example.mymall_kotlin.ui.product_details.ProductDetailsFragment"
+        android:name="com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment"
         tools:layout="@layout/fragment_product_details">
         <action
             android:id="@+id/action_productDetailsFragment_to_deliveryFragment"
@@ -131,7 +131,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_my_cart"
-        android:name="com.example.mymall_kotlin.ui.my_cart.MyCartFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_cart.MyCartFragment"
         android:label="My Cart"
         tools:layout="@layout/fragment_my_cart">
         <action
@@ -142,11 +142,12 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_nav_my_cart_to_addAddressFragment"
-            app:destination="@id/addAddressFragment" />
+            app:destination="@id/addAddressFragment"
+            app:popUpTo="@id/nav_my_cart" />
     </fragment>
     <fragment
         android:id="@+id/nav_my_orders"
-        android:name="com.example.mymall_kotlin.ui.my_orders.MyOrdersFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_orders.MyOrdersFragment"
         android:label="My Orders"
         tools:layout="@layout/fragment_my_orders">
         <action
@@ -155,16 +156,16 @@
     </fragment>
     <fragment
         android:id="@+id/orderDetailsFragment"
-        android:name="com.example.mymall_kotlin.ui.order_details.OrderDetailsFragment"
+        android:name="com.blogspot.mido_mymall.ui.order_details.OrderDetailsFragment"
         android:label="Order details"
         tools:layout="@layout/fragment_order_details" >
         <argument
             android:name="myOrderItem"
-            app:argType="com.example.mymall_kotlin.domain.models.MyOrderItemModel" />
+            app:argType="com.blogspot.mido_mymall.domain.models.MyOrderItemModel" />
     </fragment>
     <fragment
         android:id="@+id/nav_my_wishlist"
-        android:name="com.example.mymall_kotlin.ui.my_wish_list.MyWishlistFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_wish_list.MyWishlistFragment"
         android:label="My Wishlist"
         tools:layout="@layout/fragment_my_wishlist">
         <action
@@ -173,12 +174,12 @@
     </fragment>
     <fragment
         android:id="@+id/nav_my_rewards"
-        android:name="com.example.mymall_kotlin.ui.my_rewards.MyRewardsFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_rewards.MyRewardsFragment"
         android:label="fragment_my_reward"
         tools:layout="@layout/fragment_my_reward" />
     <fragment
         android:id="@+id/nav_my_account"
-        android:name="com.example.mymall_kotlin.ui.my_account.MyAccountFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_account.MyAccountFragment"
         android:label="fragment_my_account"
         tools:layout="@layout/fragment_my_account">
         <action
@@ -190,7 +191,7 @@
     </fragment>
     <fragment
         android:id="@+id/deliveryFragment"
-        android:name="com.example.mymall_kotlin.ui.delivery.DeliveryFragment"
+        android:name="com.blogspot.mido_mymall.ui.delivery.DeliveryFragment"
         android:label="Delivery"
         tools:layout="@layout/fragment_delivery">
         <action
@@ -211,7 +212,7 @@
             app:popUpToInclusive="false" />
         <argument
             android:name="cartItemModelList"
-            app:argType="com.example.mymall_kotlin.domain.models.CartItemModel[]"
+            app:argType="com.blogspot.mido_mymall.domain.models.CartItemModel[]"
             app:nullable="true"
             android:defaultValue="@null" />
         <action
@@ -235,7 +236,7 @@
     </fragment>
     <fragment
         android:id="@+id/addAddressFragment"
-        android:name="com.example.mymall_kotlin.ui.add_address.AddAddressFragment"
+        android:name="com.blogspot.mido_mymall.ui.add_address.AddAddressFragment"
         android:label="fragment_add_address"
         tools:layout="@layout/fragment_add_address">
         <action
@@ -246,7 +247,7 @@
             app:argType="string" />
         <argument
             android:name="cartItemModelList"
-            app:argType="com.example.mymall_kotlin.domain.models.CartItemModel[]"
+            app:argType="com.blogspot.mido_mymall.domain.models.CartItemModel[]"
             app:nullable="true" />
         <argument
             android:name="fromCart"
@@ -266,7 +267,7 @@
     </fragment>
     <fragment
         android:id="@+id/myAddressesFragment"
-        android:name="com.example.mymall_kotlin.ui.my_address.MyAddressesFragment"
+        android:name="com.blogspot.mido_mymall.ui.my_address.MyAddressesFragment"
         android:label="My addresses"
         tools:layout="@layout/fragment_my_addresses">
         <argument
@@ -278,7 +279,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewAllFragment"
-        android:name="com.example.mymall_kotlin.ui.view_all.ViewAllFragment"
+        android:name="com.blogspot.mido_mymall.ui.view_all.ViewAllFragment"
         android:label="Deals of the Day"
         tools:layout="@layout/fragment_view_all">
         <argument
@@ -289,10 +290,10 @@
             app:destination="@id/productDetailsFragment" />
         <argument
             android:name="horizontalProductScrollModelList"
-            app:argType="com.example.mymall_kotlin.domain.models.HorizontalProductScrollModel[]" />
+            app:argType="com.blogspot.mido_mymall.domain.models.HorizontalProductScrollModel[]" />
         <argument
             android:name="viewAllProductList"
-            app:argType="com.example.mymall_kotlin.domain.models.WishListModel[]"
+            app:argType="com.blogspot.mido_mymall.domain.models.WishListModel[]"
             app:nullable="true" />
         <argument
             android:name="title"
@@ -307,7 +308,7 @@
         app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/OTPverficationFragment"
-        android:name="com.example.mymall_kotlin.ui.otp_verfication.OTPverficationFragment"
+        android:name="com.blogspot.mido_mymall.ui.otp_verfication.OTPverficationFragment"
         android:label="fragment_otp_verfication"
         tools:layout="@layout/fragment_otp_verfication">
         <argument
@@ -316,12 +317,12 @@
     </fragment>
     <fragment
         android:id="@+id/editUserInfoFragment"
-        android:name="com.example.mymall_kotlin.ui.edit_user_info.EditUserInfoFragment"
+        android:name="com.blogspot.mido_mymall.ui.edit_user_info.EditUserInfoFragment"
         android:label="Edit user info"
         tools:layout="@layout/fragment_edit_user_info"/>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.mymall_kotlin.ui.notification.NotificationFragment"
+        android:name="com.blogspot.mido_mymall.ui.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
 </navigation>

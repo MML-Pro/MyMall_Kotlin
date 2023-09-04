@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.my_cart.MyCartFragment">
+    tools:context="com.blogspot.mido_mymall.ui.my_cart.MyCartFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartItemsRecyclerView"
         android:layout_width="0dp"
+        android:visibility="gone"
         android:layout_height="0dp"
         android:background="#d6d6d6"
         app:layout_constraintBottom_toTopOf="@+id/totalAmountAndContinue"
@@ -45,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
-                android:text="RS.45999/-"
+                android:text="EGP.45999/-"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_16ssp"
                 android:textStyle="bold" />
@@ -78,5 +79,18 @@
         </com.google.android.material.button.MaterialButton>
 
     </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/emptyCartIV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/empty_cart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

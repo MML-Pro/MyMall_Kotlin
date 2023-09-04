@@ -3,9 +3,27 @@
     <style name="Base.Theme.MyMallKotlin" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Status bar color. -->
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+
+        <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
+
+
     </style>
 
     <style name="Theme.MyMallKotlin" parent="Base.Theme.MyMallKotlin" />
+
+
+    <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <!-- Change the background color of the AppBarLayout so the AppBarLayout is green.
+                The toolbar is transparent by default so you will see this color through the toolbar. -->
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
 
     <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -21,6 +39,11 @@
         <item name="cornerSize">50%</item>
         <item name="backgroundColor">@color/colorPrimary</item>
         <item name="contentPadding">0dp</item>
+    </style>
+
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
     </style>
 
     <style name="SliderBannerStyle">

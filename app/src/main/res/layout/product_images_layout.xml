@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/detailsBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@color/white"
+        android:background="@color/viewPagerIndicatorBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productImagesViewPager"
@@ -57,8 +57,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/arial"
-        android:text="Product Title"
-        android:textColor="@color/black"
+        android:text="Product Name"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toStartOf="@+id/cod_image_view"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,8 +123,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/arial"
-        android:text="Rs 4.9999/-"
-        android:textColor="@color/black"
+        android:text="EGP 4.9999/-"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_24ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -139,8 +139,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Rs 5.9999/-"
-        android:textColor="@color/black" />
+        android:text="EGP 5.9999/-"
+        android:textColor="@color/productDetailsTextColor"
+        />
 
     <View
         android:id="@+id/divider3"
@@ -185,7 +186,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Available"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="6pt" />
 
 

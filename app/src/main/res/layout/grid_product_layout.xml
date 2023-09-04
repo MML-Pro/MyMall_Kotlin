@@ -14,9 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Title"
-        android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/_16ssp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/viewAllButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/viewAllButton" />
@@ -27,10 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/white"
         android:text="View All"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/viewAllButtonColor"
+        android:textColor="@color/viewAllTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -49,28 +49,32 @@
         <include
             android:id="@+id/firstInclude"
             layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1">
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1">
 
         </include>
 
         <include
             android:id="@+id/secondInclude"
             layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1">
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1">
 
         </include>
 
         <include
             android:id="@+id/thirdInclude"
             layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1">
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1">
 
         </include>
 
         <include
             android:id="@+id/fourthInclude"
             layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1">
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1">
 
         </include>
 

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
-    android:background="@color/white"
+    android:background="@color/detailsBackgroundColor"
     android:elevation="3dp">
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/arial"
         android:text="Ratings"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_20ssp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +43,7 @@
             android:layout_marginEnd="@dimen/_2sdp"
             android:fontFamily="@font/arial"
             android:text="4.5"
-            android:textColor="@color/black"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_36ssp"
             android:textStyle="bold">
 
@@ -56,7 +56,7 @@
             android:layout_gravity="center"
             android:layout_margin="8dp"
             android:src="@drawable/star"
-            app:tint="@color/black">
+            app:tint="@color/productDetailsTextColor">
 
         </ImageView>
 
@@ -70,6 +70,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:textColor="@color/productDetailsTextColor"
         android:text="27 ratings"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -362,7 +363,7 @@
             android:layout_weight="1"
             android:text="9"
             android:textAlignment="center"
-            android:textColor="#727272"
+            android:textColor="@color/ratingNumberTextColor"
             android:textSize="@dimen/_10ssp" />
 
         <TextView
@@ -372,7 +373,7 @@
             android:layout_weight="1"
             android:text="5"
             android:textAlignment="center"
-            android:textColor="#727272"
+            android:textColor="@color/ratingNumberTextColor"
             android:textSize="@dimen/_10ssp" />
 
         <TextView
@@ -382,7 +383,7 @@
             android:layout_weight="1"
             android:text="7"
             android:textAlignment="center"
-            android:textColor="#727272"
+            android:textColor="@color/ratingNumberTextColor"
             android:textSize="@dimen/_10ssp" />
 
         <TextView
@@ -392,7 +393,7 @@
             android:layout_weight="1"
             android:text="10"
             android:textAlignment="center"
-            android:textColor="#727272"
+            android:textColor="@color/ratingNumberTextColor"
             android:textSize="@dimen/_10ssp" />
 
         <TextView
@@ -402,7 +403,7 @@
             android:layout_weight="1"
             android:text="2"
             android:textAlignment="center"
-            android:textColor="#727272"
+            android:textColor="@color/ratingNumberTextColor"
             android:textSize="@dimen/_10ssp" />
     </LinearLayout>
 
@@ -410,7 +411,7 @@
         android:id="@+id/divider5"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#707070"
+        android:textColor="@color/ratingNumberTextColor"
         app:layout_constraintEnd_toEndOf="@+id/ratingNumbersContainer"
         app:layout_constraintStart_toStartOf="@+id/ratingNumbersContainer"
         app:layout_constraintTop_toBottomOf="@+id/ratingNumbersContainer" />
@@ -421,7 +422,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="27"
-        android:textColor="#727272"
+        android:textColor="@color/ratingNumberTextColor"
         app:layout_constraintEnd_toEndOf="@+id/ratingNumbersContainer"
         app:layout_constraintStart_toStartOf="@+id/ratingNumbersContainer"
         app:layout_constraintTop_toBottomOf="@+id/ratingNumbersContainer" />
@@ -434,7 +435,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/arial"
         android:text="your ratings"
-        android:textColor="#727272"
+        android:textColor="@color/ratingNumberTextColor"
         android:textSize="@dimen/_12ssp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.my_rewards.MyRewardsFragment">
+    tools:context="com.blogspot.mido_mymall.ui.my_rewards.MyRewardsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myRewardsRV"

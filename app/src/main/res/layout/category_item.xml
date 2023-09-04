@@ -5,7 +5,7 @@
     android:layout_height="@dimen/_60sdp"
     android:layout_margin="4dp"
     android:elevation="@dimen/_3sdp"
-    android:background="@drawable/slider_background">
+    android:background="@drawable/category_background">
 
     <ImageView
         android:id="@+id/category_icon"
