@@ -1,12 +1,17 @@
 package com.blogspot.mido_mymall.data.repo
 
+import com.blogspot.mido_mymall.domain.models.CartItemModel
+import com.blogspot.mido_mymall.domain.models.CartSummary
 import com.blogspot.mido_mymall.domain.repo.MyCartRepo
 import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class MyCartRepoImpl @Inject constructor(
@@ -31,21 +36,16 @@ class MyCartRepoImpl @Inject constructor(
     }
 
 
-    override suspend fun loadMyCartList(productId: String): Flow<Resource<DocumentSnapshot>> {
-        val result = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
-
-        result.value = Resource.Loading()
-
-
-        firestore.collection("PRODUCTS").document(productId)
-            .get().addOnSuccessListener {
-                result.value = Resource.Success(it)
-            }.addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
-            }
-
-
-        return result
+    override suspend fun loadMyCartList(productId: String): Resource<DocumentSnapshot> {
+        return try {
+            val data = firestore.collection("PRODUCTS").document(productId)
+                .get()
+                .await()
+            Resource.Success(data)
+        } catch (ex: Throwable) {
+            currentCoroutineContext().ensureActive()
+            Resource.Error(ex.message.toString())
+        }
     }
 
     override suspend fun removeFromCartList(
@@ -58,6 +58,7 @@ class MyCartRepoImpl @Inject constructor(
         result.value = Resource.Loading()
 
         cartListIds.removeAt(index)
+
 
         val updatedWishList = HashMap<String, Any>()
 
@@ -92,4 +93,6 @@ class MyCartRepoImpl @Inject constructor(
             }
         return result
     }
+
+
 }

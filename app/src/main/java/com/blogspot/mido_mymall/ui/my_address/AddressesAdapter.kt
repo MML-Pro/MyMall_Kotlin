@@ -173,7 +173,7 @@ class AddressesAdapter(MODE: Int, private val deleteAddressUtil: DeleteAddressUt
                             null,
                             fromCart = false,
                             null,
-                            0,
+                            0.0F,
                             addressPosition = position.toLong()
                         )
                     )

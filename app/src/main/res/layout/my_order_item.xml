@@ -1,51 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    android:background="@color/white"
+    android:background="@color/detailsBackgroundColor"
     android:elevation="3dp">
 
-    <ImageView
-        android:id="@+id/product_image"
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_70sdp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/image5" />
 
     <TextView
-        android:id="@+id/product_name"
+        android:id="@+id/orderIdTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Order ID: "
+        android:textStyle="bold"
+        android:textSize="@dimen/_14ssp"
+        android:textColor="@color/productDetailsTextColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+    </TextView>
+
+
+    <LinearLayout
+        android:id="@+id/productNamesContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:text="Pixel 2"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/product_image"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/order_delivered_date"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/orderIdTV">
+
+
+    </LinearLayout>
+
+    <!-- Product names will be dynamically added here -->
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/order_indicator"
         android:layout_width="@dimen/_7sdp"
         android:layout_height="@dimen/_7sdp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_name"
+        app:layout_constraintTop_toBottomOf="@+id/productNamesContainer"
         app:shapeAppearanceOverlay="@style/circleImageViewStyle"
         app:srcCompat="@drawable/ellipse12"
         app:tint="@color/success" />
@@ -55,93 +65,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:text="Delivered on Mon, 17th Jan 2017"
         android:textColor="@color/dimgrey"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toBottomOf="@+id/order_indicator"
-        app:layout_constraintEnd_toStartOf="@+id/product_image"
-        app:layout_constraintStart_toEndOf="@+id/order_indicator"
-        app:layout_constraintTop_toTopOf="@+id/order_indicator" />
-
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="your ratings"
-        android:textColor="@color/dimgrey"
-        android:textSize="@dimen/_12ssp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/product_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/order_delivered_date" />
-
-    <View
-        android:id="@+id/divider9"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-
-    <LinearLayout
-        android:id="@+id/rateNowContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider9">
-
-        <ImageView
-            android:id="@+id/starIV01"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/star"
-            app:tint="@color/mediumGray" />
-
-        <ImageView
-            android:id="@+id/starIV02"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/star"
-            app:tint="@color/mediumGray" />
-
-        <ImageView
-            android:id="@+id/starIV03"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/star"
-            app:tint="@color/mediumGray" />
-
-        <ImageView
-            android:id="@+id/starIV04"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/star"
-            app:tint="@color/mediumGray" />
-
-        <ImageView
-            android:id="@+id/starIV05"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/star"
-            app:tint="@color/mediumGray" />
-    </LinearLayout>
+        app:layout_constraintStart_toEndOf="@+id/order_indicator"
+        app:layout_constraintTop_toBottomOf="@+id/productNamesContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -158,7 +158,7 @@ class MyAddressesFragment : Fragment(), MenuProvider, DeleteAddressUtil {
                     null,
                     fromCart = false,
                     null,
-                    0
+                    0.0F
                 )
             )
         }

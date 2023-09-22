@@ -22,10 +22,10 @@ import com.blogspot.mido_mymall.databinding.CartTotalAmountLayoutBinding
 import com.blogspot.mido_mymall.databinding.QuantityDialogBinding
 import com.blogspot.mido_mymall.domain.models.CartItemModel
 import com.blogspot.mido_mymall.domain.models.RewardModel
+import java.util.Locale
 
 class CartAdapter(
     showDeleteButton: Boolean,
-    private val cartTotalAmount: TextView? = null,
     private val myCartUtil: MyCartUtil? = null,
     private val deliveryUtil: DeliveryUtil? = null,
     private val isDeliveryFragment: Boolean
@@ -75,159 +75,171 @@ class CartAdapter(
         this.rewardModelList = rewardModelList
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (asyncListDiffer.currentList[position].type) {
-            0 -> CartItemModel.CART_ITEM
-            1 -> CartItemModel.TOTAL_AMOUNT
-            else -> -1
-        }
-    }
+//    override fun getItemViewType(position: Int): Int {
+//        return when (asyncListDiffer.currentList[position].type) {
+//            0 -> CartItemModel.CART_ITEM
+//            1 -> CartItemModel.TOTAL_AMOUNT
+//            else -> -1
+//        }
+//    }
 
     fun deleteItem(position: Int) {
         val newList = asyncListDiffer.currentList.toMutableList()
         newList.removeAt(position)
 
-        if (newList.size == 1) {
-            asyncListDiffer.submitList(null)
-        } else {
-            asyncListDiffer.submitList(newList)
+        asyncListDiffer.submitList(newList)
 
-        }
-
+//        if (newList.size == 1) {
+//            asyncListDiffer.submitList(null)
+//        } else {
+//            asyncListDiffer.submitList(newList)
+//
+//        }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            CartItemModel.CART_ITEM -> {
-                val cartItemLayoutBinding: CartItemLayoutBinding = CartItemLayoutBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                CartItemViewHolder(cartItemLayoutBinding)
-            }
+//        return when (viewType) {
+//
+//
+//
+//            CartItemModel.CART_ITEM -> {
+//                val cartItemLayoutBinding: CartItemLayoutBinding = CartItemLayoutBinding.inflate(
+//                    LayoutInflater.from(parent.context), parent, false
+//                )
+//                CartItemViewHolder(cartItemLayoutBinding)
+//            }
+//
+//            CartItemModel.TOTAL_AMOUNT -> {
+//                val cartTotalAmountLayoutBinding: CartTotalAmountLayoutBinding =
+//                    CartTotalAmountLayoutBinding.inflate(
+//                        LayoutInflater.from(parent.context), parent, false
+//                    )
+//                CartTotalAmountViewHolder(cartTotalAmountLayoutBinding)
+//            }
+//
+//            else -> {
+//                val cartItemLayoutBinding: CartItemLayoutBinding = CartItemLayoutBinding.inflate(
+//                    LayoutInflater.from(parent.context), parent, false
+//                )
+//                CartItemViewHolder(cartItemLayoutBinding)
+//            }
+//        }
 
-            CartItemModel.TOTAL_AMOUNT -> {
-                val cartTotalAmountLayoutBinding: CartTotalAmountLayoutBinding =
-                    CartTotalAmountLayoutBinding.inflate(
-                        LayoutInflater.from(parent.context), parent, false
-                    )
-                CartTotalAmountViewHolder(cartTotalAmountLayoutBinding)
-            }
-
-            else -> {
-                val cartItemLayoutBinding: CartItemLayoutBinding = CartItemLayoutBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                CartItemViewHolder(cartItemLayoutBinding)
-            }
-        }
+        val cartItemLayoutBinding: CartItemLayoutBinding = CartItemLayoutBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return CartItemViewHolder(cartItemLayoutBinding)
     }
 
     override fun onBindViewHolder(
         holder: RecyclerView.ViewHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
-        when (asyncListDiffer.currentList[position].type) {
-            CartItemModel.CART_ITEM -> {
-                val cartItemModel: CartItemModel = asyncListDiffer.currentList[position]
+//        when (asyncListDiffer.currentList[position].type) {
+//            CartItemModel.CART_ITEM -> {
+        val cartItemModel: CartItemModel = asyncListDiffer.currentList[position]
 
-                (holder as CartItemViewHolder).bind(cartItemModel, position)
+        (holder as CartItemViewHolder).bind(cartItemModel, position)
 
-                if (lastPosition < position) {
-                    val animation = AnimationUtils.loadAnimation(
-                        holder.itemView.context,
-                        R.anim.fade_in
-                    )
-                    holder.itemView.animation = animation
+        if (lastPosition < position) {
+            val animation = AnimationUtils.loadAnimation(
+                holder.itemView.context,
+                R.anim.fade_in
+            )
+            holder.itemView.animation = animation
 
-                    lastPosition = position
-                }
-            }
-
-            CartItemModel.TOTAL_AMOUNT -> {
-
-                var totalItems = 0
-                var totalItemsPrice = 0
-                val deliveryPrice: String
-                val totalAmount: Int
-                var savedAmount = 0
-//                var i = 0
-                for (i in 0 until asyncListDiffer.currentList.size) {
-                    if (asyncListDiffer.currentList[i].type == CartItemModel.CART_ITEM
-                        && asyncListDiffer.currentList[i].inStock == true
-                    ) {
-
-                        val quantity = asyncListDiffer.currentList[i].productQuantity
-
-                        totalItems++
-
-                        totalItemsPrice += if (asyncListDiffer.currentList[position].selectedCouponId.isNullOrEmpty()) {
-                            asyncListDiffer.currentList[i].productPrice?.toInt()!! * quantity!!.toInt()
-                        } else {
-                            asyncListDiffer.currentList[i].discountedPrice?.toInt()!! * quantity!!.toInt()
-                        }
-
-                        if (asyncListDiffer.currentList[i].cuttedPrice?.isNotEmpty()!!) {
-                            savedAmount += (asyncListDiffer.currentList[i].cuttedPrice?.toInt()!! - asyncListDiffer.currentList[i].productPrice?.toInt()!!) * quantity.toInt()
-
-                            if (!asyncListDiffer.currentList[position].selectedCouponId.isNullOrEmpty()) {
-                                savedAmount += (asyncListDiffer.currentList[i].productPrice?.toInt()!! - asyncListDiffer.currentList[i].discountedPrice?.toInt()!!) * quantity.toInt()
-                            }
-
-                        } else {
-                            if (asyncListDiffer.currentList[position].selectedCouponId?.isNotEmpty()!!) {
-                                savedAmount += (asyncListDiffer.currentList[i].productPrice?.toInt()!! - asyncListDiffer.currentList[i].discountedPrice?.toInt()!!) * quantity.toInt()
-                            }
-                        }
-
-                    }
-                }
-                if (totalItemsPrice > 500) {
-                    deliveryPrice = "Free"
-                    totalAmount = totalItemsPrice
-                } else {
-                    deliveryPrice = "60"
-                    totalAmount = totalItemsPrice + 60
-                }
-
-//                String totalItems = asyncListDiffer.currentList.get(position).getTotalItems();
-//                String totalItemPrice = asyncListDiffer.currentList.get(position).getTotalItemPrice();
-
-                asyncListDiffer.currentList[position].totalItems = totalItems
-                asyncListDiffer.currentList[position].totalItemsPrice = totalItemsPrice
-                asyncListDiffer.currentList[position].deliveryPrice = deliveryPrice
-                asyncListDiffer.currentList[position].totalAmount = totalAmount
-                asyncListDiffer.currentList[position].savedAmount = savedAmount
-
-
-                Log.d(TAG, "onBindViewHolder: totalItems $totalItems")
-                Log.d(TAG, "onBindViewHolder: totalItems $totalItemsPrice")
-                Log.d(TAG, "onBindViewHolder: totalItems $deliveryPrice")
-                Log.d(TAG, "onBindViewHolder: totalItems $totalAmount")
-                Log.d(TAG, "onBindViewHolder: totalItems $savedAmount")
-
-
-
-                (holder as CartTotalAmountViewHolder).setTotalAmount(
-                    totalItems, totalItemsPrice, deliveryPrice, totalAmount, savedAmount
-                )
-                myCartUtil?.getTotalAmount(totalAmount)
-
-                if (lastPosition < position) {
-                    val animation = AnimationUtils.loadAnimation(
-                        holder.itemView.context,
-                        R.anim.fade_in
-                    )
-                    holder.itemView.animation = animation
-
-                    lastPosition = position
-                }
-
-
-            }
-
-            else -> return
+            lastPosition = position
         }
+//
+//            }
+//
+//            CartItemModel.TOTAL_AMOUNT -> {
+//
+//                var totalItems = 0
+//                var totalItemsPrice = 0
+//                val deliveryPrice: String
+//                val totalAmount: Int
+//                var savedAmount = 0
+////                var i = 0
+//                for (i in 0 until asyncListDiffer.currentList.size) {
+//                    if (asyncListDiffer.currentList[i].type == CartItemModel.CART_ITEM
+//                        && asyncListDiffer.currentList[i].inStock == true
+//                    ) {
+//
+//                        val quantity = asyncListDiffer.currentList[i].productQuantity
+//
+//                        totalItems++
+//
+//                        totalItemsPrice += if (asyncListDiffer.currentList[position].selectedCouponId.isNullOrEmpty()) {
+//                            asyncListDiffer.currentList[i].productPrice?.toInt()!! * quantity!!.toInt()
+//                        } else {
+//                            asyncListDiffer.currentList[i].discountedPrice?.toInt()!! * quantity!!.toInt()
+//                        }
+//
+//                        if (asyncListDiffer.currentList[i].cuttedPrice?.isNotEmpty()!!) {
+//                            savedAmount += (asyncListDiffer.currentList[i].cuttedPrice?.toInt()!! - asyncListDiffer.currentList[i].productPrice?.toInt()!!) * quantity.toInt()
+//
+//                            if (!asyncListDiffer.currentList[position].selectedCouponId.isNullOrEmpty()) {
+//                                savedAmount += (asyncListDiffer.currentList[i].productPrice?.toInt()!! - asyncListDiffer.currentList[i].discountedPrice?.toInt()!!) * quantity.toInt()
+//                            }
+//
+//                        } else {
+//                            if (asyncListDiffer.currentList[position].selectedCouponId?.isNotEmpty()!!) {
+//                                savedAmount += (asyncListDiffer.currentList[i].productPrice?.toInt()!! - asyncListDiffer.currentList[i].discountedPrice?.toInt()!!) * quantity.toInt()
+//                            }
+//                        }
+//
+//                    }
+//                }
+//                if (totalItemsPrice > 500) {
+//                    deliveryPrice = "Free"
+//                    totalAmount = totalItemsPrice
+//                } else {
+//                    deliveryPrice = "60"
+//                    totalAmount = totalItemsPrice + 60
+//                }
+//
+////                String totalItems = asyncListDiffer.currentList.get(position).getTotalItems();
+////                String totalItemPrice = asyncListDiffer.currentList.get(position).getTotalItemPrice();
+//
+//                asyncListDiffer.currentList[position].totalItems = totalItems
+//                asyncListDiffer.currentList[position].totalItemsPrice = totalItemsPrice
+//                asyncListDiffer.currentList[position].deliveryPrice = deliveryPrice
+//                asyncListDiffer.currentList[position].totalAmount = totalAmount
+//                asyncListDiffer.currentList[position].savedAmount = savedAmount
+//
+//
+//                Log.d(TAG, "onBindViewHolder: totalItems $totalItems")
+//                Log.d(TAG, "onBindViewHolder: totalItems $totalItemsPrice")
+//                Log.d(TAG, "onBindViewHolder: totalItems $deliveryPrice")
+//                Log.d(TAG, "onBindViewHolder: totalItems $totalAmount")
+//                Log.d(TAG, "onBindViewHolder: totalItems $savedAmount")
+//
+//
+//
+//                (holder as CartTotalAmountViewHolder).setTotalAmount(
+//                    totalItems, totalItemsPrice, deliveryPrice, totalAmount, savedAmount
+//                )
+//                myCartUtil?.getTotalAmount(totalAmount)
+//
+//                if (lastPosition < position) {
+//                    val animation = AnimationUtils.loadAnimation(
+//                        holder.itemView.context,
+//                        R.anim.fade_in
+//                    )
+//                    holder.itemView.animation = animation
+//
+//                    lastPosition = position
+//                }
+//
+//
+//            }
+//
+//            else -> return
+//        }
+
+
     }
 
     override fun getItemCount(): Int {
@@ -251,14 +263,22 @@ class CartAdapter(
 
             // In stock
             if (cartItemModel.inStock == true) {
-                val freeCouponNo: Long = cartItemModel.freeCoupons!!
+                val freeCouponNo: Int = cartItemModel.freeCoupons.toInt()
+
+                Log.d(TAG, "freeCouponNo: ${cartItemModel.freeCoupons}")
+
+                if(freeCouponNo == 0){
+                    cartItemLayoutBinding.freeCouponIcon.visibility = View.INVISIBLE
+                    cartItemLayoutBinding.freeCouponTV.visibility = View.INVISIBLE
+                }
+
                 if (freeCouponNo > 0) {
                     cartItemLayoutBinding.freeCouponIcon.visibility = View.VISIBLE
                     cartItemLayoutBinding.freeCouponTV.visibility = View.VISIBLE
-                    if (freeCouponNo == 1L) {
-                        cartItemLayoutBinding.freeCouponTV.text = "free $freeCouponNo Coupon"
+                    if (freeCouponNo == 1) {
+                        cartItemLayoutBinding.freeCouponTV.text = "free ${freeCouponNo} Coupon"
                     } else {
-                        cartItemLayoutBinding.freeCouponTV.text = "free $freeCouponNo Coupons"
+                        cartItemLayoutBinding.freeCouponTV.text = "free ${freeCouponNo} Coupons"
                     }
                 } else {
                     cartItemLayoutBinding.freeCouponIcon.visibility = View.INVISIBLE
@@ -282,9 +302,9 @@ class CartAdapter(
                         var offerDiscountedAmount: Long = 0
 
 
-                        if (cartItemModel.productPrice != null && rewardModelList?.get(position)?.discountOrAmount != null) {
+                        if (rewardModelList?.get(position)?.discountOrAmount != null) {
                             offerDiscountedAmount =
-                                cartItemModel.productPrice!!.toLong() * rewardModelList?.get(
+                                cartItemModel.productPrice.toLong() * rewardModelList?.get(
                                     position
                                 )?.discountOrAmount?.toLong()!! / 100
 
@@ -319,12 +339,11 @@ class CartAdapter(
 
 
                 cartItemLayoutBinding.productPrice.text =
-                    "Rs. ${(cartItemModel.productPrice?.toInt()!! * cartItemModel.productQuantity!!)} /-"
-                cartItemLayoutBinding.productPrice.setTextColor(
-                    cartItemLayoutBinding.root
-                        .resources.getColor(R.color.black)
-                )
-                cartItemLayoutBinding.cuttedPrice.text = "zzz. " + cartItemModel.cuttedPrice + " /-"
+                    "EGP. ${(cartItemModel.productPrice.toDouble() * cartItemModel.productQuantity!!)} /-"
+
+
+
+                cartItemLayoutBinding.cuttedPrice.text = "EGP." + cartItemModel.cuttedPrice + " /-"
                 cartItemLayoutBinding.productQty.visibility = View.VISIBLE
 
                 cartItemLayoutBinding.productQty.text = "Qty: " + cartItemModel.productQuantity
@@ -364,7 +383,7 @@ class CartAdapter(
                                 quantityDialogBinding.quantityEditText.text.toString().toLong()
 
                             cartItemLayoutBinding.productPrice.text =
-                                "Rs. ${(cartItemModel.productPrice?.toInt()!! * quantity)} /-"
+                                "EGP. ${(cartItemModel.productPrice?.toDouble()!! * quantity)} /-"
 
                             cartItemLayoutBinding.productQty.text =
                                 "Qty: " + quantityDialogBinding.quantityEditText.text
@@ -379,14 +398,20 @@ class CartAdapter(
                     }
                     quantityDialog.show()
                 }
-                if (cartItemModel.offersApply!! > 0) {
+                if (cartItemModel.offersApply > 0) {
                     cartItemLayoutBinding.offersApplied.visibility = View.VISIBLE
 
-                    val offerDiscountedAmount = cartItemModel.cuttedPrice?.toLong()
-                        ?.minus(cartItemModel.productPrice?.toLong()!!)
+                    val offerDiscountedAmount = cartItemModel.cuttedPrice.toDouble()
+                        .minus(cartItemModel.productPrice.toDouble())
 
                     cartItemLayoutBinding.offersApplied.text =
-                        "Offer applied - Rs.$offerDiscountedAmount/-"
+                        "Offer applied - EGP.${
+                            String.format(
+                                locale = Locale.ENGLISH,
+                                "%.2f",
+                                offerDiscountedAmount
+                            )
+                        }/-"
                 } else {
                     cartItemLayoutBinding.offersApplied.visibility = View.INVISIBLE
                 }
@@ -397,7 +422,7 @@ class CartAdapter(
                 cartItemLayoutBinding.productPrice.text = "Out of stock"
                 cartItemLayoutBinding.productPrice.setTextColor(
                     cartItemLayoutBinding.root
-                        .resources.getColor(R.color.colorPrimary)
+                        .resources.getColor(R.color.btnRed)
                 )
                 cartItemLayoutBinding.cuttedPrice.text = ""
                 cartItemLayoutBinding.cartCouponRedemptionLayout.visibility = View.GONE
@@ -425,8 +450,8 @@ class CartAdapter(
             cartItemLayoutBinding.couponRedemptionButton.setOnClickListener {
 
                 deliveryUtil?.couponRedemptionButtonClick(
-                    cartItemModel.productPrice.toString(),
-                    cartItemModel.cuttedPrice.toString(),
+                    cartItemModel.productPrice,
+                    cartItemModel.cuttedPrice,
                     position,
                     cartCouponRedemptionLayout = cartItemLayoutBinding.cartCouponRedemptionLayout,
                     couponRedemptionButton = cartItemLayoutBinding.couponRedemptionButton,
@@ -435,7 +460,7 @@ class CartAdapter(
                     productPriceTV = cartItemLayoutBinding.productPrice,
                     totalItemsPriceTV = totalItemsPriceTV,
                     totalAmountTV = totalAmountTV,
-                    quantity = cartItemModel.productQuantity!!
+                    quantity = cartItemModel.productQuantity
                 )
 
             }
@@ -451,104 +476,52 @@ class CartAdapter(
 //                        cartTotalAmount
 //                    )
 
-                myCartUtil?.deleteItem(adapterPosition).also {
-                    var totalItems = 0
-                    var totalItemsPrice = 0
-                    val deliveryPrice: String
-                    val totalAmount: Int
-                    var savedAmount = 0
+                myCartUtil?.deleteItem(adapterPosition)
 
-                    asyncListDiffer.currentList.forEach { cartItem ->
-
-                        if (cartItem.type == CartItemModel.CART_ITEM) {
-
-                            val quantity = cartItem.productQuantity
-
-                            totalItems++
-
-                            totalItemsPrice += if (cartItem.selectedCouponId.isNullOrEmpty()) {
-                                cartItem.productPrice?.toInt()!! * quantity!!.toInt()
-                            } else {
-                                cartItem.discountedPrice?.toInt()!! * quantity!!.toInt()
-                            }
-
-                            if (cartItem.cuttedPrice?.isNotEmpty()!!) {
-                                savedAmount += (cartItem.cuttedPrice?.toInt()!! - cartItem.productPrice?.toInt()!!) * quantity.toInt()
-
-                                if (!cartItem.selectedCouponId.isNullOrEmpty()) {
-                                    savedAmount += (cartItem.productPrice?.toInt()!! - cartItem.discountedPrice?.toInt()!!) * quantity.toInt()
-                                }
-
-                            } else {
-                                if (cartItem.selectedCouponId?.isNotEmpty()!!) {
-                                    savedAmount += (cartItem.productPrice?.toInt()!! - cartItem.discountedPrice?.toInt()!!) * quantity.toInt()
-                                }
-                            }
-
-                        }
-                    }
-                    if (totalItemsPrice > 500) {
-                        deliveryPrice = "Free"
-                        totalAmount = totalItemsPrice
-                    } else {
-                        deliveryPrice = "60"
-                        totalAmount = totalItemsPrice + 60
-                    }
-
-                    asyncListDiffer.currentList[position].totalItems = totalItems
-                    asyncListDiffer.currentList[position].totalItemsPrice = totalItemsPrice
-                    asyncListDiffer.currentList[position].deliveryPrice = deliveryPrice
-                    asyncListDiffer.currentList[position].totalAmount = totalAmount
-                    asyncListDiffer.currentList[position].savedAmount = savedAmount
-
-                    notifyDataSetChanged()
-
-                }
             }
-
         }
-}
-
-
-internal inner class CartTotalAmountViewHolder(private val binding: CartTotalAmountLayoutBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-    init {
-        totalItemsPriceTV = binding.totalItemsPrice
-        totalAmountTV = binding.totalAmountTv
     }
 
-    fun setTotalAmount(
-        totalItems: Int, totalItemsPrice: Int, deliveryPrice: String,
-        totalAmount: Int, savedAmount: Int
-    ) {
 
-        binding.totalItems.text = "Price ($totalItems items)"
-        binding.totalItemsPrice.text = "EGP.$totalItemsPrice/-"
-        if (deliveryPrice == "Free") {
-            binding.deliveryPrice.text = deliveryPrice
-        } else {
-            binding.deliveryPrice.text = "EGP.$deliveryPrice/-"
-        }
-        binding.totalAmountTv.text = "EGP.$totalAmount/-"
-        cartTotalAmount?.text = "EGP.$totalAmount/-"
-        binding.savedAmount.text = "You saved EGP.$savedAmount/- on this order"
-        val totalAmountParent = cartTotalAmount?.parent?.parent as? LinearLayout
-        if (totalItemsPrice == 0) {
-//                myCartUtil?.deleteItem(adapterPosition)
-            try {
-                if (asyncListDiffer.currentList[adapterPosition].type == CartItemModel.TOTAL_AMOUNT) {
-                    deleteItem(adapterPosition)
-                }
-            } catch (ex: Exception) {
-                Log.e(TAG, "setTotalAmount: $ex")
-                Log.e(TAG, "setTotalAmount: ${ex.cause.toString()}")
-            }
-
-            totalAmountParent?.visibility = View.GONE
-        } else {
-            totalAmountParent?.visibility = View.VISIBLE
-        }
-    }
-}
+//    internal inner class CartTotalAmountViewHolder(private val binding: CartTotalAmountLayoutBinding) :
+//        RecyclerView.ViewHolder(binding.root) {
+//
+//        init {
+//            totalItemsPriceTV = binding.totalItemsPrice
+//            totalAmountTV = binding.totalAmountTv
+//        }
+//
+//        fun setTotalAmount(
+//            totalItems: Int, totalItemsPrice: Int, deliveryPrice: String,
+//            totalAmount: Int, savedAmount: Int
+//        ) {
+//
+//            binding.totalItems.text = "Price ($totalItems items)"
+//            binding.totalItemsPrice.text = "EGP.$totalItemsPrice/-"
+//            if (deliveryPrice == "Free") {
+//                binding.deliveryPrice.text = deliveryPrice
+//            } else {
+//                binding.deliveryPrice.text = "EGP.$deliveryPrice/-"
+//            }
+//            binding.totalAmountTv.text = "EGP.$totalAmount/-"
+//            cartTotalAmount?.text = "EGP.$totalAmount/-"
+//            binding.savedAmount.text = "You saved EGP.$savedAmount/- on this order"
+//            val totalAmountParent = cartTotalAmount?.parent?.parent as? LinearLayout
+//            if (totalItemsPrice == 0) {
+////                myCartUtil?.deleteItem(adapterPosition)
+//                try {
+//                    if (asyncListDiffer.currentList[adapterPosition].type == CartItemModel.TOTAL_AMOUNT) {
+//                        deleteItem(adapterPosition)
+//                    }
+//                } catch (ex: Exception) {
+//                    Log.e(TAG, "setTotalAmount: $ex")
+//                    Log.e(TAG, "setTotalAmount: ${ex.cause.toString()}")
+//                }
+//
+//                totalAmountParent?.visibility = View.GONE
+//            } else {
+//                totalAmountParent?.visibility = View.VISIBLE
+//            }
+//        }
+//    }
 }

@@ -112,6 +112,7 @@
     <fragment
         android:id="@+id/productDetailsFragment"
         android:name="com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment"
+        android:label="Product Details"
         tools:layout="@layout/fragment_product_details">
         <action
             android:id="@+id/action_productDetailsFragment_to_deliveryFragment"
@@ -143,7 +144,9 @@
         <action
             android:id="@+id/action_nav_my_cart_to_addAddressFragment"
             app:destination="@id/addAddressFragment"
-            app:popUpTo="@id/nav_my_cart" />
+            app:launchSingleTop="false"
+            app:popUpTo="@id/nav_my_cart"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/nav_my_orders"
@@ -231,13 +234,12 @@
             app:nullable="true" />
         <argument
             android:name="totalAmount"
-            app:argType="integer"
-            android:defaultValue="0" />
+            app:argType="float" />
     </fragment>
     <fragment
         android:id="@+id/addAddressFragment"
         android:name="com.blogspot.mido_mymall.ui.add_address.AddAddressFragment"
-        android:label="fragment_add_address"
+        android:label="Add address"
         tools:layout="@layout/fragment_add_address">
         <action
             android:id="@+id/action_addAddressFragment_to_deliveryFragment"
@@ -258,12 +260,11 @@
             app:nullable="true" />
         <argument
             android:name="totalAmount"
-            app:argType="integer"
-            android:defaultValue="0" />
+            app:argType="float" />
         <argument
             android:name="addressPosition"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            android:defaultValue="-1L"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/myAddressesFragment"
@@ -325,4 +326,26 @@
         android:name="com.blogspot.mido_mymall.ui.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.blogspot.mido_mymall.ui.settings.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_privacyPolicyFragment"
+            app:destination="@id/privacyPolicyFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_termsAndConditions"
+            app:destination="@id/termsAndConditionsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.blogspot.mido_mymall.ui.PrivacyPolicyFragment"
+        android:label="fragment_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/termsAndConditionsFragment"
+        android:name="com.blogspot.abtallaldigital.bloggy.ui.TermsAndConditions"
+        android:label="fragment_terms_and_conditions"
+        tools:layout="@layout/fragment_terms_and_conditions" />
 </navigation>

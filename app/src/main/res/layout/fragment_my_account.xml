@@ -3,14 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/lightGray"
+    android:background="@color/myAccountBackgroundColor"
     tools:context="com.blogspot.mido_mymall.ui.my_account.MyAccountFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lightGray"
         android:orientation="vertical">
 
         <include
@@ -35,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="Sign out"
+            android:backgroundTint="@color/buttonColor"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="@dimen/_12ssp"

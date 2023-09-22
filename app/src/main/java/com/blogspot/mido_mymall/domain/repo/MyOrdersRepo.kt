@@ -11,7 +11,7 @@ interface MyOrdersRepo {
 
     suspend fun getRatings(): Flow<Resource<DocumentSnapshot>>
 
-    suspend fun getLastOrder() : Resource<DocumentSnapshot>
+    suspend fun getLastOrder() : Flow<Resource<DocumentSnapshot>>
 
 
 }

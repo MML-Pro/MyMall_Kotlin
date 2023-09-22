@@ -1,9 +1,12 @@
 package com.blogspot.mido_mymall.ui.product_details
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -15,8 +18,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.children
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -70,6 +78,8 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 //    private val wishlistViewModel by viewModels<MyWishlistViewModel>()
 
     private lateinit var tabLayoutMediator: TabLayoutMediator
+
+    private lateinit var productDetailsViewPagerTabLayoutMediator: TabLayoutMediator
 
     private val args by navArgs<ProductDetailsFragmentArgs>()
 
@@ -156,11 +166,41 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
         productId = args.productID
 
+        productDetailsViewPagerTabLayoutMediator = TabLayoutMediator(
+            binding.productDescriptionLayout.productDetailsTabLayout,
+            binding.productDescriptionLayout.productDetailsViewPager
+        ) { tab: TabLayout.Tab?, position: Int ->
+            Log.d(TAG, "productDetailsViewPagerTabLayoutMediator: ${tab?.text}")
+            when (position) {
+                0 -> {
+                    tab?.text = "Description"
+                }
+
+                1 -> {
+                    tab?.text = "Specifications"
+                }
+
+                2 -> {
+                    tab?.text = "Other details"
+                }
+            }
+        }
+
+
 //        addToWishListFAB = binding.productImageViewPager.addToWishListFAB
 
 //        productDetailsAdapter.notifyDataSetChanged()
 
         return binding.root
+    }
+
+
+    fun setStyleForTab(tab: TabLayout.Tab, style: Int) {
+        tab.view.children.find { it is TextView }?.let { tv ->
+            (tv as TextView).post {
+                tv.setTypeface(null, style)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -238,11 +278,18 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                         productImageViewPager.codIndicatorTV.visibility = View.GONE
                                     }
 
-                                    rewardWithProductLayout.rewardTitle.text =
-                                        "${documentSnapshot["free_coupons"] as Long} ${documentSnapshot["free_coupone_title"].toString()}"
+                                    val freeCoupons = documentSnapshot["free_coupons"] as Long
 
-                                    rewardWithProductLayout.rewardBody.text =
-                                        documentSnapshot["free_coupone_body"].toString()
+                                    if (freeCoupons > 0) {
+
+                                        rewardWithProductLayout.rewardTitle.text =
+                                            "$freeCoupons ${documentSnapshot["free_coupone_title"].toString()}"
+
+                                        rewardWithProductLayout.rewardBody.text =
+                                            documentSnapshot["free_coupone_body"].toString()
+                                    } else {
+                                        rewardWithProductLayout.root.visibility = View.GONE
+                                    }
 
                                     if (documentSnapshot["use_tab_layout"] as Boolean) {
 
@@ -288,6 +335,11 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                                         binding.productDescriptionLayout.productDetailsViewPager.adapter =
                                             productDetailsAdapter
+
+                                        if (!productDetailsViewPagerTabLayoutMediator.isAttached) {
+                                            productDetailsViewPagerTabLayoutMediator.attach()
+                                        }
+
                                     } else {
                                         productDescriptionLayout.root.visibility = View.GONE
                                         productDetailsOnly.root.visibility = View.VISIBLE
@@ -369,14 +421,21 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
 //                    ALREADY_ADDED_TO_CART_LIST = false
 
+
+
+
                                                 val index = myCartListIds.indexOf(productId)
 
-                                                Toast.makeText(
-                                                    requireContext(),
-                                                    "Already added to cart",
-                                                    Toast.LENGTH_SHORT
+                                                productDetailsViewModel.removeFromCartList(
+                                                    myCartListIds, index
                                                 )
-                                                    .show()
+
+//
+//                                                Toast.makeText(
+//                                                    requireContext(),
+//                                                    "Already added to cart",
+//                                                    Toast.LENGTH_SHORT
+//                                                ).show()
 
                                             } else {
 
@@ -406,55 +465,6 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                             //FOR THE BUY NOW DIRECTLY
 
                             productPrice = documentSnapshot?.get("product_price").toString()
-
-
-                            val cartItem = CartItemModel(
-                                type = CartItemModel.CART_ITEM,
-                                productId = productId,
-                                productImage = documentSnapshot?.get("product_image_1")
-                                    .toString(),
-                                productName = documentSnapshot?.get("product_name").toString(),
-                                freeCoupons = documentSnapshot?.get("free_coupons") as Long,
-                                productPrice = documentSnapshot["product_price"].toString(),
-                                cuttedPrice = documentSnapshot["cutted_price"].toString(),
-                                productQuantity = 1,
-                                maxQuantity = documentSnapshot["max_quantity"] as Long,
-                                stockQuantity = documentSnapshot["stock_quantity"] as Long,
-                                offersApply = documentSnapshot["offers_applied"] as Long,
-                                couponsApplied = 0,
-                                inStock = documentSnapshot["in_stock"] as Boolean,
-                                qtyIDs = null,
-                                selectedCouponId = null,
-                                discountedPrice = null,
-                                totalItems = null,
-                                totalItemsPrice = null,
-                                deliveryPrice = null,
-                                totalAmount = null,
-                                savedAmount = null
-                            )
-
-
-
-                            calculateProductAmountDetails()
-
-
-//                String totalItems = asyncListDiffer.currentList.get(position).getTotalItems();
-//                String totalItemPrice = asyncListDiffer.currentList.get(position).getTotalItemPrice();
-
-//                            cartItemModelList.forEach {cartItemModel->
-//
-//                                if(cartItemModel.type == CartItemModel.CART_ITEM) {
-//
-//                                }
-//                            }
-
-
-                            cartItemModelList.add(cartItem)
-                                .also {
-                                    cartItemModelList.add(
-                                        CartItemModel(CartItemModel.TOTAL_AMOUNT)
-                                    )
-                                }
                         }
 
                         is Resource.Error -> {
@@ -468,6 +478,32 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
             }
         }
 
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                productDetailsViewModel.removeCartListState.collect {
+
+                    if (it is Resource.Success) {
+                        ALREADY_ADDED_TO_CART_LIST = false
+
+                        requireActivity().invalidateMenu()
+
+                        updateAddToCartButtonAppearance(
+                            "ADD TO CART",
+                            textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp)
+                                .toFloat(),
+                            textColorRes = R.color.colorPrimary,
+                            drawableRes = R.drawable.cart_white
+                        )
+
+
+                    } else if (it is Resource.Error) {
+                        Log.e(TAG, "onViewCreated: ${it.message.toString()}")
+                    }
+
+                }
+            }
+        }
+
 
         binding.productDescriptionLayout.productDetailsTabLayout.addOnTabSelectedListener(object :
             OnTabSelectedListener {
@@ -475,11 +511,20 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                 Log.d(TAG, "onTabSelected: ${tab.position}")
                 binding.productDescriptionLayout.productDetailsViewPager.currentItem =
                     tab.position
+
+                setStyleForTab(tab, Typeface.BOLD)
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                setStyleForTab(tab, Typeface.NORMAL)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+            }
         })
+
+
 
         binding.buyNowButton.setOnClickListener {
 
@@ -492,7 +537,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                             cartListIds = myCartListIds.toTypedArray(),
                             cartItemModelList = cartItemModelList.toTypedArray(),
                             fromCart = fromCart,
-                            totalAmount = productPrice.toInt()
+                            totalAmount = productPrice.toFloat()
                         )
                 )
             } else {
@@ -520,7 +565,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     binding.productImageViewPager.addToWishListFAB.imageTintList =
                         resources.getColorStateList(
-                            R.color.fabColor,
+                            R.color.favoritesUnselectedIconColor,
                             binding.productImageViewPager.addToWishListFAB.context.theme
                         )
                 } else {
@@ -528,7 +573,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                         AppCompatResources
                             .getColorStateList(
                                 binding.productImageViewPager.addToWishListFAB.context,
-                                R.color.fabColor
+                                R.color.favoritesUnselectedIconColor
                             )
                 }
 
@@ -556,7 +601,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         binding.productImageViewPager.addToWishListFAB.imageTintList =
                                             resources.getColorStateList(
-                                                R.color.btnRed,
+                                                R.color.favoritesSelectedIconColor,
                                                 requireContext().theme
                                             )
                                     } else {
@@ -564,7 +609,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                             AppCompatResources
                                                 .getColorStateList(
                                                     requireContext(),
-                                                    R.color.btnRed
+                                                    R.color.favoritesSelectedIconColor
                                                 )
                                     }
                                 } else {
@@ -574,7 +619,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         binding.productImageViewPager.addToWishListFAB.imageTintList =
                                             resources.getColorStateList(
-                                                R.color.fabColor,
+                                                R.color.favoritesUnselectedIconColor,
                                                 requireContext().theme
                                             )
                                     } else {
@@ -582,7 +627,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                             AppCompatResources
                                                 .getColorStateList(
                                                     requireContext(),
-                                                    R.color.fabColor
+                                                    R.color.favoritesUnselectedIconColor
                                                 )
                                     }
                                 }
@@ -657,7 +702,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 binding.productImageViewPager.addToWishListFAB.imageTintList =
                                     resources.getColorStateList(
-                                        R.color.btnRed,
+                                        R.color.favoritesSelectedIconColor,
                                         binding.productImageViewPager.addToWishListFAB.context.theme
                                     )
                             } else {
@@ -665,7 +710,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                     AppCompatResources
                                         .getColorStateList(
                                             binding.productImageViewPager.addToWishListFAB.context,
-                                            R.color.btnRed
+                                            R.color.favoritesSelectedIconColor
                                         )
                             }
 
@@ -705,20 +750,22 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                         ).show()
 
                     } else if (it is Resource.Error) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            binding.productImageViewPager.addToWishListFAB.imageTintList =
-                                resources.getColorStateList(
-                                    R.color.colorPrimary,
-                                    binding.productImageViewPager.addToWishListFAB.context.theme
-                                )
-                        } else {
-                            binding.productImageViewPager.addToWishListFAB.imageTintList =
-                                AppCompatResources
-                                    .getColorStateList(
-                                        binding.productImageViewPager.addToWishListFAB.context,
-                                        R.color.colorPrimary
-                                    )
-                        }
+
+                        Log.e(TAG, "onViewCreated: ${it.message.toString()}")
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                            binding.productImageViewPager.addToWishListFAB.imageTintList =
+//                                resources.getColorStateList(
+//                                    R.color.fabColor,
+//                                    binding.productImageViewPager.addToWishListFAB.context.theme
+//                                )
+//                        } else {
+//                            binding.productImageViewPager.addToWishListFAB.imageTintList =
+//                                AppCompatResources
+//                                    .getColorStateList(
+//                                        binding.productImageViewPager.addToWishListFAB.context,
+//                                        R.color.fabColor
+//                                    )
+//                        }
                     }
 
                 }
@@ -914,10 +961,13 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                         finalRating.text = (finalRating.text.toString().toInt() + 1).toString()
 
 
+                        val avgRating = calculateAverageRating(starPosition + 1).toString()
 
-                        binding.ratingsLayout.averageRatingTV.text =
-                            calculateAverageRating(starPosition + 1)
-                                .toString()
+
+                        Log.v(TAG, "avgRating: $avgRating")
+
+                        binding.ratingsLayout.averageRatingTV.text = avgRating
+
 
                         binding.productImageViewPager.averageRatingMiniViewTV.text =
                             calculateAverageRating(
@@ -955,7 +1005,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                productDetailsViewModel.myCart.collect { response ->
+                productDetailsViewModel.myCartId.collect { response ->
                     when (response) {
 
                         is Resource.Success -> {
@@ -968,14 +1018,25 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                                 ALREADY_ADDED_TO_CART_LIST = myCartListIds.contains(productId)
 
+                                if(ALREADY_ADDED_TO_CART_LIST){
+
+                                    Log.d(TAG, "ALREADY_ADDED_TO_CART_LIST: $ALREADY_ADDED_TO_CART_LIST")
+
+                                    updateAddToCartButtonAppearance("REMOVE",
+                                        textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp).toFloat(),
+                                        textColorRes = R.color.removeColor,
+                                        drawableRes = R.drawable.baseline_shopping_cart_red
+                                    )
+                                }
+
                                 FirebaseFirestore.getInstance().collection("PRODUCTS")
                                     .document(response.data["product_id_$i"].toString())
                                     .get().addOnSuccessListener {
 
                                         cartItemModelList.add(
                                             CartItemModel(
-                                                type = CartItemModel.CART_ITEM,
-                                                productId = productId,
+//                                                CartItemModel.CART_ITEM,
+                                                productId = it.id,
                                                 productImage = documentSnapshot["product_image_1"].toString(),
                                                 productName = documentSnapshot["product_name"].toString(),
                                                 freeCoupons = documentSnapshot["free_coupons"] as Long,
@@ -987,14 +1048,9 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                                 offersApply = documentSnapshot["offers_applied"] as Long,
                                                 couponsApplied = 0,
                                                 inStock = documentSnapshot["in_stock"] as Boolean,
-                                                qtyIDs = null,
+                                                qtyIDs = arrayListOf(),
                                                 selectedCouponId = null,
                                                 discountedPrice = null,
-                                                totalItems = null,
-                                                totalItemsPrice = null,
-                                                deliveryPrice = null,
-                                                totalAmount = null,
-                                                savedAmount = null
                                             )
                                         )
 
@@ -1027,39 +1083,25 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                             Log.d(TAG, "saveCartListIdsState: ${response.data.toString()}")
 
-//                            if (cartItemModelList.size != 0) {
-//                                cartItemModelList.add(
-//                                    CartItemModel(
-//                                        type = CartItemModel.CART_ITEM,
-//                                        productId = productId,
-//                                        productImage = documentSnapshot["product_image_1"].toString(),
-//                                        productName = documentSnapshot["product_name"].toString(),
-//                                        freeCoupons = documentSnapshot["free_coupons"] as Long,
-//                                        productPrice = documentSnapshot["product_price"].toString(),
-//                                        cuttedPrice = documentSnapshot["cutted_price"].toString(),
-//                                        productQuantity = 1,
-//                                        maxQuantity = documentSnapshot["max_quantity"] as Long,
-//                                        offersApply = 0,
-//                                        couponsApplied = 0,
-//                                        inStock = documentSnapshot["in_stock"] as Boolean,
-//                                        selectedCouponId = null,
-//                                        discountedPrice = null
-//                                    )
-//                                )
-//
-//                            }
-
                             ALREADY_ADDED_TO_CART_LIST = true
 
 
                             myCartListIds.add(productId)
                             requireActivity().invalidateMenu()
 
-                            Toast.makeText(
-                                requireContext(),
-                                "Product added to Cart list successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            updateAddToCartButtonAppearance(
+                                "REMOVE",
+                                textColorRes = R.color.removeColor,
+                                textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp)
+                                    .toFloat(),
+                                drawableRes = R.drawable.baseline_shopping_cart_red
+                            )
+
+//                            Toast.makeText(
+//                                requireContext(),
+//                                "Product added to Cart list successfully",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
                         }
 
                         is Resource.Error -> {
@@ -1079,58 +1121,92 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
     }
 
-    private fun calculateProductAmountDetails() {
-        var totalItems = 0
-        var totalItemsPrice = 0
-        var deliveryPrice: String
-        var totalAmount: Int
-        var savedAmount = 0
-        //                var i = 0
-        for (i in 0 until cartItemModelList.size) {
+    private fun updateAddToCartButtonAppearance(
+        buttonText: String,
+        textColorRes: Int,
+        textSizeRes: Float,
+        drawableRes: Int
+    ) {
+        binding.addToCartTextView.apply {
 
-            if (cartItemModelList[i].type == CartItemModel.CART_ITEM
-                && cartItemModelList[i].inStock == true
-            ) {
+            text = buttonText
+            gravity = Gravity.CENTER
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            setTextColor(resources.getColor(textColorRes))
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeRes)
+            setTypeface(ResourcesCompat.getFont(context, R.font.arial), Typeface.BOLD)
+            //                                drawableTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.btnRed))
+            compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen._6dp)
+            val cartDrawable = ContextCompat.getDrawable(context, drawableRes)
+            cartDrawable?.setBounds(0, 0, cartDrawable.intrinsicWidth, cartDrawable.intrinsicHeight)
 
-                val quantity = cartItemModelList[i].productQuantity
+            val tintList = ColorStateList.valueOf(ContextCompat.getColor(context, textColorRes))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                compoundDrawableTintList = tintList
+                TextViewCompat.setCompoundDrawableTintList(binding.addToCartTextView,tintList)
 
-                totalItems = (totalItemsPrice + quantity!!).toInt()
-
-                totalItemsPrice += if (cartItemModelList[i].selectedCouponId.isNullOrEmpty()) {
-                    cartItemModelList[i].productPrice?.toInt()!! * quantity.toInt()
-                } else {
-                    cartItemModelList[i].discountedPrice?.toInt()!! * quantity.toInt()
-                }
-
-                if (cartItemModelList[i].cuttedPrice?.isNotEmpty()!!) {
-                    savedAmount += (cartItemModelList[i].cuttedPrice?.toInt()!! - cartItemModelList[i].productPrice?.toInt()!!) * quantity.toInt()
-
-                    if (!cartItemModelList[i].selectedCouponId.isNullOrEmpty()) {
-                        savedAmount += (cartItemModelList[i].productPrice?.toInt()!! - cartItemModelList[i].discountedPrice?.toInt()!!) * quantity.toInt()
-                    }
-
-                } else {
-                    if (cartItemModelList[i].selectedCouponId?.isNotEmpty()!!) {
-                        savedAmount += (cartItemModelList[i].productPrice?.toInt()!! - cartItemModelList[i].discountedPrice?.toInt()!!) * quantity.toInt()
-                    }
-                }
-
-                if (totalItemsPrice > 500) {
-                    deliveryPrice = "Free"
-                    totalAmount = totalItemsPrice
-                } else {
-                    deliveryPrice = "60"
-                    totalAmount = totalItemsPrice + 60
-                }
-                cartItemModelList[i].totalItems = totalItems
-                cartItemModelList[i].totalItemsPrice = totalItemsPrice
-                cartItemModelList[i].deliveryPrice = deliveryPrice
-                cartItemModelList[i].totalAmount = totalAmount
-                cartItemModelList[i].savedAmount = savedAmount
-
+            }else {
+                DrawableCompat.setTintList(cartDrawable!!, tintList)
             }
+
+//            DrawableCompat.setTint(cartDrawable!!, ContextCompat.getColor(context, drawableTintRes))
+            setCompoundDrawablesRelative(null, null, cartDrawable, null)
+
+            //                                compoundDrawableTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.btnRed))
+
         }
     }
+
+//    private fun calculateProductAmountDetails() {
+//        var totalItems = 0
+//        var totalItemsPrice = 0
+//        var deliveryPrice: String
+//        var totalAmount: Int
+//        var savedAmount = 0
+//        //                var i = 0
+//        for (i in 0 until cartItemModelList.size) {
+//
+//            if (cartItemModelList[i].inStock) {
+//
+//                val quantity = cartItemModelList[i].productQuantity
+//
+//                totalItems = (totalItemsPrice + quantity!!).toInt()
+//
+//                totalItemsPrice += if (cartItemModelList[i].selectedCouponId.isNullOrEmpty()) {
+//                    cartItemModelList[i].productPrice?.toInt()!! * quantity.toInt()
+//                } else {
+//                    cartItemModelList[i].discountedPrice?.toInt()!! * quantity.toInt()
+//                }
+//
+//                if (cartItemModelList[i].cuttedPrice?.isNotEmpty()!!) {
+//                    savedAmount += (cartItemModelList[i].cuttedPrice?.toInt()!! - cartItemModelList[i].productPrice?.toInt()!!) * quantity.toInt()
+//
+//                    if (!cartItemModelList[i].selectedCouponId.isNullOrEmpty()) {
+//                        savedAmount += (cartItemModelList[i].productPrice?.toInt()!! - cartItemModelList[i].discountedPrice?.toInt()!!) * quantity.toInt()
+//                    }
+//
+//                } else {
+//                    if (cartItemModelList[i].selectedCouponId?.isNotEmpty()!!) {
+//                        savedAmount += (cartItemModelList[i].productPrice?.toInt()!! - cartItemModelList[i].discountedPrice?.toInt()!!) * quantity.toInt()
+//                    }
+//                }
+//
+//                if (totalItemsPrice > 500) {
+//                    deliveryPrice = "Free"
+//                    totalAmount = totalItemsPrice
+//                } else {
+//                    deliveryPrice = "60"
+//                    totalAmount = totalItemsPrice + 60
+//                }
+//                cartItemModelList[i].totalItems = totalItems
+//                cartItemModelList[i].totalItemsPrice = totalItemsPrice
+//                cartItemModelList[i].deliveryPrice = deliveryPrice
+//                cartItemModelList[i].totalAmount = totalAmount
+//                cartItemModelList[i].savedAmount = savedAmount
+//
+//            }
+//        }
+//    }
 
     private fun calculateAverageRating(currentUserRating: Long): Float {
         var totalStars: Long = 0
@@ -1143,20 +1219,24 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         return (totalStars / (documentSnapshot["total_ratings"] as Long + 1)).toFloat()
     }
 
-    private fun calculateAverageRating2(currentUserRating: Long): Float {
-        var totalStars: Long = 0
-        for (i in 1..5) {
-
-            val ratingNo =
-                binding.ratingsLayout.ratingNumbersContainer.getChildAt(i - 1) as TextView
-
-            totalStars += ratingNo.text.toString().toLong()
-
-            Log.d(TAG, "calculateAverageRating: ${documentSnapshot.get(i.toString() + "_star")}")
-        }
-        totalStars += currentUserRating
-        return (totalStars / (documentSnapshot["total_ratings"] as Long + 1)).toFloat()
-    }
+//    private fun calculateAverageRating2(currentUserRating: Long): String {
+//        var totalStars: Double = 0.0
+//        val totalRatings = binding.ratingsLayout.totalRatingsFigure.text.toString().toLong() + 1
+//
+//        for (i in 1 until 6) {
+//            val ratingNo = binding.ratingsLayout.ratingNumbersContainer.getChildAt(5 - i) as TextView
+//            totalStars += (ratingNo.text.toString().toLong()) * i
+//        }
+//
+//        totalStars += currentUserRating
+//
+//        val averageRating = totalStars / totalRatings
+//
+//
+//        Log.d(TAG, "calculateAverageRating2: $averageRating")
+//
+//        return String.format(locale = Locale.ENGLISH,"%.1f", averageRating)
+//    }
 
 
     override fun onDestroyView() {

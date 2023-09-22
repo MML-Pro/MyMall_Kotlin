@@ -1,15 +1,21 @@
 package com.blogspot.mido_mymall.ui.my_orders
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.blogspot.mido_mymall.R
@@ -18,13 +24,11 @@ import com.blogspot.mido_mymall.domain.models.MyOrderItemModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.log
 
 private const val TAG = "MyOrderAdapter"
 
 class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
-
-//    private var myRatingsIds = arrayListOf<String>()
-//    private var myRatings = arrayListOf<Long>()
 
 
     private val diffCallback = object : DiffUtil.ItemCallback<MyOrderItemModel>() {
@@ -53,14 +57,11 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
         return ViewHolder(myOrderItemBinding)
     }
 
-//    fun submitRatingLists(myRatingsIds: ArrayList<String>, myRatings: ArrayList<Long>) {
-//        this.myRatingsIds = myRatingsIds
-//        this.myRatings = myRatings
-//    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val itemModel: MyOrderItemModel = asyncListDiffer.currentList[position]
         holder.bind(itemModel)
+
     }
 
     override fun getItemCount(): Int {
@@ -70,14 +71,60 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: MyOrderItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-
+        //        private val productNamesAdapter = ProductNamesAdapter()
+//        private val productNamesList = arrayListOf<String>()
         fun bind(myOrderItemModel: MyOrderItemModel) {
 
-            binding.productName.text = myOrderItemModel.productName
 
-            Glide.with(binding.root.context).load(myOrderItemModel.productImage)
-                .placeholder(R.drawable.placeholder_image)
-                .into(binding.productImage)
+            binding.orderIdTV.text = "Order ID: ${myOrderItemModel.orderID}"
+
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            // Set margin values in pixels
+            val marginStart =
+                binding.root.resources.getDimensionPixelSize(R.dimen.my_orders_text_views_margin_start)
+            val marginTop =
+                binding.root.resources.getDimensionPixelSize(R.dimen.my_orders_text_views_margin_top)
+            val marginEnd =
+                binding.root.resources.getDimensionPixelSize(R.dimen.my_orders_text_views_margin_end)
+            val marginBottom =
+                binding.root.resources.getDimensionPixelSize(R.dimen.my_orders_text_views_margin_bottom)
+
+            // Loop through the product list
+            for (product in myOrderItemModel.productList) {
+                val productNameTextView = TextView(binding.root.context).apply {
+                    text = product.productName
+                    ellipsize = TextUtils.TruncateAt.END
+                    maxLines = 2
+                    setTextColor(ContextCompat.getColor(context, R.color.productDetailsTextColor))
+                    setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen._12ssp))
+//                    setTypeface(typeface, Typeface.BOLD)
+                    layoutParams.setMargins(marginStart, marginTop, marginEnd, marginBottom)
+                }
+                binding.productNamesContainer.addView(productNameTextView, layoutParams)
+            }
+
+
+//            Log.d(TAG, "bind: ${myOrderItemModel.productList.size}")
+//
+//            myOrderItemModel.productList.forEach {
+//                Log.d(TAG, "bind: productName $${it.productName}")
+//            }
+//
+//
+//           myOrderItemModel.productList.forEach {
+//               productNamesList.add(it.productName)
+//           }.also {
+//               productNamesAdapter.asyncListDiffer.submitList(productNamesList)
+//           }
+//
+//            binding.productNamesRV.apply {
+//                adapter = productNamesAdapter
+//                layoutManager = LinearLayoutManager(binding.root.context,LinearLayoutManager.VERTICAL,false)
+//            }
 
 
             val date: Date? = when (myOrderItemModel.orderStatus) {
@@ -103,7 +150,7 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
                     ColorStateList.valueOf(
                         ContextCompat.getColor(
                             binding.root.context,
-                            R.color.colorPrimary
+                            R.color.btnRed
                         )
                     )
 
@@ -118,70 +165,6 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
             }
 //            binding.ratingBar.rating = myOrderItemModel.productRating
 
-            myOrderItemModel.productRating?.toLong()?.let { setRating(it, true) }
-
-            for (i in 1 until binding.rateNowContainer.childCount) {
-
-                Log.d(TAG, "index: $i")
-
-                val starPosition = i
-
-                binding.rateNowContainer.getChildAt(i).setOnClickListener { view ->
-
-//                    setRating(starPosition.toLong(), false)
-//
-//                    val documentReference: DocumentReference =
-//                        FirebaseFirestore.getInstance().collection(
-//                            "PRODUCTS"
-//                        ).document(myOrderItemModel.productID!!)
-//
-//                    FirebaseFirestore.getInstance()
-//                        .runTransaction { transaction ->
-//                            val documentSnapshot = transaction.get(documentReference)
-//
-//                            if (myOrderItemModel.productRating != 0) {
-//                                val increase =
-//                                    documentSnapshot.getLong(((starPosition + 1).toString() + "_star") + 1)
-//
-//                                val decrease = (documentSnapshot.getLong(
-//                                    (myOrderItemModel.productRating?.plus(1)).toString() + "_star"))!! -1
-//
-//
-//                                transaction.update(
-//                                    documentReference,
-//                                    (starPosition +1).toString() + "_star",
-//                                    increase
-//                                )
-//                                transaction.update(
-//                                    documentReference,
-//                                    (myOrderItemModel.productRating?.plus(1)).toString() + "_star",
-//                                    decrease
-//                                )
-//
-//                            } else {
-//                                val increase =
-//                                    documentSnapshot.getLong(((starPosition+1).toString() + "_star") + 1)
-//
-//                                transaction.update(documentReference, (starPosition+1).toString()+ "_star",
-//                                    increase
-//                                )
-//                            }
-//                        }.addOnSuccessListener {
-//                            myOrderItemModel.productRating = starPosition+1
-//
-//                            if (myRatingsIds.contains(myOrderItemModel.productID)) {
-//                                myRatings[myRatingsIds.indexOf(myOrderItemModel.productID)] =
-//                                    starPosition.toLong()+1
-//                            } else {
-//                                myRatingsIds.add(myOrderItemModel.productID!!)
-//                                myRatings.add(starPosition.toLong() +1)
-//                            }
-//
-//                        }
-
-                }
-            }
-
 
             binding.root.setOnClickListener { view ->
                 findNavController(view).navigate(
@@ -189,57 +172,6 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.ViewHolder>() {
                         myOrderItemModel
                     )
                 )
-            }
-        }
-
-        @Suppress("DEPRECATION")
-        private fun setRating(starPosition: Long, isGetRating: Boolean) {
-            for (i in 0 until binding.rateNowContainer.childCount) {
-                val starBtn = binding.rateNowContainer.getChildAt(i) as ImageView
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    starBtn.imageTintList =
-                        ColorStateList.valueOf(
-                            binding.root.resources.getColor(
-                                R.color.mediumGray,
-                                binding.root.context.theme
-                            )
-                        )
-                } else {
-                    starBtn.imageTintList =
-                        ColorStateList.valueOf(binding.root.resources.getColor(R.color.mediumGray))
-                }
-
-                if (isGetRating) {
-                    if (i < starPosition) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            starBtn.imageTintList =
-                                ColorStateList.valueOf(
-                                    binding.root.resources.getColor(
-                                        R.color.ratingColor,
-                                        binding.root.context.theme
-                                    )
-                                )
-                        } else {
-                            starBtn.imageTintList =
-                                ColorStateList.valueOf(binding.root.resources.getColor(R.color.ratingColor))
-                        }
-                    }
-                } else {
-                    if (i <= starPosition) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            starBtn.imageTintList =
-                                ColorStateList.valueOf(
-                                    binding.root.resources.getColor(
-                                        R.color.ratingColor,
-                                        binding.root.context.theme
-                                    )
-                                )
-                        } else {
-                            starBtn.imageTintList =
-                                ColorStateList.valueOf(binding.root.resources.getColor(R.color.ratingColor))
-                        }
-                    }
-                }
             }
         }
 

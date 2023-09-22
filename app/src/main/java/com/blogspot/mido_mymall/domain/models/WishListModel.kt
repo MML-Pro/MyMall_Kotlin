@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WishListModel(
-    var productID: String? = null,
+    var productID: String?,
     var productImage: String?,
     var productName: String?,
     var freeCoupons: Long,

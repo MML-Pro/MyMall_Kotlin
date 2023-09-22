@@ -63,9 +63,9 @@ class MainActivityRepoImpl @Inject constructor(
         updateStatusHashMap["ORDER STATUS"] = orderStatus
 
 
-        firestore.collection("ORDERS").document(orderID)
+    firestore.collection("ORDERS").document(orderID)
             .collection("OtherDetails")
-            .document()
+            .document("order_summary")
             .update(updateStatusHashMap)
             .addOnSuccessListener {
                 result.value = Resource.Success(true)

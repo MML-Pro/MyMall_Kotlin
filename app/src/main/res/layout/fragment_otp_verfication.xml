@@ -72,7 +72,6 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
 
     <Button
-        android:id="@+id/verifyButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

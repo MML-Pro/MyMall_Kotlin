@@ -32,7 +32,6 @@
         app:layout_constraintTop_toBottomOf="@+id/hsProductImage" />
 
     <TextView
-        android:id="@+id/postTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"

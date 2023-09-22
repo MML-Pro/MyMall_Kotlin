@@ -20,8 +20,8 @@ class MyWishlistViewModel @Inject constructor(
     private val removeFromWishListUseCase: RemoveFromWishListUseCase
 ) : ViewModel() {
 
-    private var _wishList = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
-    val wishList: Flow<Resource<DocumentSnapshot>> get() = _wishList
+//    private var _wishList = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
+//    val wishList: Flow<Resource<DocumentSnapshot>> get() = _wishList
 
     private var _wishListIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val wishListIds: Flow<Resource<DocumentSnapshot>> get() = _wishListIds
@@ -29,12 +29,15 @@ class MyWishlistViewModel @Inject constructor(
     private var _removeWishListState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
     val removeWishListState: Flow<Resource<Boolean>> get() = _removeWishListState
 
-    fun loadWishList(productId: String) {
-        viewModelScope.launch {
-            getWishListUseCase(productId).collect {
-                _wishList.emit(it)
-            }
-        }
+    suspend fun loadWishList(productId: String) :Resource<DocumentSnapshot> {
+//        viewModelScope.launch {
+//            getWishListUseCase(productId).collect {
+//                _wishList.emit(it)
+//            }
+//        }
+
+
+        return getWishListUseCase(productId)
     }
 
 

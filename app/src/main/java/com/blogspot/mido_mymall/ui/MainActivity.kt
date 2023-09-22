@@ -35,6 +35,8 @@ import com.blogspot.mido_mymall.ui.my_cart.MyCartFragmentDirections
 import com.blogspot.mido_mymall.ui.my_orders.MyOrdersFragmentDirections
 import com.blogspot.mido_mymall.ui.my_rewards.MyRewardsFragmentDirections
 import com.blogspot.mido_mymall.ui.my_wish_list.MyWishlistFragmentDirections
+import com.blogspot.mido_mymall.ui.settings.SettingsFragmentDirections
+import com.blogspot.mido_mymall.ui.settings.SettingsViewModel
 import com.blogspot.mido_mymall.util.Constants
 import com.blogspot.mido_mymall.util.Resource
 import com.bumptech.glide.Glide
@@ -60,6 +62,8 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     private val signOutViewModel by viewModels<SignOutViewModel>()
 
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
+
+    private val settingsViewModel by viewModels<SettingsViewModel>()
 
     var signOutItem: MenuItem? = null
 
@@ -87,6 +91,17 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                settingsViewModel.getSelectedDayNightMode.collect{
+                    Constants.applySelectedDayNightMode(it)
+                }
+            }
+        }
+
+
         drawer = binding.drawerLayout
 
         actionBarLogo = binding.actionBarLogo
@@ -130,7 +145,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = AppBarConfiguration.Builder(
             R.id.homeFragment, R.id.nav_my_orders, R.id.nav_my_rewards, R.id.nav_my_cart,
-            R.id.nav_my_wishlist, R.id.nav_my_account, R.id.nav_sign_out
+            R.id.nav_my_wishlist, R.id.nav_my_account, R.id.settingsFragment, R.id.nav_sign_out
         ).setOpenableLayout(drawer)
             .build()
 
@@ -281,6 +296,11 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     signOutViewModel.signOut(googleSignInClient)
                     navController.navigate(MyAccountFragmentDirections.actionGlobalLoginFragment())
                 }
+
+                R.id.settingsFragment->{
+                    signOutViewModel.signOut(googleSignInClient)
+                    navController.navigate(SettingsFragmentDirections.actionGlobalLoginFragment())
+                }
             }
 //            drawer.closeDrawer(GravityCompat.START); // or GravityCompat.END
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.START)
@@ -366,7 +386,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 "https://firebasestorage.googleapis.com/v0/b/my-mall-7c08e.appspot.com/o/products%2Fdownload.png?alt=media&token=c72c340f-94ac-465f-ad14-20fc07b316cf"
             )
             options.put("theme.color", "#3399cc");
-            options.put("currency", "INR");
+            options.put("currency", "EGP");
             options.put("order_id", orderId)
             options.put("amount", amount )//pass amount in currency subunits
 
@@ -417,7 +437,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 Log.d(TAG, "onPaymentSuccess: ${p1?.orderId}")
 
         mainActivityViewModel.updatePaymentState(true)
+
         p1?.orderId?.let { mainActivityViewModel.getOrderId(orderId = it) }
+
         if (p1 != null) {
             mainActivityViewModel.updateOrderStatus(p1.orderId,"Paid", orderStatus = "ORDERED")
         }
@@ -429,6 +451,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         mainActivityViewModel.updatePaymentState(false)
 
         p2?.orderId?.let { mainActivityViewModel.getOrderId(it) }
+
         when (errorCode) {
             Checkout.NETWORK_ERROR -> {
                 mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","NETWORK_ERROR")
@@ -438,10 +461,13 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
             }
             Checkout.PAYMENT_CANCELED -> {
+                Log.e(TAG, "onPaymentError: error ${p2.toString()}", )
+
                 mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","CANCELED")
 
             }
             Checkout.TLS_ERROR->{
+//                Log.e(TAG, "onPaymentError: error ${p2?.paymentId}", )
                 mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","TLS_ERROR")
 
             }

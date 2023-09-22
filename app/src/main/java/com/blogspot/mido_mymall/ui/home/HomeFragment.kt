@@ -92,7 +92,11 @@ class HomeFragment : Fragment(), MenuProvider {
     private var notificationListSize: Long = 0
     private lateinit var notificationCount: TextView
 
-    var unread = 0
+    private var unread = 0
+
+    private val horizontalScrollList = arrayListOf<HorizontalProductScrollModel>()
+
+    private val viewAllProductList = arrayListOf<WishListModel>()
 
 
     override fun onCreateView(
@@ -238,11 +242,9 @@ class HomeFragment : Fragment(), MenuProvider {
                                         }
 
                                         2L -> {
-                                            val viewAllProductList =
-                                                arrayListOf<WishListModel>()
 
-                                            val horizontalScrollList =
-                                                arrayListOf<HorizontalProductScrollModel>()
+
+
 
                                             val productsCount =
                                                 documentSnapshot["products_count"] as Long
@@ -356,6 +358,12 @@ class HomeFragment : Fragment(), MenuProvider {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = homePageAdapter
+
+            setOnTouchListener { view, event ->
+                // Enable touch events propagation to the parent RecyclerView
+                view.parent.requestDisallowInterceptTouchEvent(false)
+                false
+            }
         }
 
         binding.refreshLayout.setOnRefreshListener {
@@ -462,7 +470,7 @@ class HomeFragment : Fragment(), MenuProvider {
                                 if (wishlistAdapter.asyncListDiffer.currentList.isEmpty()) {
                                     binding.apply {
                                         productNotFoundTV.visibility = View.VISIBLE
-                                        homeFragment.visibility = View.VISIBLE
+                                        homeFragment.visibility = View.GONE
                                         productsRV.visibility = View.GONE
                                     }
                                 }
@@ -587,6 +595,8 @@ class HomeFragment : Fragment(), MenuProvider {
         super.onDestroyView()
 //        myCartListIds.clear()
 
+        viewAllProductList.clear()
+        horizontalScrollList.clear()
         sliderModelList.clear()
         gridLayoutList.clear()
         notificationListSize = 0

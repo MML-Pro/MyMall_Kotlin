@@ -41,6 +41,13 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
         private var IS_THIS_WISH_LIST = false
     }
 
+//    fun deleteItem(position: Int) {
+//        val newList = asyncListDiffer.currentList.toMutableList()
+//        newList.removeAt(position)
+//        asyncListDiffer.submitList(newList)
+//
+//    }
+
     private var lastPosition = -1
 
     init {
@@ -95,16 +102,17 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
 //                binding.averageRatingMiniViewTV.setVisibility(View.VISIBLE);
                 binding.linearLayout2.visibility = View.VISIBLE
                 binding.totalRatingsTv.visibility = View.VISIBLE
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    binding.productPrice.setTextColor(
-                        binding.root.resources.getColor(R.color.black, binding.root.context.theme)
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    binding.productPrice.setTextColor(
-                        binding.root.resources.getColor(R.color.black)
-                    )
-                }
+
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    binding.productPrice.setTextColor(
+//                        binding.root.resources.getColor(R.color.black, binding.root.context.theme)
+//                    )
+//                } else {
+//                    @Suppress("DEPRECATION")
+//                    binding.productPrice.setTextColor(
+//                        binding.root.resources.getColor(R.color.black)
+//                    )
+//                }
                 binding.cuttedPrice.visibility = View.VISIBLE
                 binding.cashOnDeliveryTV.visibility = View.VISIBLE
                 binding.divider7.visibility = View.VISIBLE
@@ -134,7 +142,7 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
             } else {
                 binding.deleteButtonIv.visibility = View.GONE
             }
-            binding.deleteButtonIv.setOnClickListener { view ->
+            binding.deleteButtonIv.setOnClickListener {
 //                FirebaseDbQueries.removeFromWishList(
 //                    position,
 //                    binding.getRoot().getContext()
@@ -143,25 +151,36 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
                 wishlistUtil?.deleteItem(position)
 
             }
-            binding.root.setOnClickListener { view ->
+            binding.root.setOnClickListener {
 
 //                 String productID = wishListModel.getProductImage()
                 when (findNavController(binding.root).currentDestination?.id) {
+
+
                     R.id.nav_my_wishlist -> {
-                        findNavController(binding.root)
-                            .navigate(
-                                MyWishlistFragmentDirections
-                                    .actionNavMyWishlistToProductDetailsFragment(wishListModel.productID!!)
-                            )
+
+                        if (wishListModel.productID != null) {
+                            findNavController(binding.root)
+                                .navigate(
+                                    MyWishlistFragmentDirections
+                                        .actionNavMyWishlistToProductDetailsFragment(wishListModel.productID!!)
+                                )
+                        }
                     }
+
                     R.id.homeFragment -> {
 
-                        val navOption = NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build()
+                        val navOption =
+                            NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build()
 
 
-                        findNavController(binding.root).navigate(HomeFragmentDirections
-                            .actionHomeFragmentToProductDetailsFragment(wishListModel.productID!!),navOption)
+                        findNavController(binding.root).navigate(
+                            HomeFragmentDirections
+                                .actionHomeFragmentToProductDetailsFragment(wishListModel.productID!!),
+                            navOption
+                        )
                     }
+
                     else -> {
                         findNavController(binding.root)
                             .navigate(

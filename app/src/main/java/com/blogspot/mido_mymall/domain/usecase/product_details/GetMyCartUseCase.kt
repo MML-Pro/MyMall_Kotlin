@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class GetMyCartUseCase @Inject constructor(private val productDetailsRepo: ProductDetailsRepo) {
 
-    suspend operator fun invoke() = productDetailsRepo.getCartList()
+    suspend operator fun invoke() = productDetailsRepo.getMyCartIds()
 }

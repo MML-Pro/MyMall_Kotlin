@@ -16,7 +16,11 @@ import com.blogspot.mido_mymall.databinding.FragmentMyWishlistBinding
 import com.blogspot.mido_mymall.domain.models.WishListModel
 import com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment
 import com.blogspot.mido_mymall.util.Resource
+import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 private const val TAG = "MyWishlistFragment"
@@ -34,9 +38,9 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
     private val myWishlistViewModel by viewModels<MyWishlistViewModel>()
 
-    private var listSize:Long=0
+    private var listSize: Long = 0
 
-    private var productId: String? = null
+//    private var productId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,43 +58,76 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
         myWishlistViewModel.getWishListIds()
 
-        val wishlistSize = wishListIds.size // Store the initial size of wishlist items
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myWishlistViewModel.wishListIds.collect { response ->
                     when (response) {
                         is Resource.Success -> {
-                             listSize = response.data?.get("list_size") as Long
+                            listSize = response.data?.get("list_size") as Long
 
                             for (i in 0 until listSize) {
                                 wishListIds.add(response.data["product_id_$i"].toString())
-
-                                productId = response.data["product_id_$i"].toString()
-
-                                myWishlistViewModel.loadWishList(productId!!)
-
-//                                FirebaseFirestore.getInstance().collection("PRODUCTS")
-//                                    .document(response.data["product_id_$i"].toString())
-//                                    .get().addOnSuccessListener { documentSnapshot ->
-//                                        Log.d(
-//                                            TAG,
-//                                            "wishListIds second call: ${documentSnapshot["product_image_1"].toString()}"
-//                                        )
-//
-//                                        Log.d(TAG, "product id: ${response.data["product_id_$i"].toString()}")
-//
-//
-//                                    }.addOnFailureListener {
-//                                        Log.e(TAG, "wishListIds: ${it.message.toString()}")
-//                                    }
                             }
+
+                            val deferredResults = wishListIds.map {productId->
+
+                                async(Dispatchers.IO) {
+                                    myWishlistViewModel.loadWishList(productId)
+                                }
+
+                            }
+
+                            val results = deferredResults.awaitAll()
+
+                            for (result: Resource<DocumentSnapshot> in results) {
+
+                                when (result) {
+                                    is Resource.Success -> {
+//                                        val documentSnapshot = result.data!!
+
+                                        result.data?.let { documentSnapshot ->
+
+                                            wishListModelList.add(
+                                                WishListModel(
+                                                    productID = documentSnapshot.id,
+                                                    productImage = documentSnapshot["product_image_1"].toString(),
+                                                    productName = documentSnapshot["product_name"].toString(),
+                                                    freeCoupons = documentSnapshot["free_coupons"] as Long,
+                                                    averageRating = documentSnapshot["average_rating"].toString(),
+                                                    totalRatings = documentSnapshot["total_ratings"] as Long,
+                                                    productPrice = documentSnapshot["product_price"].toString(),
+                                                    cuttedPrice = documentSnapshot["cutted_price"].toString(),
+                                                    isCOD = documentSnapshot["COD"] as Boolean,
+                                                    isInStock = documentSnapshot["in_stock"] as Boolean
+                                                )
+                                            ).also {
+                                                wishlistAdapter.asyncListDiffer.submitList(
+                                                    wishListModelList
+                                                )
+                                            }
+                                        }
+
+
+                                    }
+
+                                    is Resource.Error -> {
+                                        // Handle error case
+//                                        binding.progressBar.visibility = View.GONE
+
+                                        Log.e(TAG, "onViewCreated: ${response.message.toString()}")
+                                    }
+
+                                    else -> {}
+                                }
+                            }
+
 
                             // Remove the initial wishlist items from the list
-                            if (wishlistSize > 0) {
-                                wishListModelList.removeAll(wishListModelList.subList(0, wishlistSize)
-                                    .toSet())
-                            }
+//                            if (wishlistSize > 0) {
+//                                wishListModelList.removeAll(wishListModelList.subList(0, wishlistSize)
+//                                    .toSet())
+//                            }
                         }
 
                         is Resource.Error -> {
@@ -106,36 +143,21 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
             }
         }
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                myWishlistViewModel.wishList.collect{
-                    if(it is Resource.Success){
-
-                        it.data?.let {documentSnapshot->
-                            wishListModelList.add(
-                                WishListModel(
-                                productID = productId,
-                                productImage = documentSnapshot["product_image_1"].toString(),
-                                productName = documentSnapshot["product_name"].toString(),
-                                freeCoupons = documentSnapshot["free_coupons"] as Long,
-                                averageRating = documentSnapshot["average_rating"].toString(),
-                                totalRatings = documentSnapshot["total_ratings"] as Long,
-                                productPrice = documentSnapshot["product_price"].toString(),
-                                cuttedPrice = documentSnapshot["cutted_price"].toString(),
-                                isCOD = documentSnapshot["COD"] as Boolean,
-                                isInStock = documentSnapshot["in_stock"] as Boolean
-                            )
-                            ).also {
-                                wishlistAdapter.asyncListDiffer.submitList(wishListModelList)
-                            }
-                        }
-
-                    }else if(it is Resource.Error){
-                        Log.e(TAG, "Resource.Error: ${it.message.toString()}", )
-                    }
-                }
-            }
-        }
+//        lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                myWishlistViewModel.wishList.collect {
+//                    if (it is Resource.Success) {
+//
+//                        it.data?.let { documentSnapshot ->
+//
+//                        }
+//
+//                    } else if (it is Resource.Error) {
+//                        Log.e(TAG, "Resource.Error: ${it.message.toString()}")
+//                    }
+//                }
+//            }
+//        }
 
         binding.myWishListRV.apply {
             layoutManager =
@@ -145,7 +167,7 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myWishlistViewModel.removeWishListState.collect {
 
                     if (it is Resource.Success) {
@@ -153,7 +175,7 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
 
                     } else if (it is Resource.Error) {
-                        Log.e(TAG, "onViewCreated: ${it.message.toString()}", )
+                        Log.e(TAG, "onViewCreated: ${it.message.toString()}")
                     }
 
                 }
@@ -174,10 +196,14 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
     override fun deleteItem(position: Int) {
 
         if (wishListIds.isNotEmpty() && wishListModelList.isNotEmpty()) {
-            wishListModelList.removeAt(position)
+
+            if (position != -1) {
+                wishListModelList.removeAt(position)
+            }
             myWishlistViewModel.removeFromWishList(wishListIds, position)
-            wishlistAdapter.notifyItemRemoved(position)
-            Toast.makeText(requireContext(), "Item deleted from wishlist", Toast.LENGTH_SHORT).show()
+            wishlistAdapter.notifyDataSetChanged()
+            Toast.makeText(requireContext(), "Item deleted from wishlist", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 }

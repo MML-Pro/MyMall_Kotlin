@@ -161,11 +161,11 @@ class SignUpFragment : Fragment() {
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
 
-                            Toast.makeText(
-                                    requireContext(),
-                                "user saved success ${response.data}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+//                            Toast.makeText(
+//                                    requireContext(),
+//                                "user saved success ${response.data}",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
                             viewModel.createUserData()
 
                         }

@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    android:elevation="3dp"
-    android:background="@color/white">
+    android:background="@color/detailsBackgroundColor"
+    android:elevation="3dp">
 
     <ImageView
         android:id="@+id/productImage"
@@ -22,14 +22,15 @@
         android:id="@+id/productName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:fontFamily="@font/arial"
         android:maxLines="2"
         android:singleLine="false"
         android:text="Google Pixel XL 2 (Mirror Black,128 GB)"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_13sdp"
+        android:textColor="@color/productDetailsTextColor"
+        android:textSize="@dimen/_13ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/productImage"
@@ -39,6 +40,7 @@
         android:id="@+id/freeCouponIcon"
         android:layout_width="@dimen/_15sdp"
         android:layout_height="@dimen/_15sdp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/freeCouponTV"
         app:layout_constraintStart_toStartOf="@+id/productName"
         app:layout_constraintTop_toTopOf="@+id/freeCouponTV"
@@ -50,8 +52,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/arial"
-        android:text="Free 2 Coupons"
+        android:text="Free 3 Coupons"
         android:textColor="#8000FF"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/freeCouponIcon"
         app:layout_constraintTop_toBottomOf="@+id/productName" />
 
@@ -63,7 +66,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/arial"
         android:text="EGP.45999/-"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_16ssp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +79,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/arial"
         android:text="EGP.49999/-"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_9ssp"
         app:layout_constraintBottom_toBottomOf="@+id/productPrice"
         app:layout_constraintEnd_toStartOf="@+id/productPrice" />
@@ -85,8 +88,8 @@
         android:id="@+id/divider7"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:background="@color/black"
-        android:backgroundTint="@color/black"
+        android:background="@color/productDetailsTextColor"
+        android:backgroundTint="@color/productDetailsTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/cuttedPrice"
         app:layout_constraintEnd_toEndOf="@+id/cuttedPrice"
         app:layout_constraintStart_toStartOf="@+id/cuttedPrice"
@@ -94,8 +97,9 @@
 
     <TextView
         android:id="@+id/offersApplied"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/arial"
@@ -137,7 +141,7 @@
         android:gravity="center"
         android:padding="3dp"
         android:text="Qty: 1"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         app:layout_constraintBottom_toTopOf="@+id/removeItemButton"
         app:layout_constraintStart_toEndOf="@+id/productImage"
         app:layout_constraintTop_toBottomOf="@+id/cuttedPrice"
@@ -149,11 +153,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"
         android:background="@color/couponRed"
         android:gravity="end"
         android:orientation="horizontal"
         android:padding="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/coupons_applied">
@@ -165,8 +169,8 @@
             android:layout_gravity="start"
             android:layout_marginEnd="8dp"
             android:fontFamily="@font/arial"
-            android:text="Apply your coupon here"
             android:maxLines="2"
+            android:text="Apply your coupon here"
             android:textColor="@color/white"
             android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
@@ -184,17 +188,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="Redeem"
-            android:textStyle="bold"
-            android:textColor="@color/white"
             android:background="@drawable/border_background"
+            android:text="Redeem"
+            android:textColor="@color/white"
             android:textSize="15sp"
+            android:textStyle="bold"
             app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/couponRedemptionTV"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/couponRedemptionTV"
-            app:rippleColor="#33AAAAAA"
-            />
+            app:rippleColor="#33AAAAAA" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -203,7 +206,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/_56sdp"
         android:layout_marginTop="1dp"
-        android:background="@color/white"
+        android:background="@color/detailsBackgroundColor"
         android:elevation="3dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -214,12 +217,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="#6B6B6B"
-            android:textSize="@dimen/_12ssp"
+            android:drawablePadding="@dimen/_4sdp"
+            android:drawableTint="@color/productDetailsTextColor"
             android:fontFamily="@font/arial"
             android:gravity="center"
-            android:drawablePadding="@dimen/_4sdp"
             android:text="Remove Item"
+            android:textColor="@color/productDetailsTextColor"
+            android:textSize="@dimen/_12ssp"
             app:drawableStartCompat="@drawable/ic_baseline_delete">
 
 

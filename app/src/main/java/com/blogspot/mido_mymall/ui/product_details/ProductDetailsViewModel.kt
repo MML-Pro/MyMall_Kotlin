@@ -7,6 +7,7 @@ import com.blogspot.mido_mymall.domain.usecase.product_details.GetMyCartUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.GetProductDetailsUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.GetRatingsUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.GetWishListIdsUseCase
+import com.blogspot.mido_mymall.domain.usecase.product_details.RemoveFromCartListUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.RemoveFromWishListUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.SaveCartListIdsUseCase
 import com.blogspot.mido_mymall.domain.usecase.product_details.SaveWishListIdsUseCase
@@ -32,7 +33,8 @@ class ProductDetailsViewModel @Inject constructor(
     private val setRatingUseCase: SetRatingUseCase,
     private val getMyCartUseCase: GetMyCartUseCase,
     private val saveCartListIdsUseCase: SaveCartListIdsUseCase,
-    private val updateRatingUseCase: UpdateRatingUseCase
+    private val updateRatingUseCase: UpdateRatingUseCase,
+    private val removeFromCartListUseCase: RemoveFromCartListUseCase
 ) :
     ViewModel() {
 
@@ -54,14 +56,17 @@ class ProductDetailsViewModel @Inject constructor(
     private var _setRatingState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
     val setRatingState: Flow<Resource<Boolean>> get() = _setRatingState
 
-    private var _myCart = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
-    val myCart: Flow<Resource<DocumentSnapshot>> get() = _myCart
+    private var _myCartId = MutableSharedFlow<Resource<DocumentSnapshot>>()
+    val myCartId: Flow<Resource<DocumentSnapshot>> get() = _myCartId.asSharedFlow()
 
     private var _saveCartListIdsState = MutableSharedFlow<Resource<Boolean>>()
     val saveCartListIdsState = _saveCartListIdsState.asSharedFlow()
 
     private var _updateRatingState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
     val updateRatingState: Flow<Resource<Boolean>> get() = _updateRatingState
+
+    private var _removeCartListState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
+    val removeCartListState: Flow<Resource<Boolean>> get() = _removeCartListState
 
     fun getProductDetails(productID: String) {
         viewModelScope.launch {
@@ -150,7 +155,7 @@ class ProductDetailsViewModel @Inject constructor(
                 averageRating,
                 myRatingIds,
                 myRating
-            ).collect{
+            ).collect {
                 _updateRatingState.emit(it)
             }
         }
@@ -158,9 +163,8 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun getMyCartList() {
         viewModelScope.launch {
-            getMyCartUseCase().collect {
-                _myCart.emit(it)
-            }
+            _myCartId.emit(Resource.Loading())
+            _myCartId.emit(getMyCartUseCase())
         }
     }
 
@@ -168,6 +172,17 @@ class ProductDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _saveCartListIdsState.emit(Resource.Loading())
             _saveCartListIdsState.emit(saveCartListIdsUseCase(productID, cartListSize))
+        }
+    }
+
+    fun removeFromCartList(
+        cartListIds: ArrayList<String>,
+        index: Int
+    ) {
+        viewModelScope.launch {
+            removeFromCartListUseCase(cartListIds, index).collect {
+                _removeCartListState.emit(it)
+            }
         }
     }
 }

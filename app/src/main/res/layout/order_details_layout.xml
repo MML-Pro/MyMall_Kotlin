@@ -4,74 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/detailsBackgroundColor"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    android:background="@color/white"
     android:elevation="3dp">
 
 
-    <ImageView
-        android:id="@+id/productImage"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_margin="8dp"
+        android:id="@+id/productsRV"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/image5" />
-
-    <TextView
-        android:id="@+id/productName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Pixel 2XL"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_16ssp"
-        app:layout_constraintEnd_toStartOf="@+id/productImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/productPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Rs.49999/-"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_18ssp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productName" />
 
-    <TextView
-        android:id="@+id/productQty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/border_background"
-        android:backgroundTint="@color/black"
-        android:drawablePadding="6dp"
-        android:fontFamily="@font/arial"
-        android:gravity="center"
-        android:padding="3dp"
-        android:text="Qty: 1"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/productPrice"
-        app:layout_constraintEnd_toStartOf="@+id/productImage"
-        app:layout_constraintTop_toTopOf="@+id/productPrice" />
+    </androidx.recyclerview.widget.RecyclerView>
+
 
     <View
         android:id="@+id/divider11"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="8dp"
         android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productImage" />
+        app:layout_constraintTop_toBottomOf="@+id/productsRV" />
 
     <ImageView
         android:id="@+id/ordered_indicator"
@@ -169,7 +129,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Ordered"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/ordered_indicator"
         app:layout_constraintStart_toEndOf="@+id/ordered_indicator"
@@ -181,7 +141,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Mon, 12th Dec 2018"
-        android:textColor="@color/gray"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/ordered_tv"
         app:layout_constraintStart_toEndOf="@+id/ordered_tv"
@@ -193,7 +153,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="your order has been placed."
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_10ssp"
         app:layout_constraintStart_toStartOf="@+id/ordered_tv"
         app:layout_constraintTop_toBottomOf="@+id/orderedDateTV" />
@@ -204,7 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Packed"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/packed_indicator"
         app:layout_constraintStart_toEndOf="@+id/packed_indicator"
@@ -216,7 +176,7 @@
         android:layout_height="18dp"
         android:layout_marginStart="8dp"
         android:text="Mon, 12th Dec 2018"
-        android:textColor="@color/gray"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintTop_toBottomOf="@+id/packedTV"
         app:layout_constraintStart_toEndOf="@+id/packedTV"
@@ -228,7 +188,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="your order has been packed."
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_10ssp"
         app:layout_constraintStart_toStartOf="@+id/packedTV"
         app:layout_constraintTop_toBottomOf="@+id/packedDateTV" />
@@ -239,7 +199,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Shipped"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/shipped_indicator"
         app:layout_constraintStart_toEndOf="@+id/shipped_indicator"
@@ -251,7 +211,7 @@
         android:layout_height="18dp"
         android:layout_marginStart="8dp"
         android:text="Mon, 12th Dec 2018"
-        android:textColor="@color/gray"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toEndOf="@+id/shipped_tv"
         app:layout_constraintTop_toTopOf="@+id/shipped_tv" />
@@ -262,7 +222,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="your order has been shipped."
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_10ssp"
         app:layout_constraintStart_toEndOf="@+id/shipped_indicator"
         app:layout_constraintTop_toBottomOf="@+id/shipped_tv" />
@@ -273,7 +233,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Delivered"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/delivered_indicator"
         app:layout_constraintStart_toEndOf="@+id/delivered_indicator"
@@ -285,7 +245,7 @@
         android:layout_height="18dp"
         android:layout_marginStart="8dp"
         android:text="Mon, 12th Dec 2018"
-        android:textColor="@color/gray"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toBottomOf="@+id/delivered_tv"
         app:layout_constraintStart_toEndOf="@+id/delivered_tv"
@@ -296,104 +256,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:text="your order has been delivered."
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_10ssp"
         android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/delivered_tv"
         app:layout_constraintTop_toBottomOf="@+id/delivered_tv"
         tools:visibility="invisible" />
 
-    <View
-        android:id="@+id/divider12"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="70dp"
-        android:background="@color/gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delivered_body_tv" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout13"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider12">
-
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Your rating"
-            android:textColor="@color/dimgrey"
-            android:textSize="@dimen/_10ssp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/rateNowContainer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider12" />
-
-        <LinearLayout
-            android:id="@+id/rateNowContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider12">
-
-            <ImageView
-                android:id="@+id/starIV01"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/star"
-                app:tint="@color/mediumGray" />
-
-            <ImageView
-                android:id="@+id/starIV02"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/star"
-                app:tint="@color/mediumGray" />
-
-            <ImageView
-                android:id="@+id/starIV03"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/star"
-                app:tint="@color/mediumGray" />
-
-            <ImageView
-                android:id="@+id/starIV04"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/star"
-                app:tint="@color/mediumGray" />
-
-            <ImageView
-                android:id="@+id/starIV05"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/star"
-                app:tint="@color/mediumGray" />
-        </LinearLayout>
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

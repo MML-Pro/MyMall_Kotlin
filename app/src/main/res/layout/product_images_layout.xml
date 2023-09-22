@@ -12,16 +12,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/viewPagerIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productImagesViewPager"
-        app:rippleColor="@color/colorPrimary"
         app:srcCompat="@drawable/my_wishlist"
         tools:ignore="SpeakableTextPresentCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/white"
         android:clickable="true"
-        android:tint="@color/fabColor"
-        app:tint="@color/fabColor"
         android:focusable="true" />
 
     <androidx.viewpager2.widget.ViewPager2
@@ -29,6 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/viewPagerIndicator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_250sdp"
         android:layout_marginTop="24dp">
@@ -144,7 +141,6 @@
         />
 
     <View
-        android:id="@+id/divider3"
         app:layout_constraintBottom_toBottomOf="@+id/productCuttedPrice"
         app:layout_constraintEnd_toEndOf="@+id/productCuttedPrice"
         app:layout_constraintStart_toStartOf="@+id/productCuttedPrice"
@@ -164,7 +160,6 @@
         android:src="@drawable/cod_indicator" />
 
     <TextView
-        android:id="@+id/textView9"
         app:layout_constraintBottom_toBottomOf="@+id/cod_image_view"
         app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
         app:layout_constraintStart_toStartOf="@+id/cod_image_view"
@@ -187,7 +182,7 @@
         android:layout_marginTop="8dp"
         android:text="Available"
         android:textColor="@color/productDetailsTextColor"
-        android:textSize="6pt" />
+        android:textSize="@dimen/_10ssp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

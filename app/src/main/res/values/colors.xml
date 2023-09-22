@@ -7,28 +7,27 @@
     <color name="colorPrimaryDark">#388364</color>
     <color name="colorAccent">@color/white</color>
 
-    <color name="errorRed">#CE0000</color>
-    <color name="darkRed">#9f0000</color>
-
 
     <color name="btnRed">#9f0000</color>
 
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="removeColor">#FF6350</color>
 
     <color name="success">#11A10C</color>
     <color name="dimgrey">#696969</color>
     <color name="lightGray">#d6d6d6</color>
 
-    <color name="lightGray02">#F9F9F9</color>
+<!--    <color name="lightGray02">#F9F9F9</color>-->
     <color name="mediumGray">#D1D1D1</color>
-    <color name="lightMediumGray">#80D1D1D1</color>
     <color name="gray">#A9000000</color>
     <color name="lighterGray">#ddd</color>
 
-    <color name="fabColor">#9e9e9e</color>
+    <color name="favoritesSelectedIconColor">#F05D6E</color>
+    <color name="favoritesUnselectedIconColor">#9e9e9e</color>
 
     <color name="ratingColor">#FFDF00</color>
+
+
+    <color name="buttonColor">@color/colorPrimary</color>
 
     <color name="myRewardsToolBarAndStatusBarColor">#5B04B1</color>
 
@@ -52,8 +51,36 @@
 
     <color name="productDetailsTextColor">@color/black</color>
 
-    <color name="ratingNumberTextColor">#727272</color>
+    <color name="ratingNumberTextColor">@color/black</color>
     <color name="tabTextColor">#919191</color>
+    <color name="spacesTitleTextColor">@color/black</color>
+    <color name="featureNameTextColor">#919191</color>
+    <color name="featureValueTextColor">#535353</color>
+    <color name="subtitleTextColor">#10A13B</color>
+    <color name="hrScrollProductPriceTextColor">@color/gray</color>
+    <color name="codTextColor">@color/gray</color>
+    <color name="cuttedPriceTextColor">@color/gray</color>
+    <color name="miniRatingTextColor">@color/gray</color>
+    <color name="wishListRVbackgroundColor">@color/lightGray</color>
+    <color name="myCartRVbackgroundColor">#d6d6d6</color>
+    <color name="progressBarColor">@color/success</color>
+    <color name="buttonTextColor">#FFFFFF</color>
+
+        <color name="fabColor">@color/colorPrimary</color>
+
+    <color name="aboutUsTitleColor">@color/darker</color>
+    <color name="descriptionColor">@color/darkGray</color>
+
+    <color name="materialDialogColor">@color/white</color>
+    <color name="myAccountBackgroundColor">@color/lightGray</color>
+
+    <color name="myAccountSliderBackgroundColor">@color/white</color>
+
+    <color name="selectedDotColor">@color/btnRed</color>
+
+    <color name="recyclerViewDividerColor">@color/gray</color>
+
+    <color name="no_orders_color">@color/gray</color>
 
 
 </resources>

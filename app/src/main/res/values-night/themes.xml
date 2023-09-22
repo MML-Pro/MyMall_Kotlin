@@ -16,4 +16,14 @@
         <item name="android:background">@color/colorPrimary</item>
 <!--        <item name="colorControlNormal">@color/white</item>-->
     </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/lighterGray</item>
+        <item name="colorSecondary">@color/lighterGray</item>
+        <item name="colorSurface">@color/materialDialogColor</item>
+        <item name="colorOnSurface">@color/lighterGray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
 </resources>

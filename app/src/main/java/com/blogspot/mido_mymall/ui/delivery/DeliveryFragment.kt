@@ -36,6 +36,7 @@ import com.blogspot.mido_mymall.ui.my_cart.DeliveryUtil
 import com.blogspot.mido_mymall.ui.my_rewards.MyRewardsAdapter
 import com.blogspot.mido_mymall.ui.my_rewards.MyRewardsViewModel
 import com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment
+import com.blogspot.mido_mymall.util.Constants
 import com.blogspot.mido_mymall.util.Resource
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
@@ -72,7 +73,7 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
 
     private val mainActivityViewModel by activityViewModels<MainActivityViewModel>()
 
-    private var allProductsAvailable = true
+//    private var allProductsAvailable = true
 
     private var paymentSuccessResponse = false
 
@@ -86,6 +87,8 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
 
 
     private var rewardModelList = arrayListOf<RewardModel>()
+
+    private var orderId = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -116,9 +119,12 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
         }
 
         cartAdapter =
-            CartAdapter(false, binding.totalPriceTV, deliveryUtil = this, isDeliveryFragment = true)
+            CartAdapter(false, deliveryUtil = this, isDeliveryFragment = true)
 
-        cartAdapter.asyncListDiffer.submitList(cartItemModelList)
+        Log.d(TAG, "onViewCreated: ${cartItemModelList.size}")
+        Log.d(TAG, "args cart size: ${args.cartItemModelList?.size}")
+
+        cartAdapter.asyncListDiffer.submitList(args.cartItemModelList?.toList())
 
         binding.deliveryRecyclerView.apply {
             layoutManager =
@@ -126,6 +132,8 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
             adapter = cartAdapter
 
         }
+
+        binding.totalPriceTV.text = "EGP. ${args.totalAmount}/-"
 
 
         deliveryViewModel.getAddress()
@@ -235,10 +243,10 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
                 ).show()
             }
 
-            val order = Order(amount = args.totalAmount * 100, "INR")
+            val order = Order(amount = (args.totalAmount * 100).toDouble(), "INR")
 
             val userName = "rzp_test_itLLgXvQdarfeC"
-            val password = "ddPxVqMYa8wpFFMDwLbInxm0"
+            val password = Constants.RAZORPAY_API_PASSWORD
 
             val base = "$userName:$password"
 
@@ -310,6 +318,8 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
 
                             if (orderId.isNotEmpty()) {
 
+                                this@DeliveryFragment.orderId = orderId
+
                                 deliveryViewModel.placeOrder(
                                     orderID = orderId,
                                     cartItemModelList = cartItemModelList,
@@ -355,8 +365,31 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                deliveryViewModel.placeOrderStatus.collect {
-                    Log.d(TAG, "placeOrderStatus: $it")
+                deliveryViewModel.placeOrderStatus.collect { response->
+//                    Log.d(TAG, "placeOrderStatus: ${it.message.toString()}")
+
+                    when(response){
+
+                        is Resource.Loading-> {
+                            Log.d(TAG, "placeOrderStatus: response ${response.data}")
+
+                        }
+
+                        is Resource.Success ->{
+
+                            Log.d(TAG, "placeOrderStatus: ${response.data}")
+
+                        }
+
+                        is Resource.Error->{
+                            Log.e(TAG, "placeOrderStatus: ${response.message.toString()}", )
+                        }
+
+                        else -> {}
+                    }
+
+
+
                 }
             }
         }
@@ -365,8 +398,10 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainActivityViewModel.updateOrderStatus.collect { response ->
                     if (response is Resource.Success) {
-                        Log.d(TAG, "onViewCreated: ")
+                        Log.d(TAG, "updateOrderStatus: ${response.data}")
                     } else if (response is Resource.Error) {
+
+                        Log.e(TAG, "updateOrderStatus: ${response.message.toString()}" )
                         Toast.makeText(requireContext(), "Order Canceled", Toast.LENGTH_SHORT)
                             .show()
                     }
@@ -460,49 +495,49 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
         if (getQtyIds) {
             for (i in 0 until cartItemModelList.size - 1) {
                 if (!paymentSuccessResponse) {
-                    cartItemModelList.get(i).qtyIDs?.forEach { qtyId ->
+                    cartItemModelList.get(i).qtyIDs!!.forEach { qtyId ->
 
 
                         try {
                             FirebaseFirestore.getInstance().collection("PRODUCTS")
-                                .document(cartItemModelList[i].productId!!)
+                                .document(cartItemModelList[i].productId)
                                 .collection("QUANTITY")
                                 .document(qtyId).delete().addOnSuccessListener {
 
                                     Log.d(TAG, "onStop: success")
-//                                if (cartItemModelList[i].qtyIDs != null) {
-//
-//                                    if (cartItemModelList[i].qtyIDs!!.isNotEmpty()) {
-//
-//                                        if (qtyId.equals(
-//                                                cartItemModelList.get(i).qtyIDs?.get(
-//                                                    cartItemModelList.get(i).qtyIDs!!.size - 1
-//                                                )
-//                                            )
-//                                        )
-//                                            cartItemModelList[i].qtyIDs?.clear()
-//                                    }
-//                                }
+                //                                if (cartItemModelList[i].qtyIDs != null) {
+                //
+                //                                    if (cartItemModelList[i].qtyIDs!!.isNotEmpty()) {
+                //
+                //                                        if (qtyId.equals(
+                //                                                cartItemModelList.get(i).qtyIDs?.get(
+                //                                                    cartItemModelList.get(i).qtyIDs!!.size - 1
+                //                                                )
+                //                                            )
+                //                                        )
+                //                                            cartItemModelList[i].qtyIDs?.clear()
+                //                                    }
+                //                                }
 
                                     Log.d(TAG, "onStop: cartItemModelList ${cartItemModelList.size}")
                                     Log.d(TAG, "onStop: cartItemModelList is empty ${cartItemModelList.isEmpty()}")
 
 
-//                                    firestore.collection("PRODUCTS")
-//                                        .document(cartItemModelList[i].productId!!)
-//                                        .collection("QUANTITY")
-//                                        .orderBy("time", Query.Direction.ASCENDING)
-//                                        .get()
-//                                        .addOnSuccessListener {
-//                                            if (it.documents.size < cartItemModelList[i].stockQuantity!!) {
-//                                                firestore.collection("PRODUCTS")
-//                                                    .document(cartItemModelList[i].productId!!)
-//                                                    .update("in_stock", true)
-//                                            }
-//
-//                                        }.addOnFailureListener {
-//
-//                                        }
+                //                                    firestore.collection("PRODUCTS")
+                //                                        .document(cartItemModelList[i].productId!!)
+                //                                        .collection("QUANTITY")
+                //                                        .orderBy("time", Query.Direction.ASCENDING)
+                //                                        .get()
+                //                                        .addOnSuccessListener {
+                //                                            if (it.documents.size < cartItemModelList[i].stockQuantity!!) {
+                //                                                firestore.collection("PRODUCTS")
+                //                                                    .document(cartItemModelList[i].productId!!)
+                //                                                    .update("in_stock", true)
+                //                                            }
+                //
+                //                                        }.addOnFailureListener {
+                //
+                //                                        }
 
 
                                     Log.d(TAG, "onStop: qtyId deleted")
@@ -515,7 +550,7 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
                         }
                     }
                 } else {
-                    cartItemModelList[i].qtyIDs?.clear()
+                    cartItemModelList[i].qtyIDs!!.clear()
                 }
             }
         }
@@ -712,13 +747,13 @@ class DeliveryFragment : Fragment(), DeliveryUtil {
 
                     couponsApplied.text = "Coupon applied -${offerDiscountedAmount}"
                     productPriceTV.text =
-                        "Rs. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
+                        "EGP. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
                     totalItemsPriceTV?.text =
-                        "Rs. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
+                        "EGP. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
                     totalAmountTV?.text =
-                        "Rs. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
+                        "EGP. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
                     binding.totalPriceTV.text =
-                        "Rs. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
+                        "EGP. ${((productOriginalPrice.toLong() * quantity) - offerDiscountedAmount)} /-"
                     checkCouponPriceDialog.dismiss()
                 }
 

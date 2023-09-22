@@ -40,17 +40,6 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
 
     private var lastPosition = -1
 
-//    private var diffCallback = object :DiffUtil.ItemCallback<HomePageModel>(){
-//        override fun areItemsTheSame(oldItem: HomePageModel, newItem: HomePageModel): Boolean {
-//            TODO("Not yet implemented")
-//        }
-//
-//        override fun areContentsTheSame(oldItem: HomePageModel, newItem: HomePageModel): Boolean {
-//            TODO("Not yet implemented")
-//        }
-//
-//    }
-
     init {
         this.homePageModelList = homePageModelList
         recycledViewPool = RecycledViewPool()
@@ -98,7 +87,10 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        @SuppressLint("RecyclerView") position: Int
+    ) {
         when (homePageModelList[position].type) {
 
             HomePageModel.BANNER_SLIDER -> {
@@ -140,7 +132,7 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             }
         }
 
-        if(lastPosition < position) {
+        if (lastPosition < position) {
             val animation = AnimationUtils.loadAnimation(
                 holder.itemView.context,
                 R.anim.fade_in
@@ -170,26 +162,22 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
 
     private class BannerSliderViewHolder(private val binding: SlidingAdLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         companion object {
             private const val DELAY_TIME: Long = 3000
             private const val PERIOD_TIME: Long = 3000
-
-            //        private boolean isFirstRun = true;
-            //        private List<SliderModel> sliderModelList;
-            private var currentPage = 0
         }
 
+        private var currentPage = 2 // Start at the third page (consider adjusting this)
         private var timer: Timer? = null
         private var sliderHandler: Handler? = null
         private var update: Runnable? = null
         private lateinit var onPageChangeCallback: OnPageChangeCallback
         private var arrangedList = arrayListOf<SliderModel>()
 
-
         @SuppressLint("ClickableViewAccessibility")
         fun setBannerSliderViewPager(sliderModelList: List<SliderModel>) {
             currentPage = 2
+
             if (timer != null) {
                 timer!!.cancel()
             }
@@ -201,8 +189,8 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             arrangedList.add(1, sliderModelList[sliderModelList.size - 1])
             arrangedList.add(0, sliderModelList[0])
             arrangedList.add(1, sliderModelList[0])
-            val sliderAdapter = SliderAdapter()
 
+            val sliderAdapter = SliderAdapter()
             sliderAdapter.asyncListDiffer.submitList(arrangedList)
 
             binding.bannerSliderViewPager.apply {
@@ -211,9 +199,6 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
                 clipChildren = false
                 offscreenPageLimit = 3
             }
-
-//            binding.bannerSliderViewPager.setPageMargin(20);
-//            binding.bannerSliderViewPager.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
 
             val compositePageTransformer = CompositePageTransformer()
             compositePageTransformer.addTransformer(MarginPageTransformer(20))
@@ -225,7 +210,6 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             binding.bannerSliderViewPager.currentItem = currentPage
 
             onPageChangeCallback = object : OnPageChangeCallback() {
-
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     currentPage = position
@@ -234,15 +218,16 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
                 override fun onPageScrollStateChanged(state: Int) {
                     super.onPageScrollStateChanged(state)
                     if (state == ViewPager.SCROLL_STATE_IDLE) {
-                        pageLopper(arrangedList)
+                        pageLooper(arrangedList)
                     }
                 }
             }
             binding.bannerSliderViewPager.registerOnPageChangeCallback(onPageChangeCallback)
-            startBannerSliderShow(sliderModelList)
+            startBannerSliderShow(arrangedList)
+
             binding.bannerSliderViewPager.setOnTouchListener { v, event ->
-                pageLopper(arrangedList)
-                timer!!.cancel()
+                pageLooper(arrangedList)
+                timer?.cancel()
                 if (event.action == MotionEvent.ACTION_UP) {
                     startBannerSliderShow(arrangedList)
                 }
@@ -250,45 +235,30 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             }
         }
 
-
-
-        @Throws(Throwable::class)
-        fun finalize() {
-//            super.finalize()
-            binding.bannerSliderViewPager.clearFocus()
-            timer!!.cancel()
-            sliderHandler!!.removeCallbacks(update!!)
-            binding.bannerSliderViewPager.unregisterOnPageChangeCallback(onPageChangeCallback)
-            timer = null
-            sliderHandler = null
-        }
-
         private fun startBannerSliderShow(sliderModelList: List<SliderModel>?) {
-
-//            isFirstRun = currentPage == 0;
             sliderHandler = Handler()
             update = Runnable {
                 if (currentPage >= sliderModelList!!.size) {
                     currentPage = 0
                 }
-                binding.bannerSliderViewPager.setCurrentItem(
-                    currentPage++,
-                    true
-                )
+                binding.bannerSliderViewPager.setCurrentItem(currentPage++, true)
             }
-            timer = Timer()
-            timer!!.schedule(object : TimerTask() {
-                override fun run() {
-                    sliderHandler!!.post(update!!)
-                }
-            }, DELAY_TIME, PERIOD_TIME)
+
+            if (timer == null) {
+                timer = Timer()
+                timer!!.schedule(object : TimerTask() {
+                    override fun run() {
+                        sliderHandler!!.post(update!!)
+                    }
+                }, DELAY_TIME, PERIOD_TIME)
+            }
         }
 
         private fun stopBannerSlideShow() {
-            timer!!.cancel()
+            timer?.cancel()
         }
 
-        private fun pageLopper(sliderModelList: List<SliderModel>?) {
+        private fun pageLooper(sliderModelList: List<SliderModel>?) {
             if (currentPage == sliderModelList!!.size - 2) {
                 currentPage = 2
                 binding.bannerSliderViewPager.setCurrentItem(currentPage, false)
@@ -323,6 +293,7 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
         }
 
 
+        @SuppressLint("ClickableViewAccessibility")
         fun setHorizontalProductsLayout(
             title: String,
             productScrollModelList: ArrayList<HorizontalProductScrollModel>,
@@ -355,10 +326,20 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
 
             horizontalProductScrollAdapter.asyncListDiffer.submitList(productScrollModelList)
 
-            binding.horizontalScrollLayoutRV.layoutManager = LinearLayoutManager(
-                binding.root.context, LinearLayoutManager.HORIZONTAL, false
-            )
-            binding.horizontalScrollLayoutRV.adapter = horizontalProductScrollAdapter
+            binding.horizontalScrollLayoutRV.apply {
+                layoutManager = LinearLayoutManager(
+                    binding.root.context, LinearLayoutManager.HORIZONTAL, false
+                )
+                adapter = horizontalProductScrollAdapter
+
+                setOnTouchListener { view, _ ->
+                    view?.parent?.requestDisallowInterceptTouchEvent(true)
+
+                    false
+
+                }
+            }
+
         }
     }
 
@@ -368,7 +349,8 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
         fun setGridProductLayout(
             title: String,
             horizontalProductScrollModelList: ArrayList<HorizontalProductScrollModel>,
-            backgroundColor: String) {
+            backgroundColor: String
+        ) {
 
             binding.titleTV.text = title
             binding.container.backgroundTintList = ColorStateList.valueOf(
@@ -398,7 +380,7 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
                     .into(hsProductImage)
                 hsProductName.text = horizontalProductScrollModelList[i].productName
                 hsProductDescription.text = horizontalProductScrollModelList[i].productSubtitle
-                hsProductPrice.text = "EGP.${horizontalProductScrollModelList[i].productPrice}/-"
+                hsProductPrice.text = "EGP. ${horizontalProductScrollModelList[i].productPrice} /-"
                 val productID: String = horizontalProductScrollModelList[i].productID.toString()
 
                 binding.gridLayout.getChildAt(i).setOnClickListener {
@@ -413,11 +395,13 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             binding.viewAllButton.setOnClickListener { view ->
                 val hSModelArray: Array<HorizontalProductScrollModel> =
                     horizontalProductScrollModelList.toArray(
-                        arrayOfNulls<HorizontalProductScrollModel>(0))
+                        arrayOfNulls<HorizontalProductScrollModel>(0)
+                    )
 
                 if (findNavController(binding.root).currentDestination?.id == R.id.homeFragment) {
                     findNavController(binding.root)
-                        .navigate(HomeFragmentDirections.actionHomeFragmentToViewAllFragment(
+                        .navigate(
+                            HomeFragmentDirections.actionHomeFragmentToViewAllFragment(
                                 1,
                                 hSModelArray,
                                 null, title = title

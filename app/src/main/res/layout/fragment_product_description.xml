@@ -13,7 +13,7 @@
         android:layout_margin="16dp"
         android:fontFamily="@font/arial"
         android:text="productDescriptionTV"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold" />
 

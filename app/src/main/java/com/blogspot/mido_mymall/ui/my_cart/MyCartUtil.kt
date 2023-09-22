@@ -9,6 +9,6 @@ interface MyCartUtil {
     fun deleteItem(position:Int)
 
 
-    fun getTotalAmount(totalAmount:Int)
+    fun getTotalAmount(totalAmount:Double)
 
 }

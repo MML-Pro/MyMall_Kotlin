@@ -8,7 +8,7 @@ interface WishListRepo {
 
     suspend fun getWishListIds() :Flow<Resource<DocumentSnapshot>>
 
-    suspend fun loadWishList(productId:String) : Flow<Resource<DocumentSnapshot>>
+    suspend fun loadWishList(productId:String) : Resource<DocumentSnapshot>
 
     suspend fun removeFromWishList(
         wishListIds: ArrayList<String>,

@@ -171,6 +171,68 @@ class CredentialsRepositoryImpl @Inject constructor(
         return resetPasswordState
     }
 
+//    override suspend fun createUserData(): Flow<Resource<Boolean>> {
+//        val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
+//
+//        result.value = Resource.Loading()
+//
+//        val userDataReference =
+//            firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
+//                .collection("USER_DATA")
+//
+//
+//        //MAPS
+//        val wishListMap: HashMap<String, Any> = HashMap()
+//        wishListMap["list_size"] = 0L
+//
+//        val ratingsMap: HashMap<String, Any> = HashMap()
+//        ratingsMap["list_size"] = 0L
+//
+//        val cartMap: HashMap<String, Any> = HashMap()
+//        cartMap["list_size"] = 0L
+//
+//        val addressMap: HashMap<String, Any> = HashMap()
+//        addressMap["list_size"] = 0L
+//
+//        val notificationsMap: HashMap<String, Any> = HashMap()
+//        notificationsMap["list_size"] = 0L
+//
+//
+//        //MAPS
+//
+//        val documentNames: ArrayList<String> = ArrayList()
+//        documentNames.add("MY_WISHLIST")
+//        documentNames.add("MY_RATINGS")
+//        documentNames.add("MY_CART")
+//        documentNames.add("MY_ADDRESS")
+//        documentNames.add("MY_NOTIFICATIONS")
+//
+//        val documentFields: ArrayList<Map<String, Any>> = ArrayList()
+//
+//        documentFields.add(wishListMap)
+//        documentFields.add(ratingsMap)
+//        documentFields.add(cartMap)
+//        documentFields.add(addressMap)
+//        documentFields.add(notificationsMap)
+//
+//
+//        for (i in documentNames.indices) {
+//            userDataReference.document(documentNames[i])
+//                .set(documentFields[i])
+//                .addOnSuccessListener {
+//                    result.value = Resource.Success(true)
+//                }.addOnFailureListener {
+//                    result.value = Resource.Error(it.message.toString())
+//
+//                }
+//
+//        }
+//
+//        return result
+//    }
+
+
+
     override suspend fun createUserData(): Flow<Resource<Boolean>> {
         val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
 
@@ -180,52 +242,57 @@ class CredentialsRepositoryImpl @Inject constructor(
             firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
                 .collection("USER_DATA")
 
+        // Check if the user data already exists
+        val userDataSnapshot = userDataReference.get().await()
+        if (userDataSnapshot.isEmpty) {
+            // Data does not exist, proceed with creation
 
-        //MAPS
-        val wishListMap: HashMap<String, Any> = HashMap()
-        wishListMap["list_size"] = 0L
+            // MAPS
+            val wishListMap: HashMap<String, Any> = HashMap()
+            wishListMap["list_size"] = 0L
 
-        val ratingsMap: HashMap<String, Any> = HashMap()
-        ratingsMap["list_size"] = 0L
+            val ratingsMap: HashMap<String, Any> = HashMap()
+            ratingsMap["list_size"] = 0L
 
-        val cartMap: HashMap<String, Any> = HashMap()
-        cartMap["list_size"] = 0L
+            val cartMap: HashMap<String, Any> = HashMap()
+            cartMap["list_size"] = 0L
 
-        val addressMap: HashMap<String, Any> = HashMap()
-        addressMap["list_size"] = 0L
+            val addressMap: HashMap<String, Any> = HashMap()
+            addressMap["list_size"] = 0L
 
-        val notificationsMap: HashMap<String, Any> = HashMap()
-        notificationsMap["list_size"] = 0L
+            val notificationsMap: HashMap<String, Any> = HashMap()
+            notificationsMap["list_size"] = 0L
 
+            // MAPS
 
-        //MAPS
+            val documentNames: ArrayList<String> = ArrayList()
+            documentNames.add("MY_WISHLIST")
+            documentNames.add("MY_RATINGS")
+            documentNames.add("MY_CART")
+            documentNames.add("MY_ADDRESS")
+            documentNames.add("MY_NOTIFICATIONS")
 
-        val documentNames: ArrayList<String> = ArrayList()
-        documentNames.add("MY_WISHLIST")
-        documentNames.add("MY_RATINGS")
-        documentNames.add("MY_CART")
-        documentNames.add("MY_ADDRESS")
-        documentNames.add("MY_NOTIFICATIONS")
+            val documentFields: ArrayList<Map<String, Any>> = ArrayList()
 
-        val documentFields: ArrayList<Map<String, Any>> = ArrayList()
+            documentFields.add(wishListMap)
+            documentFields.add(ratingsMap)
+            documentFields.add(cartMap)
+            documentFields.add(addressMap)
+            documentFields.add(notificationsMap)
 
-        documentFields.add(wishListMap)
-        documentFields.add(ratingsMap)
-        documentFields.add(cartMap)
-        documentFields.add(addressMap)
-        documentFields.add(notificationsMap)
-
-
-        for (i in documentNames.indices) {
-            userDataReference.document(documentNames[i])
-                .set(documentFields[i])
-                .addOnSuccessListener {
-                    result.value = Resource.Success(true)
-                }.addOnFailureListener {
-                    result.value = Resource.Error(it.message.toString())
-
-                }
-
+            for (i in documentNames.indices) {
+                userDataReference.document(documentNames[i])
+                    .set(documentFields[i])
+                    .addOnSuccessListener {
+                        result.value = Resource.Success(true)
+                    }
+                    .addOnFailureListener {
+                        result.value = Resource.Error(it.message.toString())
+                    }
+            }
+        } else {
+            // Data already exists, return success without creating it again
+            result.value = Resource.Success(true)
         }
 
         return result

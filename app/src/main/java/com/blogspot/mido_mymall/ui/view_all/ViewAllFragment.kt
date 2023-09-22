@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.mido_mymall.databinding.FragmentViewAllBinding
+import com.blogspot.mido_mymall.domain.models.HorizontalProductScrollModel
 import com.blogspot.mido_mymall.domain.models.WishListModel
 import com.blogspot.mido_mymall.ui.MainActivity
 import com.blogspot.mido_mymall.ui.home.GridProductAdapter
@@ -23,7 +24,7 @@ class ViewAllFragment : Fragment() {
 
     private val LAYOUT_CODE = 0
 
-    //    private val horizontalProductScrollList = arrayListOf<HorizontalProductScrollModel>()
+    private val horizontalProductScrollList = arrayListOf<HorizontalProductScrollModel>()
     private val wishList = arrayListOf<WishListModel>()
 
     private val wishlistAdapter = WishlistAdapter(false)
@@ -54,7 +55,10 @@ class ViewAllFragment : Fragment() {
 
         if (layoutCode == 0) {
 
+
             wishList.addAll(args.viewAllProductList!!)
+
+            Log.d(TAG, "wishList size: ${wishList.size}")
 
             wishlistAdapter.asyncListDiffer.submitList(wishList)
 //            wishlistAdapter.submitList(wishList)
@@ -70,7 +74,7 @@ class ViewAllFragment : Fragment() {
 
             //================ Horizontal list ======================//
 
-//            horizontalProductScrollList.addAll(args.horizontalProductScrollModelList)
+            horizontalProductScrollList.addAll(args.horizontalProductScrollModelList)
 
             gridProductAdapter.clearList()
 
@@ -86,7 +90,7 @@ class ViewAllFragment : Fragment() {
             )
 
 
-            gridProductAdapter.submitList(args.horizontalProductScrollModelList.toList())
+            gridProductAdapter.submitList(horizontalProductScrollList)
 
         }
 
@@ -94,6 +98,8 @@ class ViewAllFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        wishList.clear()
+        horizontalProductScrollList.clear()
         gridProductAdapter.clearList()
         _binding = null
     }

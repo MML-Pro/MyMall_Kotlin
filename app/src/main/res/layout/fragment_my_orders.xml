@@ -8,9 +8,45 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myOrdersRecyclerView"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lightGray" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/noOrdersFoundIV"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_250sdp"
+        android:padding="16dp"
+        android:src="@drawable/no_order_found"
+        app:tint="@color/no_orders_color"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3">
+
+
+    </ImageView>
+
+
+    <TextView
+        android:id="@+id/emptyOrderTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noOrdersFoundIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textColor="@color/no_orders_color"
+        android:visibility="gone"
+        android:text="@string/empty_order_text"
+        android:textSize="@dimen/_22ssp" />
 
     <ProgressBar
         android:id="@+id/progressBar"

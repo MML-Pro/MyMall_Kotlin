@@ -57,8 +57,7 @@ class MainActivityViewModel @Inject constructor(
         orderStatus: String,
     ) {
         viewModelScope.launch {
-            updateOrderStatusUseCase(
-             orderID, paymentStatus, orderStatus).collect {
+            updateOrderStatusUseCase(orderID, paymentStatus, orderStatus).collect {
                  _updateOrderStatus.emit(it)
             }
         }

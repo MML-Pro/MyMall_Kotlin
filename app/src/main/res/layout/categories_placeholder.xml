@@ -8,7 +8,6 @@
     android:elevation="@dimen/_3sdp">
 
     <ImageView
-        android:id="@+id/category_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"

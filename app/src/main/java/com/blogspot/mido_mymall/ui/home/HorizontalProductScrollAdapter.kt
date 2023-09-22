@@ -48,7 +48,7 @@ class HorizontalProductScrollAdapter :
     }
 
     override fun getItemCount(): Int {
-        return asyncListDiffer.currentList.size
+        return 6
     }
 
      inner class ViewHolder(private val binding: HorizontalScrollItemLayoutBinding) :
@@ -63,7 +63,7 @@ class HorizontalProductScrollAdapter :
 
             binding.hsProductName.text = productScrollModel.productName
             binding.hsProductDescription.text = productScrollModel.productSubtitle
-            binding.hsProductPrice.text = "EGP.${productScrollModel.productPrice}/-"
+            binding.hsProductPrice.text = "EGP. ${productScrollModel.productPrice} /-"
             val productID: String = productScrollModel.productID.toString()
 
             binding.root.setOnClickListener { view: View ->

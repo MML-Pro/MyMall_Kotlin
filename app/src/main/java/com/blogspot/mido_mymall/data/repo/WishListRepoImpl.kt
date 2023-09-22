@@ -5,8 +5,11 @@ import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class WishListRepoImpl @Inject constructor(
@@ -15,22 +18,18 @@ class WishListRepoImpl @Inject constructor(
 ) : WishListRepo {
 
 
-    override suspend fun loadWishList(productId:String): Flow<Resource<DocumentSnapshot>> {
+    override suspend fun loadWishList(productId: String): Resource<DocumentSnapshot> {
 
-        val result = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
+        return try {
+            val data = firestore.collection("PRODUCTS").document(productId)
+                .get()
+                .await()
+            Resource.Success(data)
+        } catch (ex: Throwable) {
+            currentCoroutineContext().ensureActive()
+            Resource.Error(ex.message.toString())
+        }
 
-        result.value = Resource.Loading()
-
-
-        firestore.collection("PRODUCTS").document(productId)
-            .get().addOnSuccessListener {
-                result.value = Resource.Success(it)
-            }.addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
-            }
-
-
-        return result
     }
 
     override suspend fun removeFromWishList(

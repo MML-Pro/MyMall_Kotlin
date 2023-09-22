@@ -6,7 +6,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     android:elevation="3dp"
-    android:background="@color/white">
+    android:background="@color/detailsBackgroundColor">
 
     <ImageView
         android:id="@+id/productImage"
@@ -30,7 +30,7 @@
         android:fontFamily="@font/arial"
         android:maxLines="2"
         android:text="Google Pixel XL 2 (Mirror Black,128 GB)"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/productImage"
@@ -103,7 +103,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/arial"
         android:text="RS.45,999/-"
-        android:textColor="@color/black"
+        android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_16ssp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/linearLayout2"
@@ -116,7 +116,7 @@
         android:layout_marginStart="4dp"
         android:fontFamily="@font/arial"
         android:text="RS.49,999/-"
-        android:textColor="@color/gray"
+        android:textColor="@color/cuttedPriceTextColor"
         android:textSize="@dimen/_10ssp"
         app:layout_constraintBottom_toBottomOf="@+id/productPrice"
         app:layout_constraintStart_toEndOf="@+id/productPrice" />
@@ -138,8 +138,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="(45) ratings"
-        android:textSize="@dimen/_8ssp"
-        android:textColor="@color/gray"
+        android:textSize="@dimen/_10ssp"
+        android:textColor="@color/miniRatingTextColor"
         android:fontFamily="@font/arial"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
         app:layout_constraintStart_toEndOf="@+id/linearLayout2" />
@@ -152,7 +152,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/total_ratings_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/total_ratings_tv"
-        app:srcCompat="@drawable/ic_baseline_delete" />
+        app:srcCompat="@drawable/ic_baseline_delete"
+        app:tint="@color/productDetailsTextColor" />
 
     <TextView
         android:id="@+id/cashOnDeliveryTV"
@@ -164,6 +165,7 @@
         android:text="Cash On Delivery Available"
         android:textSize="@dimen/_12ssp"
         android:visibility="visible"
+        android:textColor="@color/codTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/productPrice"
         app:layout_constraintTop_toBottomOf="@+id/productPrice" />

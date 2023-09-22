@@ -29,9 +29,9 @@ class MyOrdersRepoImpl @Inject constructor(
             .collection("USER_ORDERS")
             .get().addOnSuccessListener { querySnapshot ->
 
-                if(querySnapshot == null || querySnapshot.isEmpty){
-                    result.value = Resource.Error("No orders found")
-                }else {
+                if (querySnapshot == null || querySnapshot.isEmpty) {
+                    result.value = Resource.Success(null)
+                } else {
                     querySnapshot.documents.forEach { _ ->
 
                         firestore.collection("ORDERS")
@@ -69,18 +69,36 @@ class MyOrdersRepoImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getLastOrder(): Resource<DocumentSnapshot> {
+    override suspend fun getLastOrder(): Flow<Resource<DocumentSnapshot>> {
 
-        return try {
-            val test = firestore.collection("ORDERS")
-                .orderBy("ORDER DATE", Query.Direction.DESCENDING)
-                .limit(1)
-                .get().await()
-            Resource.Success(test.documents[0])
-        } catch (throwable: Throwable) {
-            currentCoroutineContext().ensureActive()
-            Resource.Error(throwable.message.toString())
-        }
+        val result = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
 
+
+            val userOrders = firestore.collection("USERS").document(firebaseAuth.currentUser!!.uid)
+                .collection("USER_ORDERS")
+                .get().addOnSuccessListener { userOrdersSnapshot->
+                    if(userOrdersSnapshot == null || userOrdersSnapshot.isEmpty){
+                        result.value = Resource.Error("No order found")
+                    }else {
+                        firestore.collection("ORDERS")
+                            .orderBy("ORDER DATE", Query.Direction.DESCENDING)
+                            .limit(1)
+                            .get().addOnSuccessListener { lastOrderQuery->
+                                userOrdersSnapshot.documents.forEach {
+                                    if(it.id == lastOrderQuery.documents[0].id){
+                                        result.value = Resource.Success(lastOrderQuery.documents[0])
+                                    }
+                                }
+
+                            }.addOnFailureListener {
+                                result.value = Resource.Error(it.message.toString())
+                            }
+                    }
+                }.addOnFailureListener {
+                    result.value = Resource.Error(it.message.toString())
+                }
+
+
+        return result
     }
 }

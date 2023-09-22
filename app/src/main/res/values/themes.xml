@@ -41,23 +41,39 @@
         <item name="contentPadding">0dp</item>
     </style>
 
-    <style name="RoundedImageView" parent="">
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/colorPrimary</item>
+
+        <item name="android:colorControlNormal">@color/colorPrimary</item>
+
+
+
+        <!--        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>-->
+        <!--        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>-->
+        <!--        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button</item>-->
+        <!--        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button</item>-->
+    </style>
+
+    <style name="TextAppearance.PreferenceTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.PreferenceSummary" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--        <item name="android:textColor">@color/gray</item>-->
+    </style>
+
+    <style name="roundedImageViewRounded">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">20%</item>
+        <item name="cornerSize">50%</item>
     </style>
 
-    <style name="SliderBannerStyle">
-
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/_12sdp</item>
-        <item name="android:elevation">@dimen/_4sdp</item>
-        <item name="android:adjustViewBounds">true</item>
-        <item name="contentPadding">0dp</item>
-
-    </style>
-
-    <style name="RatingBar" parent="Theme.AppCompat">
-        <item name="colorControlNormal">#bdbdbd</item>
-<!--        <item name="colorControlActivated">@color/ratingColor</item>-->
-    </style>
 </resources>

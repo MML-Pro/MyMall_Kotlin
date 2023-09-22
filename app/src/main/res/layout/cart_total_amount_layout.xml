@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cartSummaryLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    android:background="@color/lightGray">
+    android:background="@color/detailsBackgroundColor"
+    android:backgroundTint="@color/detailsBackgroundColor"
+    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:elevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,10 +22,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:textColor="@color/dimgrey"
             android:fontFamily="@font/arial"
-            android:text="Price Details"
-            android:textSize="@dimen/_12ssp"
+            android:text="Order Summary"
+            android:textColor="@color/productDetailsTextColor"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -48,8 +48,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/arial"
-            android:textColor="@color/dimgrey"
             android:text="Price (2 items)"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider6" />
@@ -60,34 +60,34 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Delivery"
-            android:textColor="@color/black"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintStart_toStartOf="@+id/total_items"
             app:layout_constraintTop_toBottomOf="@+id/total_items" />
 
         <TextView
-            android:id="@+id/total_items_price"
+            android:id="@+id/cartSummaryTotalItemsPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/arial"
-            android:textColor="@color/dimgrey"
             android:text="EGP.49999/-"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider6" />
 
         <TextView
-            android:id="@+id/deliveryPrice"
+            android:id="@+id/cartSummaryDeliveryPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Free"
             android:textColor="#02B41A"
             android:textSize="@dimen/_12ssp"
-            app:layout_constraintEnd_toEndOf="@+id/total_items_price"
-            app:layout_constraintTop_toBottomOf="@+id/total_items_price" />
+            app:layout_constraintEnd_toEndOf="@+id/cartSummaryTotalItemsPrice"
+            app:layout_constraintTop_toBottomOf="@+id/cartSummaryTotalItemsPrice" />
 
         <View
             android:id="@+id/divider8"
@@ -98,7 +98,7 @@
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deliveryPrice" />
+            app:layout_constraintTop_toBottomOf="@+id/cartSummaryDeliveryPrice" />
 
         <TextView
             android:id="@+id/textView16"
@@ -108,21 +108,21 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/arial"
             android:text="Total Amount"
-            android:textColor="@color/black"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider8" />
 
         <TextView
-            android:id="@+id/total_amount_tv"
+            android:id="@+id/cartSummaryTotalAmountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/arial"
             android:text="EGP.49999/-"
-            android:textColor="@color/black"
+            android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

@@ -13,11 +13,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.SignInDialogBinding
 import com.blogspot.mido_mymall.ui.home.HomeFragmentDirections
 import com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragmentDirections
+
+import com.blogspot.mido_mymall.BuildConfig
 
 object Constants {
 
@@ -25,16 +28,16 @@ object Constants {
         "119751966934-4tmtpcpheeid9r1j7foa7d6uf27rgv33.apps.googleusercontent.com"
 
 
-    const val PAY_MOB_BASE_URL = "https://accept.paymob.com/api/"
-    const val GET_AUTH_TOKEN = "/auth/tokens/"
-    const val PAYMENT_API_KEY = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2T0RVM016YzJMQ0p1WVcxbElqb2lhVzVwZEdsaGJDSjkuSEUxQWJWT2ZLdWRqVG1ZdHJkNTRqNUEwSWd4TThpT1pXU1dPR1ZVZlBtSVBfZU55YjlMT0dDWW9oLXBYSVNBQmtBREE2ek90ejRTdXM4NW1ZQ3doWWc="
-
-    const val GET_ORDER_ID = "/ecommerce/orders/"
 
     const val RAZORPAY_BASE_URL = "https://api.razorpay.com/v1/"
 
-    var paymentFirstToken = ""
-    var paymentOrderId = ""
+    const val RAZORPAY_API_PASSWORD = BuildConfig.RAZORPAY_API_PASSWORD
+
+
+    @JvmStatic
+    fun applySelectedDayNightMode(mode: Int) {
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
 
     @JvmStatic
     fun signInSignUpDialog(

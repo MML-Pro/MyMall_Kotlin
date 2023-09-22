@@ -50,7 +50,6 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/averageRatingStar"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
             android:layout_gravity="center"
@@ -88,31 +87,30 @@
         app:layout_constraintTop_toBottomOf="@+id/secondTotalRatingsTV">
 
         <ProgressBar
-            android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
+            android:progressBackgroundTint="@color/ratingNumberTextColor"
             android:layout_weight="1"
             android:max="100"
             android:progress="80"
             android:progressTint="#00AC06" />
 
         <ProgressBar
-            android:id="@+id/progressBar2"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
+            android:progressBackgroundTint="@color/ratingNumberTextColor"
             android:layout_weight="1"
             android:max="100"
             android:progress="60"
             android:progressTint="#00AC06" />
 
         <ProgressBar
-            android:id="@+id/progressBar3"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -120,11 +118,12 @@
             android:layout_marginBottom="2dp"
             android:layout_weight="1"
             android:max="100"
+            android:progressBackgroundTint="@color/ratingNumberTextColor"
+
             android:progress="40"
             android:progressTint="#E4CD00" />
 
         <ProgressBar
-            android:id="@+id/progressBar4"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -132,16 +131,17 @@
             android:layout_marginBottom="2dp"
             android:layout_weight="1"
             android:max="100"
+            android:progressBackgroundTint="@color/ratingNumberTextColor"
             android:progress="30"
             android:progressTint="#E4CD00" />
 
         <ProgressBar
-            android:id="@+id/progressBar5"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
+            android:progressBackgroundTint="@color/ratingNumberTextColor"
             android:layout_weight="1"
             android:max="100"
             android:progress="10"
@@ -162,7 +162,6 @@
 
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_gravity="end"
@@ -173,25 +172,23 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/ratingMiniViewTV1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
                 android:text="5"
-                android:textColor="@color/black"
+                android:textColor="@color/ratingNumberTextColor"
                 android:textSize="@dimen/_8ssp"
                 android:textStyle="bold">
 
             </TextView>
 
             <ImageView
-                android:id="@+id/ratingMiniStar1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:src="@drawable/star"
-                app:tint="@color/black">
+                app:tint="@color/ratingNumberTextColor">
 
             </ImageView>
 
@@ -209,25 +206,23 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/productRatingMiniViewTV2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
                 android:text="4"
-                android:textColor="@color/black"
+                android:textColor="@color/ratingNumberTextColor"
                 android:textSize="@dimen/_8ssp"
                 android:textStyle="bold">
 
             </TextView>
 
             <ImageView
-                android:id="@+id/ratingMiniStar2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:src="@drawable/star"
-                app:tint="@color/black">
+                app:tint="@color/ratingNumberTextColor">
 
             </ImageView>
 
@@ -245,12 +240,11 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/productRatingMiniViewTV3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
                 android:text="3"
-                android:textColor="@color/black"
+                android:textColor="@color/ratingNumberTextColor"
                 android:textSize="@dimen/_8ssp"
                 android:textStyle="bold">
 
@@ -262,14 +256,13 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:src="@drawable/star"
-                app:tint="@color/black">
+                app:tint="@color/ratingNumberTextColor">
 
             </ImageView>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout4"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_gravity="end"
@@ -280,32 +273,29 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/productRatingMiniViewTV4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
                 android:text="2"
-                android:textColor="@color/black"
+                android:textColor="@color/ratingNumberTextColor"
                 android:textSize="@dimen/_8ssp"
                 android:textStyle="bold">
 
             </TextView>
 
             <ImageView
-                android:id="@+id/ratingMiniStar4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:src="@drawable/star"
-                app:tint="@color/black">
+                app:tint="@color/ratingNumberTextColor">
 
             </ImageView>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -315,26 +305,24 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/productRatingMiniViewTV5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/arial"
                 android:text="1"
-                android:textColor="@color/black"
+                android:textColor="@color/ratingNumberTextColor"
                 android:textSize="@dimen/_8ssp"
                 android:textStyle="bold">
 
             </TextView>
 
             <ImageView
-                android:id="@+id/ratingMiniStar5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="2dp"
                 android:layout_weight="1"
                 android:src="@drawable/star"
-                app:tint="@color/black">
+                app:tint="@color/ratingNumberTextColor">
 
             </ImageView>
 
@@ -357,7 +345,6 @@
         app:layout_constraintTop_toTopOf="@+id/ratingProgressBarContainer">
 
         <TextView
-            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -397,7 +384,6 @@
             android:textSize="@dimen/_10ssp" />
 
         <TextView
-            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -408,10 +394,10 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/divider5"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:textColor="@color/ratingNumberTextColor"
+        android:background="@color/ratingNumberTextColor"
+        android:backgroundTint="@color/ratingNumberTextColor"
         app:layout_constraintEnd_toEndOf="@+id/ratingNumbersContainer"
         app:layout_constraintStart_toStartOf="@+id/ratingNumbersContainer"
         app:layout_constraintTop_toBottomOf="@+id/ratingNumbersContainer" />
@@ -456,7 +442,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6">
 
         <ImageView
-            android:id="@+id/starIV01"
             android:layout_width="0dp"
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"
@@ -464,7 +449,6 @@
             app:tint="@color/mediumGray" />
 
         <ImageView
-            android:id="@+id/starIV02"
             android:layout_width="0dp"
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"
@@ -472,7 +456,6 @@
             app:tint="@color/mediumGray" />
 
         <ImageView
-            android:id="@+id/starIV03"
             android:layout_width="0dp"
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"
@@ -480,7 +463,6 @@
             app:tint="@color/mediumGray" />
 
         <ImageView
-            android:id="@+id/starIV04"
             android:layout_width="0dp"
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"
@@ -488,7 +470,6 @@
             app:tint="@color/mediumGray" />
 
         <ImageView
-            android:id="@+id/starIV05"
             android:layout_width="0dp"
             android:layout_height="@dimen/_20sdp"
             android:layout_weight="1"

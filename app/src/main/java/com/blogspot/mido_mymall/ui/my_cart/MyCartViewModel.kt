@@ -24,8 +24,8 @@ class MyCartViewModel @Inject constructor(
     private var _myCartListIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val myCartListIds: Flow<Resource<DocumentSnapshot>> get() = _myCartListIds
 
-    private var _cartList = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
-    val cartList: Flow<Resource<DocumentSnapshot>> get() = _cartList
+//    private var _cartList = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
+//    val cartList: Flow<Resource<DocumentSnapshot>> get() = _cartList
 
     private var _removeCartListState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
     val removeCartListState: Flow<Resource<Boolean>> get() = _removeCartListState
@@ -42,12 +42,13 @@ class MyCartViewModel @Inject constructor(
         }
     }
 
-    fun loadMyCartList(productId: String) {
-        viewModelScope.launch {
-            getMyCartListUseCase(productId).collect {
-                _cartList.emit(it)
-            }
-        }
+    suspend fun loadMyCartList(productId: String) : Resource<DocumentSnapshot>{
+//        _cartList.value = Resource.Loading()
+//        viewModelScope.launch {
+//            _cartList.emit(getMyCartListUseCase(productId))
+//
+//        }
+        return getMyCartListUseCase(productId)
     }
 
     fun removeFromCartList(
@@ -55,7 +56,7 @@ class MyCartViewModel @Inject constructor(
         index: Int
     ) {
         viewModelScope.launch {
-            removeFromCartListUseCase(cartListIds,index).collect {
+            removeFromCartListUseCase(cartListIds, index).collect {
                 _removeCartListState.emit(it)
             }
         }

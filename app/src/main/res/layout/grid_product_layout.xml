@@ -47,7 +47,6 @@
         app:layout_constraintTop_toBottomOf="@+id/viewAllButton">
 
         <include
-            android:id="@+id/firstInclude"
             layout="@layout/horizontal_scroll_item_layout"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
@@ -55,7 +54,6 @@
         </include>
 
         <include
-            android:id="@+id/secondInclude"
             layout="@layout/horizontal_scroll_item_layout"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
@@ -63,7 +61,6 @@
         </include>
 
         <include
-            android:id="@+id/thirdInclude"
             layout="@layout/horizontal_scroll_item_layout"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
@@ -71,7 +68,6 @@
         </include>
 
         <include
-            android:id="@+id/fourthInclude"
             layout="@layout/horizontal_scroll_item_layout"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
@@ -83,7 +79,6 @@
 
 
     <View
-        android:id="@+id/divider14"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/lightGray"
@@ -95,7 +90,6 @@
         app:layout_row="1" />
 
     <View
-        android:id="@+id/divider15"
         android:layout_width="1dp"
         android:layout_height="0dp"
         android:background="@color/lightGray"

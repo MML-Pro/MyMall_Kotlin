@@ -31,7 +31,7 @@ interface ProductDetailsRepo {
         myRating: ArrayList<Long>
     ): Flow<Resource<Boolean>>
 
-    suspend fun getCartList(): Flow<Resource<DocumentSnapshot>>
+    suspend fun getMyCartIds(): Resource<DocumentSnapshot>
 
     suspend fun saveCartListIds(productId: String, carListIdsSize: Int): Resource<Boolean>
 
@@ -44,6 +44,11 @@ interface ProductDetailsRepo {
         averageRating: Float,
         myRatingIds: ArrayList<String>,
         myRating: ArrayList<Long>
+    ): Flow<Resource<Boolean>>
+
+    suspend fun removeFromCartList(
+        cartListIds: ArrayList<String>,
+        index: Int
     ): Flow<Resource<Boolean>>
 
 

@@ -42,7 +42,7 @@ class ProductSpecsAdapter() : RecyclerView.Adapter<ProductSpecsAdapter.ViewHolde
             ProductSpecsModel.SPECS_TITLE -> {
                 val titleTv = TextView(parent.context)
                 titleTv.setTypeface(null, Typeface.BOLD)
-                titleTv.setTextColor(parent.resources.getColor(R.color.black))
+                titleTv.setTextColor(parent.resources.getColor(R.color.spacesTitleTextColor))
                 val layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
                 )

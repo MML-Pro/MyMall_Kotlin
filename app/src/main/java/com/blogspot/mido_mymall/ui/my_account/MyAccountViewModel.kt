@@ -20,9 +20,11 @@ class MyAccountViewModel @Inject constructor(private val getLastOrderUseCase: Ge
 
 
     fun getLastOrder() {
+        _lastOrder.value = Resource.Loading()
         viewModelScope.launch {
-            _lastOrder.emit(Resource.Loading())
-            _lastOrder.emit(getLastOrderUseCase())
+            getLastOrderUseCase().collect {
+                _lastOrder.emit(it)
+            }
         }
     }
 }
