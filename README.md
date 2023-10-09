@@ -88,7 +88,6 @@ I am looking forward to making an Admin version of My Mall app,  If you are inte
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/9d.png" width="150">
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/10d.png" width="150">
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/11d.png" width="150">
-<img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/12d.png" width="150">
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/13d.png" width="150">
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/14d.png" width="150">
 <img src="https://github.com/MML-Pro/ImagesAndVideos/blob/c9c9216c57a1acb0963e681404cace426ce71523/My%20Mall/screenshots/15d.png" width="150">
