@@ -3,9 +3,9 @@ buildscript {
 
     dependencies {
 
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.2"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.47'
-        classpath 'com.google.gms:google-services:4.4.0'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.9"
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.56'
+        classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -14,8 +14,13 @@ buildscript {
 }
 
 plugins {
-    id 'com.android.application' version '8.1.1' apply false
-    id 'com.android.library' version '8.1.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.20' apply false
-    id 'com.google.firebase.crashlytics' version '2.9.9' apply false
+    id 'com.android.application' version '8.10.0' apply false
+    id 'com.android.library' version '8.10.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.1.0' apply false
+    id 'com.google.firebase.crashlytics' version '3.0.3' apply false
+    id 'com.google.devtools.ksp' version '2.0.21-1.0.27' apply false
+}
+
+ext {
+    var = 'E:\\mymall_kotlin_keystore\\keystore.jks'
 }
