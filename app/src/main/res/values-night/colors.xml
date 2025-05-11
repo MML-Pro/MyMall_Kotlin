@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources tools:ignore="MissingDefaultResource" xmlns:tools="http://schemas.android.com/tools">
+
+    <color name="colorPrimary">@color/darker</color>
+
+    <color name="buttonColor">@color/deepPurple</color>
+
+
+    <color name="lightGray">#F9F9F9</color>
+    <color name="mediumGray">#D1D1D1</color>
+    <color name="gray">#A9000000</color>
+    <color name="lighterGray">#ddd</color>
+    <color name="darkGray">#4B4B4B</color>
+    <color name="dark">#313C44</color>
+    <color name="darker">#151B20</color>
+    <color name="deepPurple">#4a148c</color>
+
+
+    // Custom CardView Style
+<!--    <color name="aboutUsTitleColor">@color/mediumGray</color>-->
+    <color name="placeholderColor">@color/darker</color>
+    <color name="aboutUsTitleColor">@color/mediumGray</color>
+    <color name="descriptionColor">@color/mediumGray</color>
+
+    <color name="favoritesSelectedIconColor">#F05D6E</color>
+    <color name="favoritesUnselectedIconColor">#9e9e9e</color>
+
+
+    <color name="homeBackgroundColor">@color/dark</color>
+    <color name="categoryBackgroundColor">@color/mediumGray</color>
+
+    <color name="viewAllButtonColor">@color/deepPurple</color>
+
+    <color name="viewAllTextColor">@color/white</color>
+
+    <color name="detailsBackgroundColor">@color/dark</color>
+
+    <color name="viewPagerIndicatorBackground">@color/dark</color>
+
+    <color name="productDetailsTextColor">@color/lightGray</color>
+    <color name="ratingNumberTextColor">@color/lightGray</color>
+    <color name="tabTextColor">#919191</color>
+
+    <color name="spacesTitleTextColor">@color/mediumGray</color>
+    <color name="featureNameTextColor">@color/lightGray</color>
+    <color name="featureValueTextColor">@color/lightGray</color>
+    <color name="subtitleTextColor">#10A13B</color>
+    <color name="hrScrollProductPriceTextColor">@color/lightGray</color>
+    <color name="codTextColor">@color/lightGray</color>
+    <color name="cuttedPriceTextColor">@color/lightGray</color>
+    <color name="miniRatingTextColor">@color/lightGray</color>
+    <color name="wishListRVbackgroundColor">@color/mediumGray</color>
+    <color name="myCartRVbackgroundColor">@color/mediumGray</color>
+    <color name="progressBarColor">@color/success</color>
+
+    <color name="buttonTextColor">@color/mediumGray</color>
+
+        <color name="fabColor">#BB86FC</color>
+
+    <color name="materialDialogColor" >#424242</color>
+    <color name="myAccountBackgroundColor">@color/dark</color>
+
+    <color name="myAccountSliderBackgroundColor">@color/mediumGray</color>
+
+    <color name="selectedDotColor">@color/deepPurple</color>
+
+    <color name="recyclerViewDividerColor">@color/lightGray</color>
+
+    <color name="no_orders_color">@color/lightGray</color>
+
+    <color name="editUserInfoTabIndicatorColor">@color/deepPurple</color>
+
+
+    <color name="shippingDetailsColor">@color/lightGray</color>
+
+    <color name="hintColor">@color/lighterGray</color>
+
+    <color name="customTabsBackgroundColor">#FF9800</color>
+
+
+
+</resources>
