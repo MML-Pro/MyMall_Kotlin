@@ -12,14 +12,8 @@ class ProductDetailsAdapter(
     lifecycle: Lifecycle,
     private val productDescBody: String,
     private val productOtherDetails: String,
-    productSpecsModelList: ArrayList<ProductSpecsModel>
-) : FragmentStateAdapter(fragmentManager, lifecycle) {
-
     private val productSpecsModelList: ArrayList<ProductSpecsModel>
-
-    init {
-        this.productSpecsModelList = productSpecsModelList
-    }
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
 
     override fun createFragment(position: Int): Fragment {

@@ -11,4 +11,7 @@ interface MyCartUtil {
 
     fun getTotalAmount(totalAmount:Double)
 
+    fun onQuantityChanged(position: Int, newQuantity: Long) // <<< أضف هذه الدالة
+
+
 }

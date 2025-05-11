@@ -1,5 +1,7 @@
 package com.blogspot.mido_mymall.ui.product_details
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Build
@@ -17,6 +19,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -38,7 +41,9 @@ import com.blogspot.mido_mymall.databinding.FragmentProductDetailsBinding
 import com.blogspot.mido_mymall.domain.models.CartItemModel
 import com.blogspot.mido_mymall.domain.models.ProductSpecsModel
 import com.blogspot.mido_mymall.domain.models.WishListModel
+import com.blogspot.mido_mymall.ui.MainActivity
 import com.blogspot.mido_mymall.ui.credentials.SignOutViewModel
+import com.blogspot.mido_mymall.ui.my_address.MyAddressViewModel
 import com.blogspot.mido_mymall.util.Constants
 import com.blogspot.mido_mymall.util.Resource
 import com.google.android.material.tabs.TabLayout
@@ -109,6 +114,10 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
     var productPrice = ""
 
+    private val myAddressViewModel by viewModels<MyAddressViewModel>()
+
+    private var myAddressListSize: Long = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -173,15 +182,15 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
             Log.d(TAG, "productDetailsViewPagerTabLayoutMediator: ${tab?.text}")
             when (position) {
                 0 -> {
-                    tab?.text = "Description"
+                    tab?.text = resources.getString(R.string.description)
                 }
 
                 1 -> {
-                    tab?.text = "Specifications"
+                    tab?.text = resources.getString(R.string.specifications)
                 }
 
                 2 -> {
-                    tab?.text = "Other details"
+                    tab?.text = resources.getString(R.string.other_details)
                 }
             }
         }
@@ -203,6 +212,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         }
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -214,6 +224,34 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         // ============== Products Images ================= //
 
         productDetailsViewModel.getProductDetails(productId)
+        if (signOutViewModel.firebaseAuth.currentUser != null) {
+            myAddressViewModel.getAddresses()
+        }
+
+        lifecycleScope.launch {
+            // استخدام STARTED مناسب لجمع حالة الواجهة
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myAddressViewModel.myAddresses.collect { response ->
+                    when (response) {
+                        is Resource.Loading -> {
+
+                        }
+
+                        is Resource.Success<*> -> {
+                            response.data?.let {
+                                myAddressListSize = it["list_size"] as? Long ?: 0L
+                            }
+                        }
+
+                        is Resource.Error<*> -> {
+                            return@collect
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -255,27 +293,49 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
 
                                 binding.apply {
+
+                                    val totalRatings = documentSnapshot["total_ratings"] as Long
+
                                     productImageViewPager.productName.text =
                                         documentSnapshot["product_name"].toString()
+
                                     productImageViewPager.averageRatingMiniViewTV.text =
                                         documentSnapshot["average_rating"].toString()
-                                    productImageViewPager.productTotalRatingMiniViewTV.text =
-                                        "total ratings (${documentSnapshot["total_ratings"] as Long})"
-                                    productImageViewPager.productPrice.text =
-                                        "EGP. ${documentSnapshot["product_price"]}/-"
 
-                                    productPriceValue = documentSnapshot["product_price"].toString()
+                                    productImageViewPager.productTotalRatingMiniViewTV.text =
+                                        resources.getString(
+                                            R.string.total_ratings,
+                                            totalRatings
+                                        )
+
+                                    productImageViewPager.productPrice.text =
+                                        getString(
+                                            R.string.egp_price,
+                                            documentSnapshot["product_price"]
+                                        )
+
+                                    productPriceValue =
+                                        documentSnapshot["product_price"].toString()
 
                                     productImageViewPager.productCuttedPrice.text =
-                                        "EGP. ${documentSnapshot["cutted_price"]}/-"
+
+                                        getString(
+                                            R.string.egp_price,
+                                            documentSnapshot["cutted_price"]
+                                        )
 
                                     if (documentSnapshot.get("COD") as Boolean) {
-                                        productImageViewPager.codImageView.visibility = View.VISIBLE
-                                        productImageViewPager.codIndicatorTV.visibility =
-                                            View.VISIBLE
+                                        productImageViewPager.apply {
+                                            codImageView.visibility = View.VISIBLE
+                                            codTextView.visibility = View.VISIBLE
+                                            codIndicatorTV.visibility = View.VISIBLE
+                                        }
                                     } else {
-                                        productImageViewPager.codImageView.visibility = View.GONE
-                                        productImageViewPager.codIndicatorTV.visibility = View.GONE
+                                        productImageViewPager.apply {
+                                            codImageView.visibility = View.GONE
+                                            codTextView.visibility = View.GONE
+                                            codIndicatorTV.visibility = View.GONE
+                                        }
                                     }
 
                                     val freeCoupons = documentSnapshot["free_coupons"] as Long
@@ -314,11 +374,24 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 //
 //                                    Log.e(TAG, "test " + documentSnapshot.get("specs_title_" + x + "_total_field_" + y + "_name"));
 //                                    Log.e(TAG, "test " + documentSnapshot.get("specs_title_" + x + "_total_field_" + y + "_value"));
+
+                                                val englishFieldName =
+                                                    documentSnapshot["specs_title_" + x + "_total_field_" + y + "_name"].toString()
+                                                val fieldValue =
+                                                    documentSnapshot["specs_title_" + x + "_total_field_" + y + "_value"].toString()
+
+                                                val translatedFieldName =
+                                                    getTranslatedSpecFieldName(
+                                                        requireContext(),
+                                                        englishFieldName
+                                                    )
+
+
                                                 productSpecsModelList.add(
                                                     ProductSpecsModel(
                                                         1,
-                                                        documentSnapshot["specs_title_" + x + "_total_field_" + y + "_name"].toString(),
-                                                        documentSnapshot["specs_title_" + x + "_total_field_" + y + "_value"].toString()
+                                                        featureName = translatedFieldName,
+                                                        featureValue = fieldValue
                                                     )
                                                 )
                                             }
@@ -350,7 +423,14 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                     ratingsLayout.averageRatingTV.text =
                                         documentSnapshot["average_rating"].toString()
                                     ratingsLayout.secondTotalRatingsTV.text =
-                                        "${documentSnapshot["total_ratings"] as Long} ratings"
+                                        if (totalRatings == 1L) {
+                                            getString(R.string.one_rate, totalRatings)
+                                        } else {
+                                            getString(
+                                                R.string.ratings_count,
+                                                totalRatings
+                                            )
+                                        }
 
 
                                     for (i in 0 until 5) {
@@ -422,8 +502,6 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 //                    ALREADY_ADDED_TO_CART_LIST = false
 
 
-
-
                                                 val index = myCartListIds.indexOf(productId)
 
                                                 productDetailsViewModel.removeFromCartList(
@@ -453,8 +531,8 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                                     val outOfStock =
                                         binding.addToCartButton.getChildAt(0) as TextView
-                                    outOfStock.text = "Out of stock"
-                                    outOfStock.setTextColor(resources.getColor(R.color.colorPrimary))
+                                    outOfStock.text = getString(R.string.out_of_stock)
+                                    outOfStock.setTextColor(resources.getColor(R.color.couponRed))
                                     outOfStock.setCompoundDrawables(null, null, null, null)
                                     binding.linearLayout7.weightSum = 1F
                                 }
@@ -525,22 +603,84 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         })
 
 
-
         binding.buyNowButton.setOnClickListener {
-
+            // التحقق من تسجيل الدخول
             if (signOutViewModel.firebaseAuth.currentUser != null) {
 
+                // التحقق من أن بيانات المنتج الحالي متاحة قبل المتابعة
+                if (productId.isNotEmpty() /* && باقي الحقول الضرورية */) {
 
-                findNavController().navigate(
-                    ProductDetailsFragmentDirections
-                        .actionProductDetailsFragmentToDeliveryFragment(
-                            cartListIds = myCartListIds.toTypedArray(),
-                            cartItemModelList = cartItemModelList.toTypedArray(),
-                            fromCart = fromCart,
-                            totalAmount = productPrice.toFloat()
+                    // 1. إنشاء كائن CartItemModel للمنتج الحالي فقط
+                    val buyNowItem = CartItemModel(
+                        productId = productId,
+                        productImage = documentSnapshot["product_image_1"].toString(),
+                        productName = documentSnapshot["product_name"].toString(),
+                        freeCoupons = documentSnapshot["free_coupons"] as Long,
+                        productPrice = documentSnapshot["product_price"].toString(),
+                        cuttedPrice = documentSnapshot["cutted_price"].toString(),
+                        productQuantity = 1,
+                        maxQuantity = documentSnapshot["max_quantity"] as Long,
+                        stockQuantity = documentSnapshot["stock_quantity"] as Long,
+                        offersApply = documentSnapshot["offers_applied"] as Long,
+                        couponsApplied = 0,
+                        inStock = documentSnapshot["in_stock"] as Boolean,
+                        qtyIDs = arrayListOf(),
+                        selectedCouponId = null,
+                        discountedPrice = null,
+                        productRating = 0
+                    )
+
+                    // 2. إنشاء قوائم جديدة تحتوي فقط على هذا العنصر
+                    val singleItemList = arrayListOf(buyNowItem)
+                    val singleItemIdList = arrayListOf(this.productId)
+
+                    // 3. حساب الإجمالي لهذا العنصر الواحد
+                    // تأكد من استخدام السعر الصحيح (productPrice أو discountedPrice إذا كان هناك خصم)
+//                    val totalAmountSingle = (this.productPrice.toFloatOrNull() ?: 0.0f) * 1 // السعر * الكمية
+//
+//                    Log.d(
+//                        TAG,
+//                        "Buy Now clicked. Navigating with single item: $buyNowItem, Total: $totalAmountSingle"
+//                    )
+
+                    // 4. الانتقال إلى DeliveryFragment مع القوائم الجديدة
+
+                    if (myAddressListSize == 0L) {
+                        findNavController()
+                            .navigate(
+                                ProductDetailsFragmentDirections
+                                    .actionProductDetailsFragmentToAddAddressFragment(
+                                        intent = "add_new_address",
+                                        cartItemModelList = singleItemList.toTypedArray(),
+                                        fromCart = false,
+                                        cartListIds = singleItemIdList.toTypedArray(),
+                                        addressPosition = 0
+                                    )
+                            )
+                    } else {
+                        findNavController().navigate(
+                            ProductDetailsFragmentDirections
+                                .actionProductDetailsFragmentToDeliveryFragment(
+                                    cartListIds = singleItemIdList.toTypedArray(), // قائمة IDs بعنصر واحد
+                                    cartItemModelList = singleItemList.toTypedArray(), // قائمة المنتجات بعنصر واحد
+                                    fromCart = false // <-- مهم: هذا ليس قادمًا من السلة الرئيسية
+                                )
                         )
-                )
+                    }
+
+
+                } else {
+                    // خطأ: بيانات المنتج غير مكتملة
+                    Log.e(TAG, "Buy Now failed: Product details not fully loaded or available.")
+                    Toast.makeText(
+                        context,
+                        "Cannot proceed, product details missing.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
             } else {
+                // المستخدم غير مسجل الدخول: عرض ديالوج التسجيل
                 Constants.signInSignUpDialog(
                     requireContext(),
                     R.id.productDetailsFragment,
@@ -548,39 +688,117 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                     requireView()
                 )
             }
+            // نهاية setupBuyNowButton
         }
+
+
+//        binding.buyNowButton.setOnClickListener {
+//
+//            if (signOutViewModel.firebaseAuth.currentUser != null) {
+//
+//                if (!myCartListIds.contains(productId)) {
+//                    myCartListIds.add(productId)
+////                    productDetailsViewModel.
+//
+//                    FirebaseFirestore.getInstance().collection("PRODUCTS")
+//                        .document(productId)
+//                        .get().addOnSuccessListener {
+//
+//                            cartItemModelList.add(
+//                                CartItemModel(
+////                                                CartItemModel.CART_ITEM,
+//                                    productId = it.id,
+//                                    productImage = documentSnapshot["product_image_1"].toString(),
+//                                    productName = documentSnapshot["product_name"].toString(),
+//                                    freeCoupons = documentSnapshot["free_coupons"] as Long,
+//                                    productPrice = documentSnapshot["product_price"].toString(),
+//                                    cuttedPrice = documentSnapshot["cutted_price"].toString(),
+//                                    productQuantity = 1,
+//                                    maxQuantity = documentSnapshot["max_quantity"] as Long,
+//                                    stockQuantity = documentSnapshot["stock_quantity"] as Long,
+//                                    offersApply = documentSnapshot["offers_applied"] as Long,
+//                                    couponsApplied = 0,
+//                                    inStock = documentSnapshot["in_stock"] as Boolean,
+//                                    qtyIDs = arrayListOf(),
+//                                    selectedCouponId = null,
+//                                    discountedPrice = null,
+//                                )
+//                            ).also {
+//                                findNavController().navigate(
+//                                    ProductDetailsFragmentDirections
+//                                        .actionProductDetailsFragmentToDeliveryFragment(
+//                                            cartListIds = myCartListIds.toTypedArray(),
+//                                            cartItemModelList = cartItemModelList.toTypedArray(),
+//                                            fromCart = fromCart,
+//                                            totalAmount = productPrice.toFloat()
+//                                        )
+//                                )
+//                            }
+//
+//                        }.addOnFailureListener {
+//                            Log.e(TAG, "cartListIds: ${it.message.toString()}")
+//                        }
+//
+//                    ALREADY_ADDED_TO_CART_LIST = true
+//
+//                } else {
+//                    findNavController().navigate(
+//                        ProductDetailsFragmentDirections
+//                            .actionProductDetailsFragmentToDeliveryFragment(
+//                                cartListIds = myCartListIds.toTypedArray(),
+//                                cartItemModelList = cartItemModelList.toTypedArray(),
+//                                fromCart = fromCart,
+//                                totalAmount = productPrice.toFloat()
+//                            )
+//                    )
+//                }
+//
+//
+//            } else {
+//                Constants.signInSignUpDialog(
+//                    requireContext(),
+//                    R.id.productDetailsFragment,
+//                    layoutInflater,
+//                    requireView()
+//                )
+//            }
+//        }
 
         //=============== WISH LIST ================//
 
         binding.productImageViewPager.addToWishListFAB.setOnClickListener {
+            if (signOutViewModel.firebaseAuth.currentUser == null) {
+                Constants.signInSignUpDialog(
+                    requireContext(),
+                    R.id.productDetailsFragment,
+                    layoutInflater,
+                    binding.root
+                )
+            } else {
 
-            if (ALREADY_ADDED_TO_WISH_LIST) {
+                if (ALREADY_ADDED_TO_WISH_LIST) {
 
-                ALREADY_ADDED_TO_WISH_LIST = false
+                    ALREADY_ADDED_TO_WISH_LIST = false
 
-                val index = wishListIds.indexOf(productId)
+                    val index = wishListIds.indexOf(productId)
 
-                productDetailsViewModel.removeFromWishList(wishListIds, wishListModelList, index)
+                    productDetailsViewModel.removeFromWishList(
+                        wishListIds,
+                        wishListModelList,
+                        index
+                    )
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     binding.productImageViewPager.addToWishListFAB.imageTintList =
                         resources.getColorStateList(
                             R.color.favoritesUnselectedIconColor,
                             binding.productImageViewPager.addToWishListFAB.context.theme
                         )
+
                 } else {
-                    binding.productImageViewPager.addToWishListFAB.imageTintList =
-                        AppCompatResources
-                            .getColorStateList(
-                                binding.productImageViewPager.addToWishListFAB.context,
-                                R.color.favoritesUnselectedIconColor
-                            )
+
+                    productDetailsViewModel.saveWishListIds(productId, wishListIds.size)
+
                 }
-
-            } else {
-
-                productDetailsViewModel.saveWishListIds(productId, wishListIds.size)
-
             }
         }
 
@@ -616,20 +834,11 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                                     ALREADY_ADDED_TO_WISH_LIST = false
 
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        binding.productImageViewPager.addToWishListFAB.imageTintList =
-                                            resources.getColorStateList(
-                                                R.color.favoritesUnselectedIconColor,
-                                                requireContext().theme
-                                            )
-                                    } else {
-                                        binding.productImageViewPager.addToWishListFAB.imageTintList =
-                                            AppCompatResources
-                                                .getColorStateList(
-                                                    requireContext(),
-                                                    R.color.favoritesUnselectedIconColor
-                                                )
-                                    }
+                                    binding.productImageViewPager.addToWishListFAB.imageTintList =
+                                        resources.getColorStateList(
+                                            R.color.favoritesUnselectedIconColor,
+                                            requireContext().theme
+                                        )
                                 }
 
                                 FirebaseFirestore.getInstance().collection("PRODUCTS")
@@ -717,7 +926,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                             wishListIds.add(productId)
                             Toast.makeText(
                                 requireContext(),
-                                "Product added to wish list successfully",
+                                getString(R.string.product_added_to_wish_list),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -745,7 +954,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                         Toast.makeText(
                             requireContext(),
-                            "Product removed successfully",
+                            getString(R.string.product_removed_from_wishlist),
                             Toast.LENGTH_SHORT
                         ).show()
 
@@ -810,80 +1019,82 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
         }
 
+        // التقييمات متوقفة
 
-        for (i in 0 until binding.ratingsLayout.rateNowContainer.childCount) {
-
-            Log.d(TAG, "index: $i")
-
-            binding.ratingsLayout.rateNowContainer.getChildAt(i).setOnClickListener { view ->
-
-
-                starPosition = binding.ratingsLayout.rateNowContainer.indexOfChild(view).toLong()
-
-
-                // get the star position from the view's tag or id
-
-                Log.d(TAG, "starPosition: $starPosition")
-
-                if (signOutViewModel.firebaseAuth.currentUser == null) {
-                    Constants.signInSignUpDialog(
-                        requireContext(),
-                        R.id.productDetailsFragment,
-                        layoutInflater,
-                        requireView()
-                    )
-                } else {
-                    setRating(starPosition, false)
-
-                    if (myRatingsIds.contains(productId)) {
-
-
-//                        updateRating.put("${initialRating+1}_star", )
-//                        updateRating.put("${starPosition+1}_star",
-//                        updateRating.put("average_rating",))
-
-                        val oldRating =
-                            binding.ratingsLayout.ratingNumbersContainer.getChildAt((5 - initialRating - 1).toInt()) as TextView
-                        val finalRating =
-                            binding.ratingsLayout.ratingNumbersContainer.getChildAt((5 - starPosition - 1).toInt()) as TextView
-
-//                        Log.d(TAG, "oldRating: ")
+//        for (i in 0 until binding.ratingsLayout.rateNowContainer.childCount) {
 //
-//                        val oldStar =
-//                            ((documentSnapshot.get("${initialRating + 1}_star") as Long) - 1)
-//                        val newStar =
-//                            ((documentSnapshot.get("${starPosition + 1}_star") as Long) + 1)
-//                        val averageRating = (calculateAverageRating2(starPosition + 1).toString())
+//            Log.d(TAG, "index: $i")
+//
+//            binding.ratingsLayout.rateNowContainer.getChildAt(i).setOnClickListener { view ->
 //
 //
-//                        productDetailsViewModel.updateRatings(
-//                            productId,
-//                            initialRating,
-//                            oldRating.text.toString().toLong() - 1,
-//                            finalRating.text.toString().toLong() + 1,
-//                            starPosition,
-//                            averageRating.toFloat(),
+//                starPosition = binding.ratingsLayout.rateNowContainer.indexOfChild(view).toLong()
+//
+//
+//                // get the star position from the view's tag or id
+//
+//                Log.d(TAG, "starPosition: $starPosition")
+//
+//                if (signOutViewModel.firebaseAuth.currentUser == null) {
+//                    Constants.signInSignUpDialog(
+//                        requireContext(),
+//                        R.id.productDetailsFragment,
+//                        layoutInflater,
+//                        requireView()
+//                    )
+//                } else {
+//                    setRating(starPosition, false)
+//
+//                    if (myRatingsIds.contains(productId)) {
+//
+//
+////                        updateRating.put("${initialRating+1}_star", )
+////                        updateRating.put("${starPosition+1}_star",
+////                        updateRating.put("average_rating",))
+//
+//                        val oldRating =
+//                            binding.ratingsLayout.ratingNumbersContainer.getChildAt((5 - initialRating - 1).toInt()) as TextView
+//                        val finalRating =
+//                            binding.ratingsLayout.ratingNumbersContainer.getChildAt((5 - starPosition - 1).toInt()) as TextView
+//
+////                        Log.d(TAG, "oldRating: ")
+////
+////                        val oldStar =
+////                            ((documentSnapshot.get("${initialRating + 1}_star") as Long) - 1)
+////                        val newStar =
+////                            ((documentSnapshot.get("${starPosition + 1}_star") as Long) + 1)
+////                        val averageRating = (calculateAverageRating2(starPosition + 1).toString())
+////
+////
+////                        productDetailsViewModel.updateRatings(
+////                            productId,
+////                            initialRating,
+////                            oldRating.text.toString().toLong() - 1,
+////                            finalRating.text.toString().toLong() + 1,
+////                            starPosition,
+////                            averageRating.toFloat(),
+////                            myRatingsIds,
+////                            myRatings
+////                        )
+//
+//                    } else {
+//
+//                        Log.d(TAG, "starPosition: $starPosition")
+//
+//                        productDetailsViewModel.setRatings(
+//                            productId, starPosition,
+//                            averageRating = calculateAverageRating(starPosition + 1).toString(),
+//                            totalRatings = documentSnapshot["total_ratings"] as Long + 1,
 //                            myRatingsIds,
 //                            myRatings
+//
 //                        )
-
-                    } else {
-
-                        Log.d(TAG, "starPosition: $starPosition")
-
-                        productDetailsViewModel.setRatings(
-                            productId, starPosition,
-                            averageRating = calculateAverageRating(starPosition + 1).toString(),
-                            totalRatings = documentSnapshot["total_ratings"] as Long + 1,
-                            myRatingsIds,
-                            myRatings
-
-                        )
-                    }
-                }
-            }
-
-        }
+//                    }
+//                }
+//            }
+//
+//        }
+        //نهاية النقر على التقييم
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -933,7 +1144,11 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
 
 
-                        Toast.makeText(requireContext(), "Thanks for rating", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            requireContext(),
+                            "Thanks for rating",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     } else if (response is Resource.Error) {
                         setRating(initialRating, true)
@@ -1018,12 +1233,17 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 
                                 ALREADY_ADDED_TO_CART_LIST = myCartListIds.contains(productId)
 
-                                if(ALREADY_ADDED_TO_CART_LIST){
+                                if (ALREADY_ADDED_TO_CART_LIST) {
 
-                                    Log.d(TAG, "ALREADY_ADDED_TO_CART_LIST: $ALREADY_ADDED_TO_CART_LIST")
+                                    Log.d(
+                                        TAG,
+                                        "ALREADY_ADDED_TO_CART_LIST: $ALREADY_ADDED_TO_CART_LIST"
+                                    )
 
-                                    updateAddToCartButtonAppearance("REMOVE",
-                                        textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp).toFloat(),
+                                    updateAddToCartButtonAppearance(
+                                        getString(R.string.remove),
+                                        textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp)
+                                            .toFloat(),
                                         textColorRes = R.color.removeColor,
                                         drawableRes = R.drawable.baseline_shopping_cart_red
                                     )
@@ -1051,6 +1271,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                                                 qtyIDs = arrayListOf(),
                                                 selectedCouponId = null,
                                                 discountedPrice = null,
+                                                productRating = 0,
                                             )
                                         )
 
@@ -1090,7 +1311,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
                             requireActivity().invalidateMenu()
 
                             updateAddToCartButtonAppearance(
-                                "REMOVE",
+                                getString(R.string.remove),
                                 textColorRes = R.color.removeColor,
                                 textSizeRes = resources.getDimensionPixelSize(R.dimen._16ssp)
                                     .toFloat(),
@@ -1138,14 +1359,19 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
             //                                drawableTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.btnRed))
             compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen._6dp)
             val cartDrawable = ContextCompat.getDrawable(context, drawableRes)
-            cartDrawable?.setBounds(0, 0, cartDrawable.intrinsicWidth, cartDrawable.intrinsicHeight)
+            cartDrawable?.setBounds(
+                0,
+                0,
+                cartDrawable.intrinsicWidth,
+                cartDrawable.intrinsicHeight
+            )
 
             val tintList = ColorStateList.valueOf(ContextCompat.getColor(context, textColorRes))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //                compoundDrawableTintList = tintList
-                TextViewCompat.setCompoundDrawableTintList(binding.addToCartTextView,tintList)
+                TextViewCompat.setCompoundDrawableTintList(binding.addToCartTextView, tintList)
 
-            }else {
+            } else {
                 DrawableCompat.setTintList(cartDrawable!!, tintList)
             }
 
@@ -1213,7 +1439,10 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         for (i in 1..5) {
             totalStars += documentSnapshot[i.toString() + "_star"] as Long
 
-            Log.d(TAG, "calculateAverageRating: ${documentSnapshot.get(i.toString() + "_star")}")
+            Log.d(
+                TAG,
+                "calculateAverageRating: ${documentSnapshot.get(i.toString() + "_star")}"
+            )
         }
         totalStars += currentUserRating
         return (totalStars / (documentSnapshot["total_ratings"] as Long + 1)).toFloat()
@@ -1238,6 +1467,14 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
 //        return String.format(locale = Locale.ENGLISH,"%.1f", averageRating)
 //    }
 
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).apply {
+            supportActionBar?.title = getString(R.string.product_details)
+            getToolBar().title = getString(R.string.product_details)
+            actionBarLogo.visibility = View.GONE
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -1246,6 +1483,7 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         wishListIds.clear()
         myCartListIds.clear()
         cartItemModelList.clear()
+//        (requireActivity()as MainActivity).fragmentTitleAndActionBar()
         _binding = null
 //        menuHost?.removeMenuProvider(this)
     }
@@ -1311,10 +1549,15 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
         val cartItem = menu.findItem(R.id.action_cart)
         cartItem.setActionView(R.layout.cart_badge_layout)
 
+        (requireActivity() as MainActivity).apply {
+            supportActionBar?.title = getString(R.string.product_details)
+            getToolBar().title = getString(R.string.product_details)
+        }
+
 //        val badgeIcon = cartItem.actionView!!.findViewById(R.id.badge_icon) as ImageView
 //        badgeIcon.setImageResource(R.drawable.baseline_shopping_cart)
 
-        val badgeCount = cartItem.actionView!!.findViewById(R.id.cart_badge_count) as TextView
+        val badgeCount: TextView = cartItem.actionView!!.findViewById(R.id.cart_badge_count)
 
         if (signOutViewModel.firebaseAuth.currentUser != null) {
             if (myCartListIds.isEmpty()) {
@@ -1348,6 +1591,57 @@ class ProductDetailsFragment : Fragment(), MenuProvider {
             }
 
             else -> false
+        }
+    }
+
+
+    fun getTranslatedSpecFieldName(context: Context, englishFieldName: String): String {
+
+        @StringRes val resourceId = when (englishFieldName) {
+            "Model" -> R.string.spec_name_model
+            "Brand" -> R.string.spec_name_brand
+            "Country of manufacture" -> R.string.spec_name_country_of_manufacture
+            "Main material" -> R.string.spec_name_main_material
+            "Color" -> R.string.spec_name_color
+            "Item Weight" -> R.string.spec_name_item_weight
+            "Material" -> R.string.spec_name_material
+            "Special Feature" -> R.string.spec_name_special_feature
+            "Product Dimensions" -> R.string.spec_name_product_dimensions
+            "Handle Material" -> R.string.spec_name_handle_material
+            "Part Number" -> R.string.spec_name_part_number
+            "Size" -> R.string.spec_name_size
+            "Dimensions" -> R.string.spec_name_product_dimensions
+            "Max Weight" -> R.string.spec_name_max_weight
+            "Model Number" -> R.string.spec_name_model_number
+            "Frame Material" -> R.string.spec_name_frame_material
+            "Recommended room type" -> R.string.spec_name_recommended_room_type
+            "Display Size In Inches" -> R.string.spec_name_display_size_in_inches
+            "Processor CPU" -> R.string.spec_name_processor_cpu
+            "Internal Memory Capacity In GB" -> R.string.spec_name_internal_memory_capacity_in_gb
+            "Memory RAM In GB" -> R.string.spec_name_memory_ram_in_gb
+            "Rear Camera" -> R.string.spec_name_rear_camera
+            "Front Camera" -> R.string.spec_name_front_camera
+            "Battery" -> R.string.spec_name_battery
+            "Author" -> R.string.spec_name_author
+            "Publisher" -> R.string.spec_name_publisher
+            "Language" -> R.string.spec_name_language
+            "Hardcover Pages" -> R.string.spec_name_hardcover_pages
+            "Reading age" -> R.string.spec_name_reading_age
+            else -> 0 // القيمة 0 تشير إلى عدم العثور على معرف مورد مطابق
+        }
+
+        return if (resourceId != 0) {
+            try {
+                context.getString(resourceId)
+            } catch (e: Exception) {
+                // في حال حدوث خطأ غير متوقع (نادر)، عد بالاسم الأصلي
+                Log.e(TAG, "getTranslatedSpecFieldName: ${e.toString()}")
+                englishFieldName
+            }
+        } else {
+            // إذا لم يتم العثور على ترجمة معرفة في when،
+            // أعد اسم الحقل الإنجليزي الأصلي كقيمة احتياطية
+            englishFieldName
         }
     }
 }

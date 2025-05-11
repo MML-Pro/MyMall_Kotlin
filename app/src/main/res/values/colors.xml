@@ -7,6 +7,8 @@
     <color name="colorPrimaryDark">#388364</color>
     <color name="colorAccent">@color/white</color>
 
+    <color name="colorPrimaryVariant">#3700B3</color>
+
 
     <color name="btnRed">#9f0000</color>
 
@@ -52,7 +54,7 @@
     <color name="productDetailsTextColor">@color/black</color>
 
     <color name="ratingNumberTextColor">@color/black</color>
-    <color name="tabTextColor">#919191</color>
+    <color name="tabTextColor">@color/white</color>
     <color name="spacesTitleTextColor">@color/black</color>
     <color name="featureNameTextColor">#919191</color>
     <color name="featureValueTextColor">#535353</color>
@@ -81,6 +83,17 @@
     <color name="recyclerViewDividerColor">@color/gray</color>
 
     <color name="no_orders_color">@color/gray</color>
+
+    <color name="editUserInfoTabIndicatorColor">@color/colorPrimary</color>
+
+    <color name="shippingDetailsColor">@color/dimgrey</color>
+
+    <color name="splashBackgroundColor">#A5D6A7</color>
+
+    <color name="hintColor">@color/gray</color>
+    <color name="savedAmountColor">#02B41A</color>
+
+    <color name="customTabsBackgroundColor">@color/colorPrimary</color>
 
 
 </resources>

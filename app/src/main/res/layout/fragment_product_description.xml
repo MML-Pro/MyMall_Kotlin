@@ -3,18 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/detailsBackgroundColor"
     tools:context="com.blogspot.mido_mymall.ui.product_details.ProductDescriptionFragment">
 
-    <TextView
-        android:id="@+id/productDescriptionTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:fontFamily="@font/arial"
-        android:text="productDescriptionTV"
-        android:textColor="@color/productDetailsTextColor"
-        android:textSize="@dimen/_14ssp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/productDescriptionTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:fontFamily="@font/arial"
+            android:text="productDescriptionTV"
+            android:textColor="@color/productDetailsTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold" />
+
+<!--    <com.borjabravo.readmoretextview.ReadMoreTextView-->
+<!--        android:id="@+id/productDescriptionTV"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:fontFamily="@font/arial"-->
+<!--        app:trimCollapsedText="@string/read_more"-->
+<!--        app:trimExpandedText="@string/read_less"-->
+<!--        app:trimLines="5"-->
+<!--        app:trimMode="trimModeLine"-->
+<!--        android:text="productDescriptionTV"-->
+<!--        android:textColor="@color/productDetailsTextColor"-->
+<!--        android:textSize="@dimen/_14ssp">-->
+
+
+<!--    </com.borjabravo.readmoretextview.ReadMoreTextView>-->
 
 </FrameLayout>

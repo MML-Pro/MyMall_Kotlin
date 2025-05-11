@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:fillViewport="true"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
 
     <LinearLayout
@@ -20,10 +20,10 @@
             android:layout_width="@dimen/_85sdp"
             android:layout_height="@dimen/_85sdp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="32dp"
-            android:scaleType="fitXY"
+            android:layout_marginEnd="8dp"
             android:elevation="2dp"
+            android:scaleType="fitXY"
             android:src="@drawable/account"
             app:shapeAppearanceOverlay="@style/circleImageViewStyle"
             app:strokeWidth="1dp">
@@ -31,56 +31,72 @@
 
         </com.google.android.material.imageview.ShapeableImageView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/changePhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"
-            android:text="Change Photo"
-            android:textColor="@color/black"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/buttonColor"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/change_photo"
+            android:textColor="@color/buttonTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/profileImage"
             app:layout_constraintStart_toStartOf="@+id/profileImage"
             app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/removePhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
-            android:background="@android:color/transparent"
-            android:stateListAnimator="@null"
-            android:text="Remove Photo"
-            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/buttonColor"
+            android:text="@string/remove_photo"
+            android:textColor="@color/buttonTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/nameEditText"
             app:layout_constraintEnd_toEndOf="@+id/changePhotoButton"
             app:layout_constraintStart_toStartOf="@+id/changePhotoButton"
             app:layout_constraintTop_toBottomOf="@+id/changePhotoButton" />
 
-        <EditText
-            android:id="@+id/nameEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:ems="10"
             android:hint="Name"
-            android:inputType="text"
-            />
+            app:hintEnabled="true">
 
-        <EditText
-            android:id="@+id/emailEditText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:ems="10"
-            android:hint="email address"
-            android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toTopOf="@+id/updateButton" />
+            android:hint="@string/email_address"
+            app:hintEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/updateButton"
@@ -89,10 +105,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
+            android:textStyle="bold"
             android:layout_marginBottom="32dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Update"
-            android:textColor="@color/colorAccent"
+            android:backgroundTint="@color/buttonColor"
+            android:text="@string/update_info"
+            android:textColor="@color/buttonTextColor"
             android:textSize="@dimen/_16ssp" />
 
 

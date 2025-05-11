@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Order(
     @SerializedName("amount")
-    val amount: Double,
+    val amount: Long,
     @SerializedName("currency")
     val currency: String,
     @SerializedName("notes")

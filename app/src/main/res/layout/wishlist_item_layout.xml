@@ -24,6 +24,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:gravity="start"
+        android:textAlignment="viewStart"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
@@ -121,12 +123,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/productPrice"
         app:layout_constraintStart_toEndOf="@+id/productPrice" />
 
-    <com.google.android.material.divider.MaterialDivider
+    <View
         android:id="@+id/divider7"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:background="@color/lightGray"
-        android:backgroundTint="@color/lightGray"
+        android:background="@color/productDetailsTextColor"
+        android:backgroundTint="@color/productDetailsTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/cuttedPrice"
         app:layout_constraintEnd_toEndOf="@+id/cuttedPrice"
         app:layout_constraintStart_toStartOf="@+id/cuttedPrice"
@@ -144,11 +146,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
         app:layout_constraintStart_toEndOf="@+id/linearLayout2" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/delete_button_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="@+id/total_ratings_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/total_ratings_tv"
@@ -162,7 +167,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/arial"
-        android:text="Cash On Delivery Available"
+        android:text="@string/cash_on_delivery_available"
         android:textSize="@dimen/_12ssp"
         android:visibility="visible"
         android:textColor="@color/codTextColor"

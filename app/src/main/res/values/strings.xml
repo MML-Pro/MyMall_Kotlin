@@ -1,72 +1,99 @@
 <resources>
-    <string name="app_name">My Mall - Kotlin</string>
+    <string name="app_name">My Mall</string>
 
     <string name="signOut">sign out</string>
     <string name="email_confirmation_success_message">Recovery email sent successfully! check your inbox</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
 
 
     <string name="no_internet_connection_message"><b>Sorry !</b>\n There is a network problem or the server is down, try again later</string>
 
 
-    <string-array name="us_states">
-        <item>Alabama</item>
-        <item>Alaska</item>
-        <item>American Samoa</item>
-        <item>Arizona</item>
-        <item>Arkansas</item>
-        <item>California</item>
-        <item>Colorado</item>
-        <item>Connecticut</item>
-        <item>Delaware</item>
-        <item>District of Columbia</item>
-        <item>Florida</item>
-        <item>Georgia</item>
-        <item>Guam</item>
-        <item>Hawaii</item>
-        <item>Idaho</item>
-        <item>Illinois</item>
-        <item>Indiana</item>
-        <item>Iowa</item>
-        <item>Kansas</item>
-        <item>Kentucky</item>
-        <item>Louisiana</item>
-        <item>Maine</item>
-        <item>Maryland</item>
-        <item>Massachusetts</item>
-        <item>Michigan</item>
-        <item>Minnesota</item>
-        <item>Mississippi</item>
-        <item>Missouri</item>
-        <item>Montana</item>
-        <item>Nebraska</item>
-        <item>Nevada</item>
-        <item>New Hampshire</item>
-        <item>New Jersey</item>
-        <item>New Mexico</item>
-        <item>New York</item>
-        <item>North Carolina</item>
-        <item>North Dakota</item>
-        <item>Northern Marianas Islands</item>
-        <item>Ohio</item>
-        <item>Oklahoma</item>
-        <item>Oregon</item>
-        <item>Pennsylvania</item>
-        <item>Puerto Rico</item>
-        <item>Rhode Island</item>
-        <item>South Carolina</item>
-        <item>South Dakota</item>
-        <item>Tennessee</item>
-        <item>Texas</item>
-        <item>Utah</item>
-        <item>Vermont</item>
-        <item>Virginia</item>
-        <item>Virgin Islands</item>
-        <item>Washington</item>
-        <item>West Virginia</item>
-        <item>Wisconsin</item>
-        <item>Wyoming</item>
+<!--    <string-array name="us_states">-->
+<!--        <item>Alabama</item>-->
+<!--        <item>Alaska</item>-->
+<!--        <item>American Samoa</item>-->
+<!--        <item>Arizona</item>-->
+<!--        <item>Arkansas</item>-->
+<!--        <item>California</item>-->
+<!--        <item>Colorado</item>-->
+<!--        <item>Connecticut</item>-->
+<!--        <item>Delaware</item>-->
+<!--        <item>District of Columbia</item>-->
+<!--        <item>Florida</item>-->
+<!--        <item>Georgia</item>-->
+<!--        <item>Guam</item>-->
+<!--        <item>Hawaii</item>-->
+<!--        <item>Idaho</item>-->
+<!--        <item>Illinois</item>-->
+<!--        <item>Indiana</item>-->
+<!--        <item>Iowa</item>-->
+<!--        <item>Kansas</item>-->
+<!--        <item>Kentucky</item>-->
+<!--        <item>Louisiana</item>-->
+<!--        <item>Maine</item>-->
+<!--        <item>Maryland</item>-->
+<!--        <item>Massachusetts</item>-->
+<!--        <item>Michigan</item>-->
+<!--        <item>Minnesota</item>-->
+<!--        <item>Mississippi</item>-->
+<!--        <item>Missouri</item>-->
+<!--        <item>Montana</item>-->
+<!--        <item>Nebraska</item>-->
+<!--        <item>Nevada</item>-->
+<!--        <item>New Hampshire</item>-->
+<!--        <item>New Jersey</item>-->
+<!--        <item>New Mexico</item>-->
+<!--        <item>New York</item>-->
+<!--        <item>North Carolina</item>-->
+<!--        <item>North Dakota</item>-->
+<!--        <item>Northern Marianas Islands</item>-->
+<!--        <item>Ohio</item>-->
+<!--        <item>Oklahoma</item>-->
+<!--        <item>Oregon</item>-->
+<!--        <item>Pennsylvania</item>-->
+<!--        <item>Puerto Rico</item>-->
+<!--        <item>Rhode Island</item>-->
+<!--        <item>South Carolina</item>-->
+<!--        <item>South Dakota</item>-->
+<!--        <item>Tennessee</item>-->
+<!--        <item>Texas</item>-->
+<!--        <item>Utah</item>-->
+<!--        <item>Vermont</item>-->
+<!--        <item>Virginia</item>-->
+<!--        <item>Virgin Islands</item>-->
+<!--        <item>Washington</item>-->
+<!--        <item>West Virginia</item>-->
+<!--        <item>Wisconsin</item>-->
+<!--        <item>Wyoming</item>-->
+<!--    </string-array>-->
+
+    <string-array name="egypt_states">
+        <item>Alexandria</item>
+        <item>Aswan</item>
+        <item>Asyut</item>
+        <item>Beheira</item>
+        <item>Cairo</item>
+        <item>Dakahlia</item>
+        <item>Damietta</item>
+        <item>Faiyum</item>
+        <item>Gharbia</item>
+        <item>Giza</item>
+        <item>Ismailia</item>
+        <item>Kafr El Sheikh</item>
+        <item>Luxor</item>
+        <item>Matruh</item>
+        <item>Minya</item>
+        <item>Monufia</item>
+        <item>New Valley</item>
+        <item>North Sinai</item>
+        <item>Port Said</item>
+        <item>Qalyubia</item>
+        <item>Qena</item>
+        <item>Red Sea</item>
+        <item>Sharqia</item>
+        <item>Sohag</item>
+        <item>South Sinai</item>
+        <item>Suez</item>
     </string-array>
 
     <string name="searchForProducts">Search for products</string>
@@ -100,5 +127,223 @@
     <string name="app_version">Version: %s</string>
     <string name="settings">Settings</string>
     <string name="empty_order_text">Look like you haven\'t made any order yet</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="delivery">Delivery</string>
+    <string name="free">Free</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="saved_amount">You saved EGP. %1$s /- on this order</string>
+    <string name="price_number_items">Price (%1$d items)</string>
+    <string name="happy_shopping_image">Happy Shopping Image</string>
+    <string name="home">Home</string>
+    <string name="city">City*</string>
+    <string name="locality_area_or_street">Locality area or street*</string>
+    <string name="flat_no_building_name">Flat no.,Building name*</string>
+    <string name="pin_code">Pin Code*</string>
+    <string name="landmark_optional">Landmark(Optional)</string>
+    <string name="name">Name*</string>
+    <string name="mobile_no">Mobile number.*</string>
+    <string name="alternate_mobile_number">Alternate mobile no.(Optional)</string>
+    <string name="save_address">Save Address</string>
+    <string name="continue_word">CONTINUE</string>
+    <string name="your_order_has_been_confirmed">Your order has been confirmed</string>
+    <string name="order_confirmation">You will shortly receive your order confirmation message and email</string>
+    <string name="thank_you">Thank you</string>
+    <string name="order_id">Order ID: %1$s</string>
+    <string name="expected_delivery">Expected delivery within 4–6 days.</string>
+    <string name="continue_shopping">Continue shopping</string>
+    <string name="continue_shopping_button">Continue shopping button</string>
+    <string name="success_icon">Success icon</string>
+    <string name="shipping_details">SHIPPING DETAILS</string>
+    <string name="change_or_add_address">Change or Add Address</string>
+    <string name="user_info">User Info</string>
+    <string name="password">Password</string>
+    <string name="your_current_order_status">Your current order status</string>
+    <string name="no_orders">NO ORDERS</string>
+    <string name="your_recent_orders">Your recent orders</string>
+    <string name="sign_out">Sign out</string>
+    <string name="add_new_address">Add new address</string>
+    <string name="number_addresses_saved">%1$d addresses saved</string>
+    <string name="deliver_here">Deliver here</string>
+    <string name="ordered">Ordered</string>
+    <string name="placeholder_date" translatable="false">Mon, 12th Dec 2018</string>
+    <string name="your_order_has_been_placed">your order has been placed.</string>
+    <string name="packed">Packed</string>
+    <string name="your_order_has_been_packed">your order has been packed.</string>
+    <string name="shipped">Shipped</string>
+    <string name="your_order_has_been_shipped">your order has been shipped.</string>
+    <string name="delivered">Delivered</string>
+    <string name="your_order_has_been_delivered">your order has been delivered.</string>
+    <string name="total_ratings">total ratings (%1$d)</string>
+    <string name="available">Available</string>
+    <string name="add_to_cart">ADD TO CART</string>
+    <string name="buy_now">BUY NOW</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="don_t_worry_we_just_need_your_registered_email_address">Don\'t worry, we just need your registered email address</string>
+    <string name="reset_password">Reset password</string>
+    <string name="check_your_inbox_after_enter_your_email">Check your inbox after enter your email</string>
+    <string name="go_back"><![CDATA[<< Go back]]></string>
+    <string name="email_icon">Email icon</string>
+    <string name="provide_your_registered_email">provide your registered email</string>
+    <string name="email">Email</string>
+    <string name="or">or</string>
+    <string name="dont_have_an_account">Dont have an Account?</string>
+    <string name="signup">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="register">Register</string>
+    <string name="already_have_an_account">Already Have an Account?</string>
+    <string name="app_logo">app logo</string>
+    <string name="change_photo">Change Photo</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="update_info">Update info</string>
+    <string name="view_all">View All</string>
+    <string name="deals_of_the_day">Deals of the day</string>
+    <string name="coupon">Coupon</string>
+    <string name="my_address">My address</string>
+    <string name="not_signed_in">Not signed in</string>
+    <string name="your_rating">Your rating</string>
+    <string name="qty_number">Qty: %1$d</string>
+    <string name="description">Description</string>
+    <string name="specifications">Specifications</string>
+    <string name="other_details">Other details</string>
+    <string name="product_details">Product Details</string>
+    <string name="quantity">Quantity</string>
+    <string name="please_enter_your_password_to_change_the_email_address">Please enter your password to change the email address</string>
+    <string name="done">Done</string>
+    <string name="just_few_steps_away_from_your_cart">Just few steps away from your cart !</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign Up!</string>
+    <string name="cash_on_delivery_available">Cash On Delivery Available</string>
+    <string name="my_orders">My Orders</string>
+    <string name="my_rewards">My Rewards</string>
+    <string name="my_cart">My Cart</string>
+    <string name="my_wishlist">My Wishlist</string>
+    <string name="my_account">My Account</string>
+    <string name="egp_price">EGP. %1$s /-</string>
+    <string name="ratings_count">%1$s ratings</string>
+    <string name="one_rate">%1$s rating</string>
+    <string name="ratings">Ratings</string>
+    <string name="product_added_to_wish_list">Product added to wish list</string>
+    <string name="number_ratings">(%1$d) Ratings</string>
+    <string name="out_of_stock">OUT OF STOCK</string>
+    <string name="free_coupon">free %1$d coupon</string>
+    <string name="free_coupons">free %1$d coupons</string>
+    <string name="order_details">Order details</string>
+    <string name="best_selling_products">Best selling products</string>
+    <string name="no_recent_orders">No recent orders.</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="my_addresses">My addresses</string>
+    <string name="no_addresses">No saved addresses</string>
+    <string name="state">State*</string>
+    <string name="add_address">Add address</string>
+    <string name="notifications">Notifications</string>
+    <string name="apply_your_coupon_here">Apply your coupon here</string>
+    <string name="redeem">Redeem</string>
+    <string name="please_add_the_product_to_the_cart">Please add the product to the cart</string>
+    <string name="update_address">Update Address</string>
+    <string name="address_updated">Address updated</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="your_order_has_been_cancelled">Your order has been cancelled</string>
+    <string name="item_removed_from_cart_list">Item removed from your cart list</string>
+    <string name="remove_item">Remove Item</string>
+    <string name="coupon_applied">Coupon applied -%1$s</string>
+    <string name="offer_applied_egp">Offer applied - EGP.%1$s/-</string>
+    <string name="out_for_delivery">Out for Delivery</string>
+    <string name="mobiles">Mobiles</string>
+    <string name="appliances">Appliances</string>
+    <string name="electronics">Electronics</string>
+    <string name="furniture">Furniture</string>
+    <string name="fashion">Fashion</string>
+    <string name="books">Books</string>
+    <string name="sports">Sports</string>
+    <string name="toys">Toys</string>
+    <string name="Wallarts">Wall arts</string>
+    <string name="shoes">Shoes</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="we_re_back_online">We\'re back online</string>
+    <string name="default_profile_image">Default profile image</string>
+    <string name="product_removed_from_wishlist">Product removed from wish list</string>
+    <string name="remove">REMOVE</string>
+    <string name="login">Login</string>
+    <string name="google" translatable="false">Google</string>
+    <string name="there_are_no_items_on_your_wishlist">There are no items on your wishlist</string>
+    <string name="password_must_have_at_least_6_characters">Password must have at least 6 characters</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="n_a" translatable="false">N/A</string>
+    <string name="there_is_no_coupon_for_this_product">There is no coupon for this product</string>
+    <string name="there_are_no_notifications_currently">There are no notifications currently</string>
+    <string name="profile_image_updated_successfully">Profile image updated successfully</string>
+    <string name="order_canceled">Order Canceled</string>
+    <string name="an_error_occurred_while_setting_the_default_image">An error occurred while setting the default image.</string>
+    <string name="error_in_payment">"Error in payment: "</string>
+    <string name="username_updated_successfully">username updated successfully</string>
+    <string name="email_updated_successfully">Email updated successfully</string>
+    <string name="profile_image_removed_successfully">The image has been removed successfully.</string>
+    <string name="an_error_occurred_while_changing_the_image_please_try_again">An error occurred while changing the image. Please try again.</string>
+    <string name="unknown_error_happened_result_code_is" translatable="false">Unknown Error happened result code is %1$s</string>
+    <string name="cancelled_by_user_image_not_updated">Cancelled by user, image not updated</string>
+
+
+    <string name="spec_name_display_size_in_inches">Display Size In Inches</string>
+    <string name="spec_name_processor_cpu">Processor CPU</string>
+    <string name="spec_name_internal_memory_capacity_in_gb">Internal Memory Capacity In GB</string>
+    <string name="spec_name_memory_ram_in_gb">Memory RAM In GB</string>
+    <string name="spec_name_rear_camera">Rear Camera</string>
+    <string name="spec_name_front_camera">Front Camera</string>
+    <string name="spec_name_battery">Battery</string>
+
+
+    <string name="spec_name_brand">Brand</string>
+    <string name="spec_name_model">Model</string>
+    <string name="spec_name_country_of_manufacture">Country of manufacture</string>
+    <string name="spec_name_color">Color</string>
+    <string name="spec_name_item_weight">Item Weight</string>
+    <string name="spec_name_material">Material</string>
+    <string name="spec_name_main_material">Main material</string>
+    <string name="spec_name_special_feature">Special Feature</string>
+    <string name="spec_name_product_dimensions">Product Dimensions</string>
+    <string name="spec_name_handle_material">Handle Material</string>
+    <string name="spec_name_part_number">Part Number</string>
+    <string name="spec_name_size">Size</string>
+
+    <string name="spec_name_dimensions">Dimensions</string>
+    <string name="spec_name_max_weight">Max Weight</string>
+    <string name="spec_name_model_number">Model Number</string>
+    <string name="spec_name_frame_material">Frame Material</string>
+    <string name="spec_name_recommended_room_type">Recommended room type</string>
+
+    <string name="spec_name_author">Author</string>
+    <string name="spec_name_publisher">Publisher</string>
+    <string name="spec_name_language">Language</string>
+    <string name="spec_name_hardcover_pages">Hardcover Pages</string>
+    <string name="spec_name_reading_age">Reading age</string>
+    <string name="remove_photo">Remove Photo</string>
+    <string name="old_password_is_empty">Old password is empty</string>
+    <string name="old_password_is_below_than_6_characters">old password is below than 6 characters</string>
+    <string name="new_password_is_empty">New password is empty</string>
+    <string name="confirm_password_is_empty">confirm password is empty</string>
+    <string name="new_password_cannot_be_the_old_one">new password cannot be the old one</string>
+    <string name="new_password_cannot_be_below_than_6_characters">new password cannot be below than 6 characters</string>
+    <string name="new_password_not_equal_the_confirmation_password">new password not equal the confirmation password</string>
+    <string name="password_updated_successfully">Password updated successfully</string>
+    <string name="address_deleted">Address deleted</string>
+    <string name="email_address">Email Address</string>
+    <string name="update_password">Update password</string>
+    <string name="please_enter_keyword_to_search">please enter keyword to search</string>
+    <string name="delete_address">Delete Address</string>
+    <string name="are_you_sure_you_want_to_delete_this_address">Are you sure you want to delete this address?</string>
+    <string name="city_required">City required</string>
+    <string name="locality_area_or_street_required">Locality area or street required</string>
+    <string name="flat_no_building_name_required">Flat no.,Building name required</string>
+    <string name="pin_code_required">Pin code required</string>
+    <string name="name_required">Name required</string>
+    <string name="mobile_number_required">Mobile number required</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="this_permission_is_required_to_perform_the_operation">This permission is required to perform the operation.</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="edit_user_info">Edit user info</string>
 
 </resources>

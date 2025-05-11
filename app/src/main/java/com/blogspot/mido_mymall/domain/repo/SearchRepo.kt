@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchRepo {
 
-    suspend fun searchForProducts(searchQuery:String) : Flow<Resource<QuerySnapshot>>
+    suspend fun searchForProducts(searchTerms: List<String>) : Resource<QuerySnapshot>
+
 
 }

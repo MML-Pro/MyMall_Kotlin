@@ -5,29 +5,64 @@ plugins {
     id "androidx.navigation.safeargs.kotlin"
     id 'kotlin-parcelize'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
-    id 'kotlin-kapt'
+//    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
+def localProps = new Properties()
+def localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localProps.load(new FileInputStream(localPropsFile))
+}
+
 android {
+    signingConfigs {
+        release {
+            storeFile file(var)
+            storePassword '24681012'
+            keyAlias 'key0'
+            keyPassword '24681012'
+        }
+    }
     namespace 'com.blogspot.mido_mymall'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.blogspot.mido_mymall"
-        minSdk 21
-        targetSdk 34
-        versionCode 1
+        minSdk 23
+        targetSdk 35
+        versionCode 12
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue "string", "main_activity_banner", "\"${localProps['MAIN_ACTIVITY_BANNER']}\""
+        resValue "string", "app_open_ad", "\"${localProps['APP_OPEN_AD']}\""
+        resValue "string", "in_content_ad", "\"${localProps['IN_CONTENT_AD']}\""
+        multiDexEnabled true
+
+        // *** أضف هذا البلوك لتعريف الـ Placeholder ***
+        manifestPlaceholders = [
+                // المفتاح 'ADMOB_APP_ID' يجب أن يطابق الاسم في المانيفست (${ADMOB_APP_ID})
+                // القيمة تأتي من localProps. استخدم اسم الخاصية الصحيح من ملف local.properties
+                ADMOB_APP_ID: localProps.getProperty('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+                // استبدل 'admob.app.id' بالاسم الفعلي للمفتاح في ملف local.properties الخاص بك
+                // استبدل 'YOUR_DEFAULT_ADMOB_APP_ID_HERE' بمعرف افتراضي (مثل معرف اختبار) إذا لم يتم العثور على القيمة
+        ]
+        // *** نهاية البلوك المضاف ***
+
     }
+
 
     buildTypes {
         release {
-            minifyEnabled false
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -46,61 +81,79 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
-    implementation("androidx.gridlayout:gridlayout:1.0.0")
+    implementation("androidx.gridlayout:gridlayout:1.1.0")
 
 
-    def hilt_version="2.47"
+    def hilt_version = '2.56'
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    ksp "com.google.dagger:hilt-compiler:$hilt_version"
 
-    def navigation_version = "2.7.2"
+    def navigation_version = "2.9.0"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
-    implementation 'com.intuit.sdp:sdp-android:1.1.0'
-    implementation 'com.intuit.ssp:ssp-android:1.1.0'
+    implementation 'com.intuit.sdp:sdp-android:1.1.1'
+    implementation 'com.intuit.ssp:ssp-android:1.1.1'
 
-    implementation 'com.google.firebase:firebase-auth-ktx:22.1.2'
-    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.2.0'
+    implementation 'com.google.android.gms:play-services-auth:21.3.0'
 
-    implementation platform("com.google.firebase:firebase-bom:32.0.0")
+    implementation platform('com.google.firebase:firebase-bom:33.13.0')
 
-    implementation 'com.google.firebase:firebase-firestore:24.8.1'
+    implementation 'com.google.firebase:firebase-firestore:25.1.4'
     implementation("com.google.firebase:firebase-storage-ktx")
 
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
 
+    implementation("com.google.android.gms:play-services-ads:24.2.0")
+
+
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.16.0'
-    kapt 'com.github.bumptech.glide:compiler:4.15.1'
-
-
+    ksp 'com.github.bumptech.glide:compiler:4.16.0'
 
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
 
     //interceptor
-    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10"
+    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12"
 
-    implementation 'com.razorpay:checkout:1.6.33'
+    implementation 'com.razorpay:checkout:1.6.41'
 
     // DataStore
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation 'androidx.datastore:datastore-preferences:1.1.6'
+
+    implementation 'com.airbnb.android:lottie:6.1.0'
+
+
+//    implementation 'com.github.omarzer0:az-edittext:0.1.2'
+
+//    implementation 'com.borjabravo:readmoretextview:2.1.0'
+
+    implementation("androidx.lifecycle:lifecycle-process:2.9.0")
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
+
+
+
+
+
+
 
 }

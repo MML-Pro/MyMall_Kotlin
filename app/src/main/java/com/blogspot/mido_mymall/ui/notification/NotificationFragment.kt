@@ -11,8 +11,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.FragmentNotificationBinding
 import com.blogspot.mido_mymall.domain.models.NotificationModel
+import com.blogspot.mido_mymall.ui.MainActivity
 import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,6 +45,11 @@ class NotificationFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
 
+        (requireActivity() as MainActivity).apply {
+            getToolBar().title = getString(R.string.notifications)
+            actionBarLogo.visibility = View.GONE
+        }
+
         return binding.root
     }
 
@@ -56,7 +63,15 @@ class NotificationFragment : Fragment() {
             adapter = notificationAdapter
         }
 
-        notificationViewModel.getNotifications(false)
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            notificationViewModel.getNotifications(false)
+        } else {
+            binding.apply {
+                notificationRV.visibility = View.GONE
+                noNotificationsFoundIV.visibility = View.VISIBLE
+                emptyNotificationTV.visibility = View.VISIBLE
+            }
+        }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -67,53 +82,80 @@ class NotificationFragment : Fragment() {
                         is Resource.Loading -> {}
 
                         is Resource.Success -> {
-                            if(notificationList.isNotEmpty()) notificationList.clear()
-
-                            response.data?.let {
-                                val listSize = it["list_size"] as Long
+                            if (notificationList.isNotEmpty()) notificationList.clear()
 
 
-                                for (i in 0 until listSize ) {
-                                    notificationList.add(
-                                        NotificationModel(
-                                            image = it.get("Image_$i").toString(),
-                                            body = it.get("Body_$i").toString(),
-                                            beenRead = it.get("been_read_$i") as Boolean
-                                        )
-                                    )
+                            if (response.data == null) {
+                                binding.apply {
+                                    notificationRV.visibility = View.GONE
+                                    noNotificationsFoundIV.visibility = View.VISIBLE
+                                    emptyNotificationTV.visibility = View.VISIBLE
                                 }
+                            } else {
 
-                                val readMap = hashMapOf<String, Any>()
+                                response.data.let {
+                                    val listSize = it["list_size"] as Long
 
-                                for (i in 0 until listSize.toInt()) {
-
-                                    if (!notificationList[i].beenRead) {
-
-                                        Log.d(TAG, "notificationList been read: ${notificationList[i].beenRead}")
-
-                                        runQuery = true
+                                    if(listSize == 0L){
+                                        binding.apply {
+                                            notificationRV.visibility = View.GONE
+                                            noNotificationsFoundIV.visibility = View.VISIBLE
+                                            emptyNotificationTV.visibility = View.VISIBLE
+                                        }
                                     }
 
-                                    readMap["been_read_$i"] = true
-                                }
 
-                                if (runQuery) {
-                                    FirebaseFirestore.getInstance().collection("USERS")
-                                        .document(FirebaseAuth.getInstance().currentUser?.uid!!)
-                                        .collection("USER_DATA")
-                                        .document("MY_NOTIFICATIONS")
-                                        .update(readMap)
-                                        .addOnSuccessListener {
-                                            Log.d(TAG, "update been read success ")
-                                        }.addOnFailureListener {
-                                            Log.e(TAG, "update been read failed: ${it.message.toString()}",)
-                                            Log.e(TAG, "update been read failed: ${it.cause.toString()}",)
+                                    for (i in 0 until listSize) {
+                                        notificationList.add(
+                                            NotificationModel(
+                                                image = it.get("Image_$i").toString(),
+                                                body = it.get("Body_$i").toString(),
+                                                beenRead = (it.get("been_read_$i") ?:false) as Boolean
+                                            )
+                                        )
+                                    }
+
+                                    val readMap = hashMapOf<String, Any>()
+
+                                    for (i in 0 until listSize.toInt()) {
+
+                                        if (!notificationList[i].beenRead) {
+
+                                            Log.d(
+                                                TAG,
+                                                "notificationList been read: ${notificationList[i].beenRead}"
+                                            )
+
+                                            runQuery = true
                                         }
+
+                                        readMap["been_read_$i"] = true
+                                    }
+
+                                    if (runQuery) {
+                                        FirebaseFirestore.getInstance().collection("USERS")
+                                            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
+                                            .collection("USER_DATA")
+                                            .document("MY_NOTIFICATIONS")
+                                            .update(readMap)
+                                            .addOnSuccessListener {
+                                                Log.d(TAG, "update been read success ")
+                                            }.addOnFailureListener {
+                                                Log.e(
+                                                    TAG,
+                                                    "update been read failed: ${it.message.toString()}",
+                                                )
+                                                Log.e(
+                                                    TAG,
+                                                    "update been read failed: ${it.cause.toString()}",
+                                                )
+                                            }
+                                    }
+
+                                }.also {
+                                    notificationAdapter.asyncListDiffer.submitList(notificationList)
+
                                 }
-
-                            }.also {
-                                notificationAdapter.asyncListDiffer.submitList(notificationList)
-
                             }
                         }
 
@@ -133,12 +175,10 @@ class NotificationFragment : Fragment() {
     }
 
 
-
-
     override fun onStop() {
         super.onStop()
 
-        for (i in 0 until notificationList.size ) {
+        for (i in 0 until notificationList.size) {
             notificationList[i].beenRead = true
         }
 
@@ -147,7 +187,9 @@ class NotificationFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        notificationViewModel.getNotifications(true)
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            notificationViewModel.getNotifications(true)
+        }
         notificationList.clear()
         _binding = null
     }

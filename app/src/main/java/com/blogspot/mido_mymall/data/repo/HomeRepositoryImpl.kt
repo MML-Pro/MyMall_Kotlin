@@ -1,5 +1,6 @@
 package com.blogspot.mido_mymall.data.repo
 
+import android.util.Log
 import com.blogspot.mido_mymall.domain.repo.HomeRepository
 import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.firestore.DocumentSnapshot
@@ -31,22 +32,29 @@ class HomeRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
         return result
     }
 
-    override suspend fun getTopDeals(): Flow<Resource<List<DocumentSnapshot>>> {
-        val result = MutableStateFlow<Resource<List<DocumentSnapshot>>>(Resource.Ideal())
-        result.value = Resource.Loading()
-        firestore.collection("CATEGORIES")
-            .document("HOME")
-            .collection("TOP_DEALS").orderBy("index").get()
-            .addOnSuccessListener {
-                result.value = Resource.Success(it.documents)
+override suspend fun getTopDeals(): Flow<Resource<List<DocumentSnapshot>>> {
+    val result = MutableStateFlow<Resource<List<DocumentSnapshot>>>(Resource.Ideal())
+    Log.d(TAG, "getTopDeals: Starting to fetch top deals")
+    result.value = Resource.Loading()
 
-//                Log.d(TAG, "getTopDeals: ${it.documents[0].data.toString()}")
+    firestore.collection("CATEGORIES")
+        .document("HOME")
+        .collection("TOP_DEALS")
+        .orderBy("index")
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            val documents = querySnapshot.documents
+            Log.d(TAG, "getTopDeals: Success - Documents fetched: ${documents.size}")
+            documents.forEachIndexed { index, doc ->
+                Log.d(TAG, "getTopDeals: Document $index - Data: ${doc.data}")
             }
-            .addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
-            }
+            result.value = Resource.Success(documents)
+        }
+        .addOnFailureListener { exception ->
+            Log.e(TAG, "getTopDeals: Failed - Error: ${exception.message}")
+            result.value = Resource.Error(exception.message.toString())
+        }
 
-
-        return result
-    }
+    return result
+}
 }

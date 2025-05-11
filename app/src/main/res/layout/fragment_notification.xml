@@ -15,4 +15,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/noNotificationsFoundIV"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_250sdp"
+        android:padding="16dp"
+        android:src="@drawable/baseline_notifications_none_24"
+        app:tint="@color/no_orders_color"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3">
+
+
+    </ImageView>
+
+
+    <TextView
+        android:id="@+id/emptyNotificationTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noNotificationsFoundIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:textColor="@color/no_orders_color"
+        android:visibility="gone"
+        android:text="@string/there_are_no_notifications_currently"
+        android:textSize="@dimen/_22ssp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

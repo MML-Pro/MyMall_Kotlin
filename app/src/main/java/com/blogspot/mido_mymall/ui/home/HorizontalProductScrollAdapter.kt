@@ -51,7 +51,7 @@ class HorizontalProductScrollAdapter :
         return 6
     }
 
-     inner class ViewHolder(private val binding: HorizontalScrollItemLayoutBinding) :
+    inner class ViewHolder(private val binding: HorizontalScrollItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 
@@ -63,7 +63,10 @@ class HorizontalProductScrollAdapter :
 
             binding.hsProductName.text = productScrollModel.productName
             binding.hsProductDescription.text = productScrollModel.productSubtitle
-            binding.hsProductPrice.text = "EGP. ${productScrollModel.productPrice} /-"
+            binding.hsProductPrice.text = binding.root.resources.getString(
+                R.string.egp_price,
+                productScrollModel.productPrice
+            )
             val productID: String = productScrollModel.productID.toString()
 
             binding.root.setOnClickListener { view: View ->
@@ -74,7 +77,8 @@ class HorizontalProductScrollAdapter :
                         HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(productID)
                     )
                 } else if (findNavController(view).currentDestination?.id
-                    == R.id.categoryFragment) {
+                    == R.id.categoryFragment
+                ) {
                     findNavController(view).navigate(
                         CategoryFragmentDirections.actionCategoryFragmentToProductDetailsFragment(
                             productID

@@ -9,16 +9,16 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addToWishListFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="@+id/viewPagerIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productImagesViewPager"
         app:srcCompat="@drawable/my_wishlist"
-        tools:ignore="SpeakableTextPresentCheck"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        android:focusable="true" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/productImagesViewPager"
@@ -53,11 +53,14 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="end"
         android:fontFamily="@font/arial"
+        android:gravity="start"
         android:text="Product Name"
+        android:textAlignment="viewStart"
         android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_14ssp"
-        app:layout_constraintEnd_toStartOf="@+id/cod_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewPagerIndicator" />
 
@@ -109,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/arial"
-        android:text="total ratings:"
+        android:text="@string/total_ratings"
         android:textSize="@dimen/_12ssp" />
 
     <TextView
@@ -147,19 +150,21 @@
         app:layout_constraintTop_toTopOf="@+id/productCuttedPrice"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#80000000" />
+        android:backgroundTint="@color/productDetailsTextColor"
+        android:background="@color/productDetailsTextColor" />
 
     <ImageView
         android:id="@+id/cod_image_view"
-        app:layout_constraintBottom_toBottomOf="@+id/productTotalRatingMiniViewTV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addToWishListFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/cod_indicator" />
+        android:src="@drawable/cod_indicator"
+        app:layout_constraintBottom_toBottomOf="@+id/productCuttedPrice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/productCuttedPrice" />
 
     <TextView
+        android:id="@+id/codTextView"
         app:layout_constraintBottom_toBottomOf="@+id/cod_image_view"
         app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
         app:layout_constraintStart_toStartOf="@+id/cod_image_view"
@@ -174,15 +179,17 @@
 
     <TextView
         android:id="@+id/codIndicatorTV"
-        app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
-        app:layout_constraintStart_toStartOf="@+id/cod_image_view"
-        app:layout_constraintTop_toBottomOf="@+id/cod_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Available"
+        android:layout_marginBottom="8dp"
+        android:text="@string/available"
         android:textColor="@color/productDetailsTextColor"
-        android:textSize="@dimen/_10ssp" />
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/cod_image_view"
+        app:layout_constraintStart_toStartOf="@+id/cod_image_view"
+        app:layout_constraintTop_toBottomOf="@+id/cod_image_view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

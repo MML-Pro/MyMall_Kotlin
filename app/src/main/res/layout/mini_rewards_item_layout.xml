@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/arial"
-        android:text="Coupon"
+        android:text="@string/coupon"
         android:textColor="@color/white"
         android:textSize="@dimen/_11ssp"
         android:textStyle="bold"

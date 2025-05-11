@@ -9,7 +9,9 @@ import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,8 +28,8 @@ class MyWishlistViewModel @Inject constructor(
     private var _wishListIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val wishListIds: Flow<Resource<DocumentSnapshot>> get() = _wishListIds
 
-    private var _removeWishListState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
-    val removeWishListState: Flow<Resource<Boolean>> get() = _removeWishListState
+    private var _removeWishListState = MutableSharedFlow<Resource<Boolean>>()
+    val removeWishListState get() = _removeWishListState.asSharedFlow()
 
     suspend fun loadWishList(productId: String) :Resource<DocumentSnapshot> {
 //        viewModelScope.launch {

@@ -5,5 +5,7 @@ import javax.inject.Inject
 
 class GetMyOrdersUseCase @Inject constructor(private val myOrdersRepo: MyOrdersRepo) {
 
-    suspend operator fun invoke() = myOrdersRepo.getOrders()
+//    suspend operator fun invoke() = myOrdersRepo.getAllOrders()
+
+    suspend operator fun invoke(userId: String) = myOrdersRepo.getUserOrders(userId)
 }

@@ -2,6 +2,7 @@ package com.blogspot.mido_mymall.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blogspot.mido_mymall.data.DataStoreRepository
 import com.blogspot.mido_mymall.domain.usecase.main_activity.GetUserInfoUseCase
 import com.blogspot.mido_mymall.domain.usecase.main_activity.UpdateLastSeenUseCase
 import com.blogspot.mido_mymall.domain.usecase.main_activity.UpdateOrderStatusUseCase
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     private val updateLastSeenUseCase: UpdateLastSeenUseCase,
     private val updateOrderStatusUseCase: UpdateOrderStatusUseCase,
-    private val getUserInfoUseCase: GetUserInfoUseCase
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
     private var _lastSeenUpdateState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
@@ -35,6 +37,19 @@ class MainActivityViewModel @Inject constructor(
     private var _userInfo = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val userInfo: Flow<Resource<DocumentSnapshot>> get() = _userInfo
 
+    val readBackOnline = dataStoreRepository.readBackOnline
+
+
+    var networkStatus = false
+
+    var backOnline = false
+
+
+    fun saveBackOnline(backOnline:Boolean){
+        viewModelScope.launch {
+            dataStoreRepository.saveBackOnline(backOnline)
+        }
+    }
     fun updateLastSeen() {
         viewModelScope.launch {
             updateLastSeenUseCase().collect {
@@ -61,6 +76,10 @@ class MainActivityViewModel @Inject constructor(
                  _updateOrderStatus.emit(it)
             }
         }
+    }
+
+    fun resetPaymentStatus(){
+        _paymentState.value = false
     }
 
     fun getUserInfo(){

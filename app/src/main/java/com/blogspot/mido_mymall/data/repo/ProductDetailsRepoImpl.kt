@@ -38,79 +38,92 @@ class ProductDetailsRepoImpl @Inject constructor(
         return result
     }
 
-    override suspend fun getWishListIds(): Flow<Resource<DocumentSnapshot>> {
+    override suspend fun getWishListIds(): Resource<DocumentSnapshot> {
 
-        val result = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
+//        result.value = Resource.Loading()
 
-        result.value = Resource.Loading()
+        return try {
+            val result = firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
+                .collection("USER_DATA").document("MY_WISHLIST")
+                .get().await()
 
-        firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
-            .collection("USER_DATA").document("MY_WISHLIST")
-            .get().addOnSuccessListener {
-                result.value = Resource.Success(it)
-            }.addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
-            }
-        return result
+            Resource.Success(result)
+        } catch (throwable: Throwable) {
+
+            currentCoroutineContext().ensureActive()
+            Resource.Error(throwable.message)
+
+        }
+
     }
 
     override suspend fun saveWishListIds(
         productId: String,
         wishListIdsSize: Int
-    ): Flow<Resource<Boolean>> {
+    ): Resource<Boolean> {
 
-        val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
+//        val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
 
-        result.value = Resource.Loading()
+//        result.value = Resource.Loading()
 
-        val addProduct: HashMap<String, Any> = HashMap()
-        addProduct["product_id_$wishListIdsSize"] = productId
-        addProduct["list_size"] = wishListIdsSize.toLong() + 1
 
-        firestore.collection("USERS")
-            .document(firebaseAuth.currentUser?.uid!!)
-            .collection("USER_DATA")
-            .document("MY_WISHLIST")
-            .update(addProduct)
-            .addOnSuccessListener {
-                result.value = Resource.Success(true)
-            }.addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
-            }
+        return try {
 
-        return result
+
+            val addProduct: HashMap<String, Any> = HashMap()
+            addProduct["product_id_$wishListIdsSize"] = productId
+            addProduct["list_size"] = wishListIdsSize.toLong() + 1
+
+            firestore.collection("USERS")
+                .document(firebaseAuth.currentUser?.uid!!)
+                .collection("USER_DATA")
+                .document("MY_WISHLIST")
+                .update(addProduct)
+                .await()
+
+            Resource.Success(true)
+
+        } catch (throwable: Throwable) {
+            currentCoroutineContext().ensureActive()
+            Resource.Error(throwable.message.toString())
+        }
     }
 
     override suspend fun removeFromWishList(
         wishListIds: ArrayList<String>,
         wishListModelList: ArrayList<WishListModel>,
         index: Int
-    ): Flow<Resource<Boolean>> {
-        val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
+    ): Resource<Boolean> {
+//        val result = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
 
-        result.value = Resource.Loading()
-        wishListIds.removeAt(index)
+//        result.value = Resource.Loading()
 
-        val updatedWishList = HashMap<String, Any>()
+        return try {
 
-        for (i in 0 until wishListIds.size) {
-            updatedWishList["product_id_$i"] = wishListIds[i]
-        }
+            wishListIds.removeAt(index)
 
-        updatedWishList["list_size"] = wishListIds.size.toLong()
+            val updatedWishList = HashMap<String, Any>()
 
-        firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
-            .collection("USER_DATA").document("MY_WISHLIST")
-            .set(updatedWishList).addOnSuccessListener {
+            for (i in 0 until wishListIds.size) {
+                updatedWishList["product_id_$i"] = wishListIds[i]
+            }
+
+            updatedWishList["list_size"] = wishListIds.size.toLong()
+
+            firestore.collection("USERS").document(firebaseAuth.currentUser?.uid!!)
+                .collection("USER_DATA").document("MY_WISHLIST")
+                .set(updatedWishList).await()
+
+            Resource.Success(true).also {
                 if (wishListModelList.isNotEmpty()) {
                     wishListModelList.removeAt(index)
                 }
-                result.value = Resource.Success(true)
-            }.addOnFailureListener {
-                result.value = Resource.Error(it.message.toString())
             }
 
-        return result
+        } catch (throwable: Throwable) {
+            currentCoroutineContext().ensureActive()
+            Resource.Error(throwable.message.toString())
+        }
 
     }
 
@@ -288,7 +301,15 @@ class ProductDetailsRepoImpl @Inject constructor(
 
         result.value = Resource.Loading()
 
+        // التحقق من صحة الفهرس
+        if (index < 0 || index >= cartListIds.size) {
+            result.value = Resource.Error("Invalid index: $index")
+            return result
+        }
+
         cartListIds.removeAt(index)
+
+
 
 
         val updatedWishList = HashMap<String, Any>()

@@ -2,6 +2,7 @@ package com.blogspot.mido_mymall.ui.edit_user_info
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -23,6 +24,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -39,6 +41,7 @@ import com.blogspot.mido_mymall.util.Constants
 import com.blogspot.mido_mymall.util.Resource
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -52,9 +55,7 @@ class UpdateInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var selectImageLauncher: ActivityResultLauncher<String>
-
     private lateinit var pickMediaLauncher: ActivityResultLauncher<PickVisualMediaRequest>
-
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private lateinit var userImageUri: Uri
@@ -67,7 +68,6 @@ class UpdateInfoFragment : Fragment() {
     }
 
     private val updateUserInfoViewModel by viewModels<UpdateUserInfoViewModel>()
-
     private val signInViewModel by viewModels<SignInViewModel>()
 
     private var currentUserName = ""
@@ -76,7 +76,10 @@ class UpdateInfoFragment : Fragment() {
 
     private lateinit var reAuthenticateAndConfirmationDialog: Dialog
 
-    private var allUpdatesSuccessful = false
+//    private var allUpdatesSuccessful = false
+
+    private var isImageRemoved = false
+
 
     private val mainActivityViewModel by activityViewModels<MainActivityViewModel>()
 
@@ -123,7 +126,7 @@ class UpdateInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        // إعداد لاقطات الصور
         selectImageLauncher =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 if (uri != null) {
@@ -153,6 +156,7 @@ class UpdateInfoFragment : Fragment() {
                     try {
 //
                         userImageUri = uri
+
 
                         Glide.with(this).load(uri)
                             .into(binding.profileImage)
@@ -199,25 +203,55 @@ class UpdateInfoFragment : Fragment() {
 
             changePhotoButton.setOnClickListener {
 
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 
-
-                    // No need to show permission rationale, request the permission directly
-                    requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-
-
+                    pickMediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 } else {
-                    selectImage()
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+
+
+                        // No need to show permission rationale, request the permission directly
+                        requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+
+                    } else {
+                        selectImage()
+                    }
                 }
 
             }
 
             removePhotoButton.setOnClickListener {
+                // ---> التحقق أولاً <---
+                // --- إذا لم تكن الصورة الحالية هي الافتراضية، تابع العملية ---
+                // 1. تعيين الصورة الافتراضية محلياً في الواجهة
                 profileImage.setImageResource(R.drawable.account)
+
+                // 2. تحويل الصورة الافتراضية (Drawable) إلى ByteArray
+                val defaultImageByteArray = drawableToByteArray(R.drawable.account)
+
+                // 3. التحقق من نجاح التحويل قبل الاستدعاء
+                if (defaultImageByteArray != null) {
+                    // 4. استدعاء دالة تحديث الصورة في ViewModel بالبيانات الجديدة (للصورة الافتراضية)
+                    updateUserInfoViewModel.updateUserProfileImage(defaultImageByteArray).also {
+                        isImageRemoved = true
+                    }
+                    // ملاحظة: لا نحتاج لإظهار Toast هنا، لأن المراقب الخاص بـ
+                    // updateUserProfileImageState سيفعل ذلك عند نجاح أو فشل التحديث.
+                    // سيظهر Toast مثل "Profile image updated successfully".
+                } else {
+                    isImageRemoved = false
+                    // إبلاغ المستخدم بفشل تجهيز الصورة الافتراضية
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.an_error_occurred_while_setting_the_default_image),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e(TAG, "Failed to convert R.drawable.account to ByteArray")
+                }
             }
 
 
@@ -245,58 +279,67 @@ class UpdateInfoFragment : Fragment() {
                         error = "Invalid email"
                     }
 
-                } else if (!(currentUserName.equals(newUserName)) && currentEmail.equals(newEmail) && !this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
+                }
 
 
+                if (!(currentUserName.equals(newUserName)) && currentEmail.equals(newEmail) &&
+                    !this@UpdateInfoFragment::userImageUri.isInitialized) {
                     nameEditText.error = null
                     updateUserInfoViewModel.updateUserName(newUserName)
-                } else if ((currentUserName.equals(newUserName)) && !currentEmail.equals(newEmail) && !this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
+                }
+
+                if ((currentUserName.equals(newUserName)) && !currentEmail.equals(newEmail) &&
+                    !this@UpdateInfoFragment::userImageUri.isInitialized) {
                     emailEditText.error = null
-
-
                     this@UpdateInfoFragment.newEmail = newEmail
                     reAuthenticateDialog(newEmail)
+                }
 
 
-                } else if (currentUserName.equals(newUserName) && currentEmail.equals(newEmail) && this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
+                 if (currentUserName.equals(newUserName) && currentEmail.equals(newEmail) &&
+                     this@UpdateInfoFragment::userImageUri.isInitialized) {
                     nameEditText.error = null
                     emailEditText.error = null
-
                     val data = imageFromUriToByteArray(userImageUri)
-                    updateUserInfoViewModel.updateUserProfileImage(data)
+                    updateUserInfoViewModel.updateUserProfileImage(data) }
 
-                } else if (!currentUserName.equals(newUserName) && !currentEmail.equals(newEmail) && !this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
 
+                if (!currentUserName.equals(newUserName) && !currentEmail.equals(newEmail) &&
+                    !this@UpdateInfoFragment::userImageUri.isInitialized) {
                     nameEditText.error = null
                     emailEditText.error = null
 
                     updateUserInfoViewModel.updateUserName(newUserName)
 
                     this@UpdateInfoFragment.newEmail = newEmail
-                    reAuthenticateDialog(newEmail)
+                    reAuthenticateDialog(newEmail) }
 
-                } else if (!currentUserName.equals(newUserName) && currentEmail.equals(newEmail) && this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
+                if (!currentUserName.equals(newUserName) && currentEmail.equals(newEmail) &&
+                    this@UpdateInfoFragment::userImageUri.isInitialized) {
+
+                    Log.d(TAG, "onViewCreated: update image and user called")
 
                     updateUserInfoViewModel.updateUserName(newUserName)
                     val data = imageFromUriToByteArray(userImageUri)
-                    updateUserInfoViewModel.updateUserProfileImage(data)
+                    updateUserInfoViewModel.updateUserProfileImage(data).also {
+                        Log.d(TAG, "updateUserProfileImage:  called")
+                    }
+                }
 
-                } else if (currentUserName.equals(newUserName) && !currentEmail.equals(newEmail) && this@UpdateInfoFragment::userImageUri.isInitialized
-                ) {
 
+                if (currentUserName.equals(newUserName) &&
+                    !currentEmail.equals(newEmail) &&
+                    this@UpdateInfoFragment::userImageUri.isInitialized) {
                     emailEditText.error = null
-
                     this@UpdateInfoFragment.newEmail = newEmail
                     reAuthenticateDialog(newEmail)
                     val data = imageFromUriToByteArray(userImageUri)
-                    updateUserInfoViewModel.updateUserProfileImage(data)
+                    updateUserInfoViewModel.updateUserProfileImage(data) }
 
-                } else if (!currentUserName.equals(newUserName) && !currentEmail.equals(newEmail) && this@UpdateInfoFragment::userImageUri.isInitialized) {
+
+                 if (!currentUserName.equals(newUserName) &&
+                     !currentEmail.equals(newEmail) &&
+                     this@UpdateInfoFragment::userImageUri.isInitialized) {
                     // Clear the error message
                     nameEditText.error = null
                     emailEditText.error = null
@@ -305,7 +348,6 @@ class UpdateInfoFragment : Fragment() {
                         val data = imageFromUriToByteArray(userImageUri)
                         updateUserInfoViewModel.updateUserProfileImage(data)
                     }
-
                     updateUserInfoViewModel.updateUserName(newUserName)
                     this@UpdateInfoFragment.newEmail = newEmail
                     reAuthenticateDialog(newEmail)
@@ -348,10 +390,10 @@ class UpdateInfoFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                mainActivityViewModel.userInfo.collect{
-                    if(it is Resource.Success){
-                        it.data?.let { documentSnapshot->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainActivityViewModel.userInfo.collect {
+                    if (it is Resource.Success) {
+                        it.data?.let { documentSnapshot ->
 //                            Glide.with(this@UpdateInfoFragment)
 //                                .load(documentSnapshot.get("profileImage"))
 //                                .placeholder(R.drawable.profile_placeholder)
@@ -366,12 +408,14 @@ class UpdateInfoFragment : Fragment() {
                                 emailEditText.setText(currentEmail)
                             }
 
-                            (requireActivity() as MainActivity).navHeaderMainBinding.mainUserName.text = currentUserName
-                            (requireActivity() as MainActivity).navHeaderMainBinding.mainEmail.text = currentEmail
+                            (requireActivity() as MainActivity).navHeaderMainBinding.mainUserName.text =
+                                currentUserName
+                            (requireActivity() as MainActivity).navHeaderMainBinding.mainEmail.text =
+                                currentEmail
                         }
 
-                    }else if(it is Resource.Error){
-                        Log.e(TAG, "onCreate: ${it.message.toString()}" )
+                    } else if (it is Resource.Error) {
+                        Log.e(TAG, "onCreate: ${it.message.toString()}")
                     }
                 }
             }
@@ -429,7 +473,7 @@ class UpdateInfoFragment : Fragment() {
                             loadingDialog.cancel()
                             Toast.makeText(
                                 requireContext(),
-                                "username updated successfully",
+                                getString(R.string.username_updated_successfully),
                                 Toast.LENGTH_SHORT
                             ).show()
                             mainActivityViewModel.getUserInfo()
@@ -462,7 +506,7 @@ class UpdateInfoFragment : Fragment() {
                             loadingDialog.cancel()
                             Toast.makeText(
                                 requireContext(),
-                                "Email updated successfully",
+                                getString(R.string.email_updated_successfully),
                                 Toast.LENGTH_SHORT
                             ).show()
                             mainActivityViewModel.getUserInfo()
@@ -500,16 +544,31 @@ class UpdateInfoFragment : Fragment() {
                         is Resource.Success -> {
 
                             loadingDialog.cancel()
-                            Toast.makeText(
-                                requireContext(),
-                                "Profile image updated successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            mainActivityViewModel.getUserInfo()
+                            if (isImageRemoved) {
+                                (requireActivity() as MainActivity).navHeaderMainBinding.mainProfileImage.setImageResource(
+                                    R.drawable.account
+                                )
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.profile_image_removed_successfully),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                binding.profileImage.setImageURI(this@UpdateInfoFragment.userImageUri)
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.profile_image_updated_successfully),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            mainActivityViewModel.getUserInfo().also {
+                                isImageRemoved = false
+                            }
                         }
 
                         is Resource.Error -> {
-
+                            isImageRemoved = false
                             loadingDialog.cancel()
                             Log.e(TAG, "updateUserNameState: ${response.message.toString()}")
                         }
@@ -577,28 +636,74 @@ class UpdateInfoFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "onActivityResult: called")
         if (requestCode == REQUEST_CODE_SELECT_IMAGE) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    data.data?.let {
-                        userImageUri = it
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    if (data != null) {
+                        data.data?.let {
+                            userImageUri = it
+                            val newImage = getBytesFromUri(requireContext(), it)
+                            updateUserInfoViewModel.updateUserProfileImage(newImage!!)
+                        }
+                    } else {
+                        Log.d(TAG, "onActivityResult: data is null")
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.an_error_occurred_while_changing_the_image_please_try_again),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
+                }
+
+                Activity.RESULT_CANCELED -> {
+                    Log.e(TAG, "onActivityResult: result is canceled")
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.cancelled_by_user_image_not_updated),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                else -> {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.an_error_occurred_while_changing_the_image_please_try_again),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
     }
 
 
+// ... (كل الكود السابق يبقى كما هو بالضبط في ملف UpdateInfoFragment.kt) ...
+// ... (بما في ذلك تعريفات الـ Launchers، onCreateView، onViewCreated، requestPermissionLauncher callback، إلخ) ...
+// ... (والتعديل السابق في changePhotoButton ليفحص عند API 33) ...
+
+    // --- دالة selectImage() - هنا التعديل الوحيد المقترح لحل مشكلة الأجهزة القديمة ---
     private fun selectImage() {
+        // الهدف: استخدام ACTION_GET_CONTENT دائمًا عند استدعاء هذه الدالة لأنه أكثر توافقًا
+        // الكود الأصلي كان يستخدم ACTION_PICK + startActivityForResult للأجهزة الأقدم من Q
+        // الآن، سنجعله يستخدم selectImageLauncher (الذي هو GetContent) لجميع الحالات.
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 
-            pickMediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.type = "image/*"
-            selectImageLauncher.launch("image/*")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.d(
+                TAG,
+                "selectImage function called. Launching image picker using GetContent (selectImageLauncher)."
+            )
+            try {
+                selectImageLauncher.launch("image/*")
+            } catch (e: Exception) {
+                // قد يحدث خطأ إذا لم يكن هناك تطبيق لمعالجة الانتنت
+                Log.e(TAG, "Error launching selectImageLauncher (GetContent)", e)
+                Toast.makeText(
+                    requireContext(),
+                    "Cannot open image picker. No suitable application found.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         } else {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             if (intent.resolveActivity(requireActivity().packageManager) != null) {
@@ -608,18 +713,69 @@ class UpdateInfoFragment : Fragment() {
     }
 
     private fun showPermissionRationaleDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Permission Required")
-            .setMessage("This permission is required to perform the operation.")
-            .setPositiveButton("Grant") { _, _ ->
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.permission_required))
+            .setMessage(getString(R.string.this_permission_is_required_to_perform_the_operation))
+            .setPositiveButton(getString(R.string.allow)) { _, _ ->
                 requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
             }
-            .setNegativeButton("Deny") { _, _ ->
+            .setNegativeButton(getString(R.string.deny)) { _, _ ->
                 // Handle the case when the user denies the permission
             }
             .show()
     }
 
+    /**
+     * تحويل معرف مورد Drawable إلى ByteArray.
+     * @param drawableId معرف المورد (مثل R.drawable.account).
+     * @param format صيغة الضغط (مثل Bitmap.CompressFormat.PNG).
+     * @param quality جودة الضغط (0-100).
+     * @return بيانات الصورة كـ ByteArray أو null في حالة الخطأ.
+     */
+    private fun drawableToByteArray(
+        drawableId: Int,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+        quality: Int = 90
+    ): ByteArray? {
+        return try {
+            // طريقة أكثر أمانًا للحصول على Drawable والتعامل مع أنواع مختلفة (مثل VectorDrawable)
+            val drawable = ContextCompat.getDrawable(requireContext(), drawableId)
+            if (drawable == null) {
+                Log.e(TAG, "Drawable resource not found for ID: $drawableId")
+                return null
+            }
+
+            // تحويل الـ Drawable إلى Bitmap
+            // تحديد حجم افتراضي إذا كان Drawable لا يملك حجمًا ذاتيًا (مثل بعض VectorDrawables)
+            val bitmap = drawable.toBitmap(
+                width = drawable.intrinsicWidth.coerceAtLeast(1),
+                height = drawable.intrinsicHeight.coerceAtLeast(1)
+            )
+
+            // ضغط الـ Bitmap إلى ByteArrayOutputStream
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(format, quality, baos)
+
+            // إرجاع الـ ByteArray
+            baos.toByteArray()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error converting drawable to byte array", e)
+            null // إرجاع null في حالة حدوث أي خطأ
+        }
+    }
+    // ---> نهاية الدالة المساعدة <---
+
+    // دالة التحويل التي تم إنشاؤها في الخطوة 1
+    private fun getBytesFromUri(context: Context, uri: Uri): ByteArray? {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.readBytes()
+            }
+        } catch (e: Exception) { // استخدام Exception لالتقاط أي خطأ محتمل (IOException, SecurityException, etc.)
+            Log.e(TAG, "Error reading bytes from URI: $uri", e)
+            null
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

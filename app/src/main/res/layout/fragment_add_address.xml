@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/detailsBackgroundColor"
     tools:context="com.blogspot.mido_mymall.ui.add_address.AddAddressFragment">
 
 
@@ -40,10 +40,10 @@
                 android:autofillHints="city"
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
-                android:hint="City*"
+                android:hint="@string/city"
                 android:inputType="textPostalAddress"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <EditText
                 android:id="@+id/localityOrStreet"
@@ -55,11 +55,11 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
                 android:gravity="start"
-                android:hint="Locality area or street*"
+                android:hint="@string/locality_area_or_street"
                 android:inputType="textMultiLine"
                 android:lines="3"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <EditText
                 android:id="@+id/flatBuildEditText"
@@ -71,11 +71,11 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
                 android:gravity="start"
-                android:hint="Flat no.,Building name*"
+                android:hint="@string/flat_no_building_name"
                 android:inputType="textMultiLine"
                 android:lines="3"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,10 +91,10 @@
                     android:autofillHints="postalCode"
                     android:backgroundTint="@color/colorPrimary"
                     android:ems="10"
-                    android:hint="Pincode*"
+                    android:hint="@string/pin_code"
                     android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHint="@color/gray" />
+                    android:textColor="@color/productDetailsTextColor"
+                    android:textColorHint="@color/hintColor" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/stateSpinner"
@@ -102,8 +102,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:backgroundTint="@color/colorPrimary"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHint="@color/gray" />
+                    android:textColor="@color/productDetailsTextColor"
+                     />
 
             </LinearLayout>
 
@@ -116,10 +116,10 @@
                 android:autofillHints="postalAddress"
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
-                android:hint="Landmark(Optional)"
+                android:hint="@string/landmark_optional"
                 android:inputType="textPersonName"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -139,10 +139,10 @@
                 android:autofillHints="name"
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
-                android:hint="Name*"
+                android:hint="@string/name"
                 android:inputType="textPersonName"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <EditText
                 android:id="@+id/mobileNoEditText"
@@ -152,13 +152,15 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
+                android:gravity="start"
+                android:textAlignment="viewStart"
                 android:autofillHints="phone"
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
-                android:hint="Mobile no.*"
+                android:hint="@string/mobile_no"
                 android:inputType="phone"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <EditText
                 android:id="@+id/alternateMobileNoEditText"
@@ -169,21 +171,25 @@
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:autofillHints="phone"
+                android:gravity="start"
+                android:textAlignment="viewStart"
                 android:backgroundTint="@color/colorPrimary"
                 android:ems="10"
-                android:hint="Alternate mobile no.(Optional)"
+                android:hint="@string/alternate_mobile_number"
                 android:inputType="phone"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/gray" />
+                android:textColor="@color/productDetailsTextColor"
+                android:textColorHint="@color/hintColor" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="Save Address"
+                android:text="@string/save_address"
+                android:textStyle="bold"
+                android:backgroundTint="@color/buttonColor"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp">
+                android:textSize="@dimen/_14ssp">
 
             </com.google.android.material.button.MaterialButton>
 

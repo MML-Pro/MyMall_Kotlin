@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,9 +19,12 @@ import androidx.navigation.fragment.findNavController
 import com.blogspot.mido_mymall.databinding.FragmentSignupBinding
 import com.blogspot.mido_mymall.domain.models.User
 import com.blogspot.mido_mymall.ui.MainActivity
+import com.blogspot.mido_mymall.ui.MainActivityViewModel
+import com.blogspot.mido_mymall.util.RegisterValidation
 import com.blogspot.mido_mymall.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -34,6 +38,7 @@ class SignUpFragment : Fragment() {
 //    private var firebaseFirestore: FirebaseFirestore? = null
 
     private val viewModel by viewModels<SignUpViewModel>()
+    private val mainActivityViewModel by activityViewModels<MainActivityViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,12 +46,15 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
+        (requireActivity() as MainActivity).signOutItem?.isEnabled = false
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         binding.inputUsername.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -139,15 +147,65 @@ class SignUpFragment : Fragment() {
                         }
 
                         is Resource.Error -> {
+                            Log.e(TAG, " viewModel.register: ${response.message}")
                             binding.progressBar.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
                                 response.message.toString(),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         }
 
-                        else -> {}
+                        else -> {
+                            binding.progressBar.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.registerFailedStatesValidation.collect { validationState ->
+                    Log.d("SignUpFragment", "تم استقبال حالة التحقق: $validationState")
+
+                    // مهم: تأكد من إخفاء مؤشر التقدم هنا أيضًا
+                    // لأن هذا قد يتم استدعاؤه بعد معالجة الحالة الرئيسية
+                    binding.progressBar.visibility = View.GONE
+
+                    // --- التعامل مع نتيجة التحقق من الإيميل ---
+                    when (val emailResult = validationState.email) {
+                        is RegisterValidation.Failed -> {
+                            // وضع رسالة الخطأ على حقل الإيميل
+
+                            Toast.makeText(
+                                requireContext(),
+                                emailResult.message.toString(),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        is RegisterValidation.Success -> {
+                            // مسح أي خطأ سابق من حقل الإيميل
+//                            binding.emailEditText.error = null
+                        }
+                        // قد تحتاج لأنواع فرعية أخرى إذا كان لديك أخطاء إيميل محددة
+                    }
+
+                    // --- التعامل مع نتيجة التحقق من كلمة المرور ---
+                    when (val passwordResult = validationState.password) {
+                        is RegisterValidation.Failed -> {
+                            Toast.makeText(
+                                requireContext(),
+                                passwordResult.message.toString(),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        is RegisterValidation.Success -> {
+                            // مسح الأخطاء من كلا حقلي كلمة المرور
+
+                        }
                     }
                 }
             }
@@ -186,22 +244,29 @@ class SignUpFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.createUserDataState.collect{ response->
+                viewModel.createUserDataState.collect { response ->
 
-                    when(response){
+                    when (response) {
                         is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
 
                         is Resource.Success -> {
                             Log.d(TAG, "viewModel.createUserDataState: ${response.data.toString()}")
 
-                            findNavController().navigate(SignUpFragmentDirections.actionRegisterFragmentToHomeFragment())
+                            findNavController().navigate(SignUpFragmentDirections.actionRegisterFragmentToHomeFragment()).also {
+                                mainActivityViewModel.getUserInfo()
+                                (requireActivity() as MainActivity).signOutItem?.isEnabled = true
+                            }
                         }
 
-                        is Resource.Error ->{
-                            Toast.makeText(requireContext(), response.message.toString(), Toast.LENGTH_SHORT).show()
-                            Log.e(TAG, "onViewCreated: ${response.message.toString()}", )
+                        is Resource.Error -> {
+                            Toast.makeText(
+                                requireContext(),
+                                response.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e(TAG, "onViewCreated: ${response.message.toString()}")
                         }
 
                         else -> {}
@@ -217,7 +282,10 @@ class SignUpFragment : Fragment() {
         }
 
         binding.closeIcon.setOnClickListener {
-            (requireActivity() as MainActivity).signOutItem?.isEnabled = false
+            (requireActivity() as MainActivity).apply {
+                signOutItem?.isEnabled = false
+                setNoUserInfoAfterSignOut()
+            }
             findNavController().navigate(SignUpFragmentDirections.actionRegisterFragmentToHomeFragment())
         }
 

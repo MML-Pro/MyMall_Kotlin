@@ -94,6 +94,15 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
+        <FrameLayout
+            android:id="@+id/ad_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            />
+
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -123,6 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/homeFragment"
         />
+
 
 
 

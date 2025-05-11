@@ -40,7 +40,7 @@ class NotificationsRepoImpl @Inject constructor(
                         Log.d(TAG, "Current data: ${snapshot.data}")
                         result.value = Resource.Success(snapshot)
                     } else {
-                        result.value = Resource.Error("Current data: null")
+                        result.value = Resource.Success(null)
                         Log.d(TAG, "Current data: null")
                     }
 

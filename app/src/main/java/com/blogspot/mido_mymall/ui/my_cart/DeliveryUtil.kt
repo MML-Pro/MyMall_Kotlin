@@ -19,4 +19,7 @@ interface DeliveryUtil {
         totalAmountTV:TextView?=null,
         quantity:Long
     )
+
+    fun onQuantityChanged(position: Int, newQuantity: Long) // <<< أضف هذه الدالة
+
 }

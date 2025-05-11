@@ -193,21 +193,21 @@ class DeliveryRepoImpl @Inject constructor(
         for (cartItem in cartItemModelList) {
             val orderDetails = hashMapOf<Any, Any>()
 
-            orderDetails["PRODUCT ID"] = cartItem.productId
-            orderDetails["PRODUCT IMAGE"] = cartItem.productImage
-            orderDetails["PRODUCT NAME"] = cartItem.productName
-            orderDetails["FREE COUPONS"] = cartItem.freeCoupons
+            orderDetails["PRODUCT ID"] = cartItem.productId.toString()
+            orderDetails["PRODUCT IMAGE"] = cartItem.productImage.toString()
+            orderDetails["PRODUCT NAME"] = cartItem.productName.toString()
+            orderDetails["FREE COUPONS"] = takeIf { cartItem.freeCoupons != null } ?: 0L
             orderDetails["USER ID"] = firebaseAuth.currentUser?.uid!!
-            orderDetails["PRODUCT QUANTITY"] = cartItem.productQuantity
-            orderDetails["OFFERS APPLIED"] = cartItem.offersApply
-            orderDetails["COUPONS APPLIED"] = cartItem.couponsApplied
+            orderDetails["PRODUCT QUANTITY"] = takeIf { cartItem.productQuantity !=null } ?: 0L
+            orderDetails["OFFERS APPLIED"] = takeIf { cartItem.offersApply != null } ?: 0L
+            orderDetails["COUPONS APPLIED"] = takeIf { cartItem.couponsApplied != null } ?: 0L
 
 
-            if (cartItem.cuttedPrice.isNotEmpty()) {
+            if (cartItem.cuttedPrice != null && cartItem.cuttedPrice.isNotEmpty()) {
                 orderDetails["CUTTED PRICE"] = cartItem.cuttedPrice
             }
 
-            orderDetails["PRODUCT PRICE"] = cartItem.productPrice
+            orderDetails["PRODUCT PRICE"] = cartItem.productPrice.toString()
 
             if (!cartItem.selectedCouponId.isNullOrEmpty()) {
                 orderDetails["COUPON ID"] = cartItem.selectedCouponId!!
@@ -225,7 +225,7 @@ class DeliveryRepoImpl @Inject constructor(
 
         val batch = firestore.batch()
 
-        // Create or update the ORDERS document
+        // Create or update_info the ORDERS document
         val ordersDocumentRef = firestore.collection("ORDERS").document(orderID)
         val ordersData = hashMapOf<String, Any>()
 
@@ -241,6 +241,7 @@ class DeliveryRepoImpl @Inject constructor(
         ordersData["ADDRESS"] = address
         ordersData["FULL NAME"] = fullName
         ordersData["PIN CODE"] = pinCode
+        ordersData["USER ID"] = firebaseAuth.currentUser?.uid!!
 
         ordersDocumentRef.set(ordersData)
 
@@ -311,7 +312,7 @@ class DeliveryRepoImpl @Inject constructor(
 //
 //        firestore.collection("PRODUCTS").document(productId)
 //            .collection("QUANTITY").document(documentId)
-//            .update("available",available)
+//            .update_info("available",available)
 //            .addOnSuccessListener {
 //
 //                result.value = Resource.Success(true)
@@ -332,7 +333,7 @@ class DeliveryRepoImpl @Inject constructor(
 //
 //        firestore.collection("PRODUCTS").document(productId)
 //            .collection("QUANTITY").document(documentId)
-//            .update("user_ID",firebaseAuth.currentUser?.uid!!)
+//            .update_info("user_ID",firebaseAuth.currentUser?.uid!!)
 //            .addOnSuccessListener {
 //
 //                result.value = Resource.Success(true)

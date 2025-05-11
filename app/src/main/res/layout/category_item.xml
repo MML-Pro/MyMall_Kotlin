@@ -30,7 +30,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/arial"
-        android:text="Home"
+        android:text="@string/home"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="@dimen/_10ssp"

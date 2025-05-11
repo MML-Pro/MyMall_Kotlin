@@ -1,5 +1,6 @@
 package com.blogspot.mido_mymall.ui.notification
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blogspot.mido_mymall.domain.usecase.notification.GetNotificationUseCase
@@ -15,14 +16,20 @@ import javax.inject.Inject
 class NotificationViewModel @Inject constructor(private val notificationUseCase: GetNotificationUseCase) :
     ViewModel() {
 
+        companion object{
+            private const val TAG = "NotificationViewModel"
+        }
+
 
     private var _notification = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val notification: Flow<Resource<DocumentSnapshot>> get() = _notification
 
     fun getNotifications(remove: Boolean) {
         viewModelScope.launch {
-            notificationUseCase(remove).collect {
-                _notification.emit(it)
+            notificationUseCase(remove).collect { data->
+
+                Log.d(TAG, "getNotifications: ${data}")
+                _notification.emit(data)
             }
         }
     }

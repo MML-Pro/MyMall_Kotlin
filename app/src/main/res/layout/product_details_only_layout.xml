@@ -14,7 +14,7 @@
         android:background="#D9D9D9"
         android:gravity="start"
         android:padding="16dp"
-        android:text="Product Details"
+        android:text="@string/product_details"
         android:textColor="#919191"
         android:textSize="@dimen/_16ssp"
         android:textStyle="bold"

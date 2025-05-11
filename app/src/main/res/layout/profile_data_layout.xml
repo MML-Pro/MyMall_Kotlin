@@ -64,10 +64,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:maxLines="2"
-            android:text="johnDoe2356@gmail.com"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_12ssp"
 
             />
     </LinearLayout>

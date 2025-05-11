@@ -12,19 +12,19 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         app:tabIndicatorHeight="2dp"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabSelectedTextColor="@color/black"
+        app:tabIndicatorColor="@color/editUserInfoTabIndicatorColor"
+        app:tabSelectedTextColor="@color/productDetailsTextColor"
         android:layout_height="wrap_content">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Info" />
+            android:text="@string/user_info" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password" />
+            android:text="@string/password" />
 
     </com.google.android.material.tabs.TabLayout>
 

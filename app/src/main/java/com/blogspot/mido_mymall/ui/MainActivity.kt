@@ -1,7 +1,6 @@
 package com.blogspot.mido_mymall.ui
 
 import android.app.Activity
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -9,10 +8,17 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isEmpty
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +31,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import com.blogspot.mido_mymall.BaseApplication
+import com.blogspot.mido_mymall.BaseApplication.AppOpenAdManager
+import com.blogspot.mido_mymall.BuildConfig
 import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.ActivityMainBinding
 import com.blogspot.mido_mymall.databinding.NavHeaderMainBinding
@@ -38,19 +47,27 @@ import com.blogspot.mido_mymall.ui.my_wish_list.MyWishlistFragmentDirections
 import com.blogspot.mido_mymall.ui.settings.SettingsFragmentDirections
 import com.blogspot.mido_mymall.ui.settings.SettingsViewModel
 import com.blogspot.mido_mymall.util.Constants
+import com.blogspot.mido_mymall.util.Constants.requestTheLatestConsentInformation
+import com.blogspot.mido_mymall.util.NetworkListener
 import com.blogspot.mido_mymall.util.Resource
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.razorpay.Checkout
 import com.razorpay.PaymentData
 import com.razorpay.PaymentResultWithDataListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
+class MainActivity : AppCompatActivity(), PaymentResultWithDataListener, HideShowIconInterface {
 
     private lateinit var mAppBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -79,23 +96,76 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
     val googleSignInClient by lazy { GoogleSignIn.getClient(this, gso) }
 
-    lateinit var actionBarLogo :ImageView
+    lateinit var actionBarLogo: ImageView
 
+    private var contentHasLoaded = false
+
+//    private lateinit var splashScreen: SplashScreen
+
+    private val networkListener by lazy { NetworkListener() }
+
+
+    private var adView: AdView? = null
+    private var adRequest: AdRequest? = null
+    private lateinit var appOpenAdManager: AppOpenAdManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        setTheme(R.style.Theme_MyMallKotlin)
+//        setTheme(R.style.Theme_MyMallKotlin)
+
+//        splashScreen = installSplashScreen()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootLayout)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(
+                systemBars.left,
+                systemBars.top + 16,
+                systemBars.right,
+                systemBars.bottom + 16
+            )
+            insets
+        }
+
+        appOpenAdManager = (application as BaseApplication).AppOpenAdManager()
+        appOpenAdManager.showAdIfAvailable(this)
+        adView = AdView(this)
+
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                networkListener.checkNetworkAvailability(this@MainActivity).collect { status ->
+                    Log.d(TAG, "onCreate: networkListener $status")
+
+                    mainActivityViewModel.networkStatus = status
+                    showNetworkStatus()
+                }
+
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                mainActivityViewModel.readBackOnline.collect {
+                    mainActivityViewModel.backOnline = it
+                }
+            }
+        }
+
 
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitleTextColor(resources.getColor(R.color.white))
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                settingsViewModel.getSelectedDayNightMode.collect{
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsViewModel.getSelectedDayNightMode.collect {
                     Constants.applySelectedDayNightMode(it)
                 }
             }
@@ -105,12 +175,12 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         drawer = binding.drawerLayout
 
         actionBarLogo = binding.actionBarLogo
+//        actionBarLogo.visibility = View.VISIBLE
 
 
         Checkout.preload(this)
 
         navHeaderMainBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
-
 
 
         //        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -125,7 +195,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
         if (signOutViewModel.firebaseAuth.currentUser == null) {
             navGraph.setStartDestination(R.id.loginFragment)
-            navController.navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+            if (navController.currentDestination?.id == R.id.homeFragment) {
+                navController.navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+            }
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.START)
             Log.d(TAG, "loginFragment: ${navGraph.startDestinationId}")
         } else {
@@ -155,9 +227,40 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
 
         navController.addOnDestinationChangedListener { _: NavController?, destination: NavDestination, _: Bundle? ->
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START)
+
+            if (destination.id == R.id.homeFragment ||
+                destination.id == R.id.nav_my_orders ||
+                destination.id == R.id.nav_my_rewards ||
+                destination.id == R.id.nav_my_cart ||
+                destination.id == R.id.nav_my_wishlist ||
+                destination.id == R.id.nav_my_account
+            ) {
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START)
+
+                binding.toolbar.setNavigationOnClickListener {
+                    drawer.openDrawer(GravityCompat.START)
+                }
+            } else {
+
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START)
+
+                }
+
+                binding.toolbar.setNavigationOnClickListener { //do whatever you want here
+
+                    navController.navigateUp()
+                }
+
+            }
+
+
+//            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START)
+
             when (destination.id) {
                 R.id.homeFragment -> {
+
                     supportActionBar!!.show()
                     invalidateOptionsMenu()
                     binding.actionBarLogo.visibility = View.VISIBLE
@@ -184,7 +287,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 }
 
                 R.id.nav_my_orders -> {
-                    fragmentTitleAndActionBar("My Orders")
+                    fragmentTitleAndActionBar(getString(R.string.my_orders))
                     changeToolbarAndStatusBarColor(
                         "#" + Integer.toHexString(
                             ContextCompat.getColor(
@@ -197,7 +300,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 }
 
                 R.id.nav_my_cart -> {
-                    fragmentTitleAndActionBar("My Cart")
+                    fragmentTitleAndActionBar(getString(R.string.my_cart))
                     changeToolbarAndStatusBarColor(
                         "#" + Integer.toHexString(
                             ContextCompat.getColor(
@@ -210,7 +313,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 }
 
                 R.id.nav_my_wishlist -> {
-                    fragmentTitleAndActionBar("My Wishlist")
+                    fragmentTitleAndActionBar(getString(R.string.my_wishlist))
                     changeToolbarAndStatusBarColor(
                         "#" + Integer.toHexString(
                             ContextCompat.getColor(
@@ -223,7 +326,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 }
 
                 R.id.nav_my_rewards -> {
-                    fragmentTitleAndActionBar("My Rewards")
+                    fragmentTitleAndActionBar(getString(R.string.my_rewards))
                     changeToolbarAndStatusBarColor(
                         "#" + Integer.toHexString(
                             ContextCompat.getColor(
@@ -234,15 +337,15 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     )
                 }
 
-                R.id.nav_my_account -> fragmentTitleAndActionBar("My account")
+                R.id.nav_my_account -> fragmentTitleAndActionBar(getString(R.string.my_account))
 
-                R.id.viewAllFragment ->{
+                R.id.viewAllFragment -> {
                     binding.actionBarLogo.visibility = View.GONE
 //                    fragmentTitleAndActionBar("Deals of the Day")
 
                 }
 
-                R.id.editUserInfoFragment->{
+                R.id.editUserInfoFragment -> {
                     changeToolbarAndStatusBarColor(
                         "#" + Integer.toHexString(
                             ContextCompat.getColor(
@@ -255,6 +358,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 //                R.id.deliveryFragment -> fragmentTitleAndActionBar("Delivery")
 //                R.id.viewAllFragment -> fragmentTitleAndActionBar("Deals of the Day")
 //                R.id.productDetailsFragment -> fragmentTitleAndActionBar("")
+
             }
         }
 
@@ -266,6 +370,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         Log.d(TAG, "signOutItem is enabled: " + signOutItem?.isEnabled)
 
         signOutItem?.setOnMenuItemClickListener {
+            destroyAdAfterLogOut()
             when (navController.currentDestination!!.id) {
                 R.id.homeFragment -> {
                     signOutViewModel.signOut(googleSignInClient)
@@ -297,7 +402,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     navController.navigate(MyAccountFragmentDirections.actionGlobalLoginFragment())
                 }
 
-                R.id.settingsFragment->{
+                R.id.settingsFragment -> {
                     signOutViewModel.signOut(googleSignInClient)
                     navController.navigate(SettingsFragmentDirections.actionGlobalLoginFragment())
                 }
@@ -307,24 +412,26 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             true
         }
 
-        if(signOutViewModel.firebaseAuth.currentUser != null){
+        if (signOutViewModel.firebaseAuth.currentUser != null) {
             mainActivityViewModel.updateLastSeen()
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                mainActivityViewModel.lastSeenUpdateState.collect{
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainActivityViewModel.lastSeenUpdateState.collect {
 
-                    if(it is Resource.Success){
+                    if (it is Resource.Success) {
+
+//                        contentHasLoaded = true
 
 //                        Toast.makeText(
 //                            this@MainActivity,
-//                            "update last seen success",
+//                            "update_info last seen success",
 //                            Toast.LENGTH_SHORT
 //                        ).show()
 
-                    }else if(it is Resource.Error){
-                        Log.e(TAG, "lastSeenUpdateState: ${it.message.toString()}" )
+                    } else if (it is Resource.Error) {
+                        Log.e(TAG, "lastSeenUpdateState: ${it.message.toString()}")
                     }
                 }
 
@@ -332,10 +439,10 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                mainActivityViewModel.userInfo.collect{
-                    if(it is Resource.Success){
-                        it.data?.let { documentSnapshot->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainActivityViewModel.userInfo.collect {
+                    if (it is Resource.Success) {
+                        it.data?.let { documentSnapshot ->
                             Glide.with(this@MainActivity)
                                 .load(documentSnapshot.get("profileImage"))
                                 .placeholder(R.drawable.account)
@@ -352,23 +459,139 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                             navHeaderMainBinding.mainEmail.text = userEmail
                         }
 
-                    }else if(it is Resource.Error){
-                        Log.e(TAG, "onCreate: ${it.message.toString()}" )
+                        contentHasLoaded = true
+
+                    } else if (it is Resource.Error) {
+                        Log.e(TAG, "onCreate: ${it.message.toString()}")
                     }
                 }
             }
         }
 
+        if (Constants.hasInternetConnection(this) && signOutViewModel.firebaseAuth.currentUser != null) {
+
+            requestTheLatestConsentInformation(this)
+            adRequest = Constants.callAndBuildAdRequest()
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                MobileAds.initialize(this@MainActivity) {
+                    Log.d(TAG, "onInitCompleted")
+                }
+            }
+
+            if (adView?.adUnitId.isNullOrEmpty()) {
+                adView?.adUnitId = BuildConfig.MAIN_ACTIVITY_BANNER
+            }
+
+            adView?.setAdSize(Constants.getAdSize(this))
+            requestHomeBanner()
+
+//            binding.adViewContainer.apply {
+//                visibility = View.VISIBLE
+//                if (isEmpty()) {
+//                    addView(adView)
+//                }
+//            }
+
+
+        } else {
+            binding.adViewContainer.removeAllViews()
+            binding.adViewContainer.visibility = View.GONE
+        }
 
     }
 
-//    override fun onStart() {
-//        super.onStart()
+
+    fun getToolBar(): Toolbar {
+        return binding.toolbar
+    }
+
+    private fun showNetworkStatus() {
+        if (!mainActivityViewModel.networkStatus) {
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_LONG)
+                .show()
+            mainActivityViewModel.saveBackOnline(true)
+        } else {
+
+            if (mainActivityViewModel.backOnline) {
+                Toast.makeText(this, getString(R.string.we_re_back_online), Toast.LENGTH_LONG)
+                    .show()
+                mainActivityViewModel.saveBackOnline(false)
+            }
+
+        }
+    }
+
+    fun requestHomeBanner() {
+        if (binding.adViewContainer.isEmpty()) {
+            if (adView != null) {
+                binding.adViewContainer.addView(adView)
+            } else {
+                adView = AdView(this)
+                adView?.setAdSize((Constants.getAdSize(this)))
+                binding.adViewContainer.apply {
+                    visibility = View.VISIBLE
+                    addView(adView)
+                }
+            }
+        }
+
+        adView?.adListener = object : AdListener() {
+
+
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d(TAG, "onAdLoaded: called")
+                if (binding.adViewContainer.isVisible == false) {
+                    binding.adViewContainer.visibility = View.VISIBLE
+
+
+                }
+            }
+
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.e(TAG, "onAdFailedToLoad: ${adError.cause.toString()}")
+                Log.e(TAG, "onAdFailedToLoad: ${adError.responseInfo.toString()}")
+                binding.adViewContainer.visibility = View.GONE
+            }
+
+        }
+        adRequest?.let { adView?.loadAd(it) }
+
+    }
+
+
+//    private fun setupSplashScreen(splashScreen: SplashScreen) {
+//        val content: View = findViewById(android.R.id.content)
+//        content.viewTreeObserver.addOnPreDrawListener(
+//            object : ViewTreeObserver.OnPreDrawListener {
+//                override fun onPreDraw(): Boolean {
+//                    return if (contentHasLoaded) {
+//                        content.viewTreeObserver.removeOnPreDrawListener(this)
+//                        true
+//                    } else false
+//                }
+//            }
+//        )
+//
+//        splashScreen.setOnExitAnimationListener { splashScreenView ->
+//            val slideBack = ObjectAnimator.ofFloat(
+//                splashScreenView.view,
+//                View.TRANSLATION_X,
+//                0f,
+//                -splashScreenView.view.width.toFloat()
+//            ).apply {
+//                interpolator = DecelerateInterpolator()
+//                duration = 800L
+//                doOnEnd { splashScreenView.remove() }
+//            }
+//
+//            slideBack.start()
+//        }
 //    }
 
 
-
-    fun startPayment(orderId:String,amount: String) {
+    fun startPayment(orderId: String, amount: String) {
         /*
         *  You need to pass the current activity to let Razorpay create CheckoutActivity
         * */
@@ -385,10 +608,10 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 "image",
                 "https://firebasestorage.googleapis.com/v0/b/my-mall-7c08e.appspot.com/o/products%2Fdownload.png?alt=media&token=c72c340f-94ac-465f-ad14-20fc07b316cf"
             )
-            options.put("theme.color", "#3399cc");
-            options.put("currency", "EGP");
+            options.put("theme.color", "#3399cc")
+            options.put("currency", "EGP")
             options.put("order_id", orderId)
-            options.put("amount", amount )//pass amount in currency subunits
+            options.put("amount", amount)//pass amount in currency subunits
 
             val retryObj = JSONObject()
             retryObj.put("enabled", true)
@@ -402,7 +625,10 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             options.put("prefill", prefill)
             co.open(activity, options)
         } catch (e: Exception) {
-            Toast.makeText(activity, "Error in payment: " + e.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                activity,
+                getString(R.string.error_in_payment) + e.message, Toast.LENGTH_LONG
+            ).show()
 //            e.printStackTrace()
             Log.e(TAG, "startPayment: ${e.message.toString()}")
             Log.e(TAG, "startPayment: ${e.cause.toString()}")
@@ -410,17 +636,19 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     }
 
 
-    fun fragmentTitleAndActionBar(title: String?) {
+    fun fragmentTitleAndActionBar(title: String? = null) {
         invalidateOptionsMenu()
         binding.actionBarLogo.visibility = View.GONE
         supportActionBar?.setDisplayShowTitleEnabled(true)
-        supportActionBar?.title = title
+        if (title != null) {
+            supportActionBar?.title = title
+        }
     }
 
     private fun changeToolbarAndStatusBarColor(color: String) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.parseColor(color)
-        binding.toolbar.setBackgroundColor(Color.parseColor(color))
+        window.statusBarColor = color.toColorInt()
+        binding.toolbar.setBackgroundColor(color.toColorInt())
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -434,44 +662,128 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String?, p1: PaymentData?) {
-                Log.d(TAG, "onPaymentSuccess: ${p1?.orderId}")
+        Log.d(TAG, "onPaymentSuccess: ${p1?.orderId}")
 
         mainActivityViewModel.updatePaymentState(true)
 
         p1?.orderId?.let { mainActivityViewModel.getOrderId(orderId = it) }
 
         if (p1 != null) {
-            mainActivityViewModel.updateOrderStatus(p1.orderId,"Paid", orderStatus = "ORDERED")
+            mainActivityViewModel.updateOrderStatus(p1.orderId, "Paid", orderStatus = "ORDERED")
         }
 
     }
 
     override fun onPaymentError(errorCode: Int, p1: String?, p2: PaymentData?) {
-                Log.e(TAG, "onPaymentError: $p1")
+        Log.e(TAG, "onPaymentError: $p1")
         mainActivityViewModel.updatePaymentState(false)
 
         p2?.orderId?.let { mainActivityViewModel.getOrderId(it) }
 
         when (errorCode) {
             Checkout.NETWORK_ERROR -> {
-                mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","NETWORK_ERROR")
+                mainActivityViewModel.updateOrderStatus(p2?.orderId!!, "not paid", "NETWORK_ERROR")
             }
+
             Checkout.INVALID_OPTIONS -> {
-                mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","INVALID_OPTIONS")
+                mainActivityViewModel.updateOrderStatus(
+                    p2?.orderId!!,
+                    "not paid",
+                    "INVALID_OPTIONS"
+                )
 
             }
+
             Checkout.PAYMENT_CANCELED -> {
-                Log.e(TAG, "onPaymentError: error ${p2.toString()}", )
+                Log.e(TAG, "onPaymentError: error ${p2.toString()}")
 
-                mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","CANCELED")
+                mainActivityViewModel.updateOrderStatus(p2?.orderId!!, "not paid", "CANCELED")
 
             }
-            Checkout.TLS_ERROR->{
+
+            Checkout.TLS_ERROR -> {
 //                Log.e(TAG, "onPaymentError: error ${p2?.paymentId}", )
-                mainActivityViewModel.updateOrderStatus(p2?.orderId!!,"not paid","TLS_ERROR")
+                mainActivityViewModel.updateOrderStatus(p2?.orderId!!, "not paid", "TLS_ERROR")
 
             }
         }
 
+
     }
+
+    fun setNoUserInfoAfterSignOut() {
+        navHeaderMainBinding.apply {
+            mainUserName.text = getString(R.string.not_signed_in)
+            mainEmail.text = ""
+            mainProfileImage.setImageResource(R.drawable.account)
+        }
+    }
+
+    override fun showBackIcon() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24)
+//        drawerToggle.setDrawerIndicatorEnabled(false)
+    }
+
+//    override fun onStop() {
+//        super.onStop()
+//        adView?.destroy()
+//        adView = null
+//    }
+
+    override fun onResume() {
+        super.onResume()
+        if (signOutViewModel.firebaseAuth.currentUser != null && binding.adViewContainer.isEmpty() && adView == null) {
+            adView = AdView(this)
+            adView?.setAdSize(Constants.getAdSize(this))
+            requestHomeBanner()
+
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adView?.destroy()
+        adView = null
+        binding.adViewContainer.apply {
+            removeAllViews()
+            visibility = View.GONE
+        }
+    }
+
+    fun destroyAdAfterLogOut() {
+        adView?.destroy()
+        adView = null
+        binding.adViewContainer.apply {
+            removeAllViews()
+            visibility = View.GONE
+        }
+    }
+
+//    fun showAdAfterLogin() {
+//        if (binding.adViewContainer.isEmpty()) {
+//
+//            if (adView == null) {
+//                adView = AdView(this)
+//                adView?.setAdSize(Constants.getAdSize(this))
+//                requestHomeBanner()
+//            } else {
+//                requestHomeBanner()
+//            }.also {
+//                binding.adViewContainer.apply {
+//                    visibility = View.VISIBLE
+//                    addView(adView)
+//                }
+//            }
+//
+//
+//        }
+//    }
 }
+
+interface HideShowIconInterface {
+    //    fun showHamburgerIcon()
+    fun showBackIcon()
+}
+

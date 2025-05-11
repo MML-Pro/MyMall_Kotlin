@@ -78,14 +78,14 @@ class OrderDetailsFragment : Fragment() {
                     when (response) {
 
                         is Resource.Success -> {
-                            response.data?.let {ratingDoc->
+                            response.data?.let { ratingDoc ->
                                 val listSize = ratingDoc.get("list_size") as Long
 
                                 val orderProductIds = arrayListOf<String>()
 
                                 args.myOrderItem.productList.forEach { myOrderItemModel ->
 
-                                    orderProductIds.add(myOrderItemModel.productId)
+                                    orderProductIds.add(myOrderItemModel.productId.toString())
                                 }
 
                                 Log.d(TAG, "orderProductIds: size ${orderProductIds.size}")
@@ -105,10 +105,10 @@ class OrderDetailsFragment : Fragment() {
 
                                     orderProductIds.forEachIndexed { index, productId ->
 
-                                        val rate =  (ratingDoc.get("rating_$i") as Long).toInt()
+                                        val rate = (ratingDoc.get("rating_$i") as Long).toInt()
 
                                         if (productId.equals(ratingId)) {
-                                            args.myOrderItem.productList[index].productRating= rate
+                                            args.myOrderItem.productList[index].productRating = rate
 
                                         }
 
@@ -463,8 +463,8 @@ class OrderDetailsFragment : Fragment() {
                             shippedIndicator.imageTintList =
                                 ColorStateList.valueOf(resources.getColor(R.color.colorPrimary))
                             shippedDateTV.text = formattedShippedDate
-                            shippedTv.text = "Cancelled"
-                            shippedBodyTv.text = "Your order has been cancelled"
+                            shippedTv.text = getString(R.string.cancelled)
+                            shippedBodyTv.text = getString(R.string.your_order_has_been_cancelled)
 
                             firstProgress.progress = 100
                             secondProgress.progress = 100
@@ -484,8 +484,8 @@ class OrderDetailsFragment : Fragment() {
                         packedIndicator.imageTintList =
                             ColorStateList.valueOf(resources.getColor(R.color.colorPrimary))
                         packedDateTV.text = formattedPackedDate
-                        packedTV.text = "Canceled"
-                        packedBodyTv.text = "Your order has been Canceled"
+                        packedTV.text = getString(R.string.cancelled)
+                        packedBodyTv.text = getString(R.string.your_order_has_been_cancelled)
 
                         firstProgress.progress = 100
                         secondProgress.visibility = View.GONE
@@ -580,30 +580,36 @@ class OrderDetailsFragment : Fragment() {
             Log.d(TAG, "submitCartSummaryData: totalAmount ${cartSummary.totalAmount}")
             Log.d(TAG, "submitCartSummaryData: savedAmount ${cartSummary.savedAmount}")
 
-            totalItems.text = "Price (${cartSummary.totalItems} items)"
-            cartSummaryTotalItemsPrice.text = "EGP.${
-                String.format(
+            val formattedTotalItemsPrice = String.format(
                     locale = Locale.ENGLISH,
                     "%.2f",
                     cartSummary.totalItemsPrice
                 )
-            }/-"
+
+
+            totalItems.text = getString(R.string.price_number_items, cartSummary.totalItems)
+
+            cartSummaryTotalItemsPrice.text =
+                getString(R.string.egp_price, formattedTotalItemsPrice)
 
             if (cartSummary.deliveryPrice == "Free") {
-                cartSummaryDeliveryPrice.text = cartSummary.deliveryPrice
+                cartSummaryDeliveryPrice.text = getString(R.string.free)
             } else {
-                cartSummaryDeliveryPrice.text = "EGP.${cartSummary.deliveryPrice}/-"
+                cartSummaryDeliveryPrice.text =
+                    getString(R.string.egp_price, cartSummary.deliveryPrice)
+
             }
 
-            cartSummaryTotalAmountTV.text = "EGP.${cartSummary.totalAmount}/-"
+            cartSummaryTotalAmountTV.text =
+                getString(R.string.egp_price, cartSummary.totalAmount.toString())
 
-            savedAmount.text = "You saved EGP.${
-                String.format(
-                    locale = Locale.ENGLISH,
-                    "%.2f",
-                    cartSummary.savedAmount
-                )
-            }/- on this order"
+            val savedAmountValue = String.format(
+                locale = Locale.ENGLISH,
+                "%.2f",
+                cartSummary.savedAmount
+            )
+
+            savedAmount.text = getString(R.string.saved_amount, savedAmountValue)
         }
     }
 

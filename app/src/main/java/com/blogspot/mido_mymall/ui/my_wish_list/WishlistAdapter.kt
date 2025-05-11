@@ -89,9 +89,12 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
 
                 binding.freeCouponIcon.visibility = View.VISIBLE
                 if (freeCouponsNo == 1L) {
-                    binding.freeCouponTV.text = "free $freeCouponsNo coupon"
+                    binding.freeCouponTV.text =
+                        binding.root.resources.getString(R.string.free_coupon, freeCouponsNo)
                 } else {
-                    binding.freeCouponTV.text = "free $freeCouponsNo coupons"
+                    binding.freeCouponTV.text =
+                        binding.root.resources.getString(R.string.free_coupons, freeCouponsNo)
+
                 }
             } else {
                 binding.freeCouponIcon.visibility = View.INVISIBLE
@@ -118,8 +121,10 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
                 binding.divider7.visibility = View.VISIBLE
                 binding.averageRatingMiniViewTV.text = wishListModel.averageRating
                 val totalRatingsNo: Long = wishListModel.totalRatings
-                binding.totalRatingsTv.text = "($totalRatingsNo) Ratings"
-                binding.productPrice.text = "EGP.${wishListModel.productPrice}/-"
+                binding.totalRatingsTv.text =
+                    binding.root.resources.getString(R.string.number_ratings, totalRatingsNo)
+                binding.productPrice.text =
+                    binding.root.resources.getString(R.string.egp_price, wishListModel.productPrice)
                 binding.cuttedPrice.text = wishListModel.cuttedPrice
                 if (wishListModel.isCOD) {
                     binding.cashOnDeliveryTV.visibility = View.VISIBLE
@@ -129,10 +134,16 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
             } else {
                 binding.linearLayout2.visibility = View.INVISIBLE
                 binding.totalRatingsTv.visibility = View.INVISIBLE
-                binding.productPrice.text = "Out of Stock"
-                binding.productPrice.setTextColor(
-                    binding.root.resources.getColor(R.color.colorPrimary)
-                )
+                binding.productPrice.text = binding.root.resources.getString(R.string.out_of_stock)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    binding.productPrice.setTextColor(
+                        binding.root.resources.getColor(R.color.colorPrimary,binding.root.context.theme)
+                    )
+                }else {
+                    @Suppress("DEPRECATION")
+                    binding.productPrice.setTextColor(
+                        binding.root.resources.getColor(R.color.colorPrimary))
+                }
                 binding.cuttedPrice.visibility = View.INVISIBLE
                 binding.cashOnDeliveryTV.visibility = View.INVISIBLE
                 binding.divider7.visibility = View.INVISIBLE
@@ -154,42 +165,7 @@ class WishlistAdapter(IS_THIS_WISH_LIST: Boolean, private val wishlistUtil: Wish
             binding.root.setOnClickListener {
 
 //                 String productID = wishListModel.getProductImage()
-                when (findNavController(binding.root).currentDestination?.id) {
 
-
-                    R.id.nav_my_wishlist -> {
-
-                        if (wishListModel.productID != null) {
-                            findNavController(binding.root)
-                                .navigate(
-                                    MyWishlistFragmentDirections
-                                        .actionNavMyWishlistToProductDetailsFragment(wishListModel.productID!!)
-                                )
-                        }
-                    }
-
-                    R.id.homeFragment -> {
-
-                        val navOption =
-                            NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build()
-
-
-                        findNavController(binding.root).navigate(
-                            HomeFragmentDirections
-                                .actionHomeFragmentToProductDetailsFragment(wishListModel.productID!!),
-                            navOption
-                        )
-                    }
-
-                    else -> {
-                        findNavController(binding.root)
-                            .navigate(
-                                ViewAllFragmentDirections
-                                    .actionViewAllFragmentToProductDetailsFragment(wishListModel.productID!!)
-                            )
-
-                    }
-                }
             }
         }
     }

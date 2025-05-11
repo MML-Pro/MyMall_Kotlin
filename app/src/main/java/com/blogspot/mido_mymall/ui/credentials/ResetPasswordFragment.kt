@@ -1,5 +1,6 @@
 package com.blogspot.mido_mymall.ui.credentials
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -12,7 +13,6 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -49,6 +49,7 @@ class ResetPasswordFragment : Fragment() {
         return binding.root
     }
 
+    @Suppress("DEPRECATION")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -95,10 +96,29 @@ class ResetPasswordFragment : Fragment() {
                             scaleAnimation.repeatCount = 1
 
                             binding.emailConfirmationTV.text = getString(R.string.email_confirmation_success_message)
-                            binding.emailIcon.setColorFilter(resources.getColor(R.color.success))
-                            binding.emailConfirmationTV.setTextColor(
-                                requireActivity().resources.getColor(R.color.success)
-                            )
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                binding.emailIcon.setColorFilter(
+                                    resources.getColor(
+                                        R.color.success,
+                                        requireActivity().theme
+                                    )
+                                )
+                                binding.emailConfirmationTV.setTextColor(
+                                    requireActivity().resources.getColor(R.color.success,requireActivity().theme)
+                                )
+                            }else {
+                                binding.emailIcon.setColorFilter(
+                                    resources.getColor(
+                                        R.color.success
+                                    )
+                                )
+
+                                binding.emailConfirmationTV.setTextColor(
+                                    requireActivity().resources.getColor(R.color.success)
+                                )
+                            }
+
                             TransitionManager.beginDelayedTransition(binding.EmailIconAndTextLinearLayout)
                             binding.emailIcon.visibility = View.VISIBLE
                             binding.emailConfirmationTV.visibility = View.VISIBLE
@@ -108,7 +128,7 @@ class ResetPasswordFragment : Fragment() {
                                 override fun onAnimationStart(animation: Animation) {}
                                 override fun onAnimationEnd(animation: Animation) {
 
-                                    Toast.makeText(requireContext(), "Animation done", Toast.LENGTH_SHORT).show()
+//                                    Toast.makeText(requireContext(), "Animation done", Toast.LENGTH_SHORT).show()
                                     binding.progressBar.visibility = View.GONE
                                 }
 
@@ -124,7 +144,7 @@ class ResetPasswordFragment : Fragment() {
                                 binding.EmailIconAndTextLinearLayout
                             )
                             binding.emailConfirmationTV.setTextColor(
-                                requireActivity().resources.getColor(R.color.colorPrimary)
+                                requireActivity().resources.getColor(R.color.btnRed)
                             )
                             binding.emailConfirmationTV.text = response.message.toString()
                             binding.emailIcon.visibility = View.VISIBLE

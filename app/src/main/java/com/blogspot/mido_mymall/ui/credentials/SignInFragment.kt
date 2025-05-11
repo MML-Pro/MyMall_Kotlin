@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.FragmentSigninBinding
 import com.blogspot.mido_mymall.ui.MainActivity
 import com.blogspot.mido_mymall.ui.MainActivityViewModel
@@ -84,12 +85,16 @@ class SignInFragment : Fragment() {
         //        firebaseAuth = FirebaseAuth.getInstance();
 //        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 //        setHasOptionsMenu(false);
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(signOutViewModel.firebaseAuth.currentUser == null){
+            (requireActivity()as MainActivity).destroyAdAfterLogOut()
+        }
 
         binding.btnlogin.setOnClickListener {
             signInViewModel.signIn(
@@ -103,7 +108,7 @@ class SignInFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+                binding.inputEmail.error = null
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -112,7 +117,7 @@ class SignInFragment : Fragment() {
 
                 if (!isValid) {
                     // Show an error message
-                    binding.inputEmail.error = "Invalid email"
+                    binding.inputEmail.error = getString(R.string.invalid_email)
                 } else {
                     // Clear the error message
                     binding.inputEmail.error = null
@@ -130,7 +135,7 @@ class SignInFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+                binding.inputPassword.error = null
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -139,7 +144,8 @@ class SignInFragment : Fragment() {
                 val isValid = password.length >= 6
                 if (!isValid) {
                     // Show an error message
-                    binding.inputPassword.error = "Password must have at least 6 characters"
+                    binding.inputPassword.error =
+                        getString(R.string.password_must_have_at_least_6_characters)
                 } else {
                     // Clear the error message
                     binding.inputPassword.error = null
@@ -185,14 +191,15 @@ class SignInFragment : Fragment() {
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
 
-                            (requireActivity() as MainActivity).apply {
-                                signOutItem?.isEnabled = true
-                                mainActivityViewModel.getUserInfo()
-                            }
-
                             findNavController().navigate(
                                 SignInFragmentDirections.actionLoginFragmentToHomeFragment()
-                            )
+                            ).also {
+                                (requireActivity() as MainActivity).apply {
+                                    signOutItem?.isEnabled = true
+                                    mainActivityViewModel.getUserInfo()
+                                    (requireActivity()as MainActivity).requestHomeBanner()
+                                }
+                            }
 
                             Log.d(TAG, "signInViewModel.login: ${response.data.toString()}")
                         }
@@ -258,6 +265,8 @@ class SignInFragment : Fragment() {
                                 userEmail
                             )
 
+                            (requireActivity() as MainActivity).requestHomeBanner()
+
                         }
 
                         is Resource.Error -> {
@@ -320,12 +329,12 @@ class SignInFragment : Fragment() {
                         is Resource.Success -> {
                             Log.d(TAG, "signUpViewModel.createUserDataState: ${response.data.toString()}")
 
-                            (requireActivity() as MainActivity).apply {
-                                signOutItem?.isEnabled = true
-                                mainActivityViewModel.getUserInfo()
+                            findNavController().navigate(SignInFragmentDirections.actionLoginFragmentToHomeFragment()).also {
+                                (requireActivity() as MainActivity).apply {
+                                    signOutItem?.isEnabled = true
+                                    mainActivityViewModel.getUserInfo()
+                                }
                             }
-
-                            findNavController().navigate(SignInFragmentDirections.actionLoginFragmentToHomeFragment())
 
 
                         }

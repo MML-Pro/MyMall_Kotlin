@@ -15,6 +15,7 @@ import com.blogspot.mido_mymall.databinding.FragmentMyRewardBinding
 import com.blogspot.mido_mymall.domain.models.RewardModel
 import com.blogspot.mido_mymall.util.Resource
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -53,7 +54,10 @@ class MyRewardsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getUserLastSeen()
+
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            viewModel.getUserLastSeen()
+        }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/_8sdp"
     tools:context="com.blogspot.mido_mymall.ui.view_all.ViewAllFragment">
 
 
@@ -11,8 +12,8 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/lightGray"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,19 +23,32 @@
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lightGray"
-        android:verticalSpacing="1dp"
-        android:horizontalSpacing="1dp"
+        android:background="@color/detailsBackgroundColor"
+        android:clipToPadding="false"
+        android:horizontalSpacing="2dp"
+        android:numColumns="2"
+        android:paddingTop="8dp"
+        android:verticalSpacing="10dp"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:numColumns="auto_fit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+    <!--        android:id="@+id/gridRecyclerView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:clipToPadding="false"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        tools:visibility="visible">-->
 
-
+    <!--    </androidx.recyclerview.widget.RecyclerView>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

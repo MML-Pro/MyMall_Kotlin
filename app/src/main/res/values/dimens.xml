@@ -13,4 +13,7 @@
     <dimen name="my_orders_text_views_margin_start">4dp</dimen>
     <dimen name="my_orders_text_views_margin_end">4dp</dimen>
 
+    <dimen name="test_size">@dimen/_130sdp</dimen>
+
+
 </resources>

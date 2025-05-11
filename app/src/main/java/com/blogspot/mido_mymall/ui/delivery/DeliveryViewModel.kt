@@ -25,9 +25,9 @@ class DeliveryViewModel @Inject constructor(
     private val getAddressUseCase: GetAddressUseCase,
     private val updateCartListUseCase: UpdateCartListUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
-    private val getAvailableQuantitiesUseCase: GetAvailableQuantitiesUseCase,
-    private val updateAvailableQuantitiesUseCase: UpdateAvailableQuantitiesUseCase,
-    private val updateAvailableQuantitiesIdsUseCase: UpdateAvailableQuantitiesIdsUseCase,
+//    private val getAvailableQuantitiesUseCase: GetAvailableQuantitiesUseCase,
+//    private val updateAvailableQuantitiesUseCase: UpdateAvailableQuantitiesUseCase,
+//    private val updateAvailableQuantitiesIdsUseCase: UpdateAvailableQuantitiesIdsUseCase,
     private val placeOrderUseCase: PlaceOrderUseCase
 
 ) :
@@ -96,6 +96,14 @@ class DeliveryViewModel @Inject constructor(
                 _placeOrderStatus.emit(it)
             }
         }
+    }
+
+    fun resetCreateOrderState(){
+        _orderResponse.value = Resource.Ideal()
+    }
+
+    fun resetPlaceOrderState(){
+        _placeOrderStatus.value = Resource.Ideal()
     }
 
 //    fun getAvailableQuantities(cartItemModelList: ArrayList<CartItemModel>) {

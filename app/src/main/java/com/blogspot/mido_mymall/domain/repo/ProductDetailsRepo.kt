@@ -9,15 +9,15 @@ interface ProductDetailsRepo {
 
     suspend fun getProductDetails(productID: String): Flow<Resource<DocumentSnapshot>>
 
-    suspend fun getWishListIds(): Flow<Resource<DocumentSnapshot>>
+    suspend fun getWishListIds(): Resource<DocumentSnapshot>
 
-    suspend fun saveWishListIds(productId: String, wishListIdsSize: Int): Flow<Resource<Boolean>>
+    suspend fun saveWishListIds(productId: String, wishListIdsSize: Int): Resource<Boolean>
 
     suspend fun removeFromWishList(
         wishListIds: ArrayList<String>,
         wishListModelList: ArrayList<WishListModel>,
         index: Int
-    ): Flow<Resource<Boolean>>
+    ): Resource<Boolean>
 
 
     suspend fun getRatings(): Flow<Resource<DocumentSnapshot>>

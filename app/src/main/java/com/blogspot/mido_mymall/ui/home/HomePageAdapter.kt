@@ -1,16 +1,21 @@
 package com.blogspot.mido_mymall.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +24,6 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.bumptech.glide.Glide
 import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.GridProductLayoutBinding
 import com.blogspot.mido_mymall.databinding.HorizontalScrollLayoutBinding
@@ -29,19 +33,24 @@ import com.blogspot.mido_mymall.domain.models.HomePageModel
 import com.blogspot.mido_mymall.domain.models.HorizontalProductScrollModel
 import com.blogspot.mido_mymall.domain.models.SliderModel
 import com.blogspot.mido_mymall.domain.models.WishListModel
+import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdView
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.abs
 
-class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
+private const val TAG = "HomePageAdapter"
+class HomePageAdapter(private val homePageModelList: ArrayList<HomePageModel>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private val homePageModelList: ArrayList<HomePageModel>
 
     private var lastPosition = -1
 
     init {
-        this.homePageModelList = homePageModelList
         recycledViewPool = RecycledViewPool()
     }
 
@@ -100,9 +109,12 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             }
 
             HomePageModel.STRIP_AD_BANNER -> {
-                val resource = homePageModelList[position].image!!
-                val color: String = homePageModelList[position].backgroundColor!!
-                (holder as StripAdBannerViewHolder).setStripAd(resource, color)
+//                val resource = homePageModelList[position].image!!
+//                val color: String = homePageModelList[position].backgroundColor!!
+//                (holder as StripAdBannerViewHolder).setStripAd(resource, color)
+
+                (holder as StripAdBannerViewHolder).bind(model = homePageModelList[position])
+
             }
 
             HomePageModel.HORIZONTAL_PRODUCT_VIEW -> {
@@ -272,18 +284,207 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
 
     }
 
-    private class StripAdBannerViewHolder(private val stripAdLayoutBinding: StripAdLayoutBinding) :
-        RecyclerView.ViewHolder(stripAdLayoutBinding.root) {
+private class StripAdBannerViewHolder(private val stripAdLayoutBinding: StripAdLayoutBinding) :
+    RecyclerView.ViewHolder(stripAdLayoutBinding.root) {
 
+    // تعريف AdLoader مرة واحدة لكل ViewHolder (قد يكون هذا جيدًا أو سيئًا حسب استراتيجيتك)
+    // من الأفضل غالبًا تحميل الإعلانات في الـ Fragment/ViewModel وتمريرها
+    private var adLoader: AdLoader? = null
+    private var currentNativeAd: NativeAd? = null // لتخزين الإعلان المحمل وتدميره لاحقًا
 
-        fun setStripAd(resource: String, color: String) {
+    init {
+        // يمكنك تهيئة AdLoader هنا أو داخل bind عند الحاجة لأول مرة
+    }
+
+    private fun buildAdLoader(): AdLoader {
+       return AdLoader.Builder(
+                stripAdLayoutBinding.root.context,
+                // استخدم معرف اختبار Native Ad الصحيح!
+                stripAdLayoutBinding.root.context.getString(R.string.in_content_ad) // مثال لمعرف اختبار Native
+                // أو معرفك الحقيقي للإعلانات المدمجة
+            )
+            .forNativeAd { nativeAd ->
+                Log.d(TAG, "Native Ad Received")
+                // تخزين الإعلان لتدميره لاحقًا
+                currentNativeAd?.destroy() // تدمير الإعلان القديم إذا كان موجودًا
+                currentNativeAd = nativeAd
+
+                // التأكد أن الـ ViewHolder لا يزال صالحًا
+                if (adapterPosition == RecyclerView.NO_POSITION) {
+                    nativeAd.destroy()
+                    return@forNativeAd
+                }
+                // عرض الإعلان في الحاوية المخصصة
+                displayNativeAd(stripAdLayoutBinding.adViewContainer, nativeAd)
+            }
+            .withAdListener(object : AdListener() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.e(TAG, "Native Ad Failed To Load: ${adError.message} (Code: ${adError.code})")
+                    // يمكنك محاولة إخفاء الحاوية هنا أو عرض شيء آخر
+                    stripAdLayoutBinding.adViewContainer.visibility = View.GONE
+                    // قم بتنظيف المرجع للإعلان القديم إذا فشل التحميل
+                    currentNativeAd = null
+                }
+                override fun onAdLoaded() {
+                    super.onAdLoaded()
+                    Log.d(TAG, "AdListener: onAdLoaded event triggered (but native ad is handled in forNativeAd)")
+                    // لا تعرض الإعلان هنا، يتم التعامل معه في forNativeAd
+                }
+            })
+            .build() // بناء الـ AdLoader
+    }
+
+    // دالة عرض الصورة (تبقى كما هي تقريبًا)
+    fun setStripAd(imageUrl: String?, backgroundColorStr: String?) {
+        stripAdLayoutBinding.stripAdImage.visibility = View.VISIBLE // <<< تأكد من إظهار ImageView
+        if (imageUrl != null) {
             Glide.with(stripAdLayoutBinding.root.context)
-                .load(resource)
+                .load(imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .into(stripAdLayoutBinding.stripAdImage)
-            stripAdLayoutBinding.root.setBackgroundColor(Color.parseColor(color))
+        } else {
+             stripAdLayoutBinding.stripAdImage.setImageResource(R.drawable.placeholder_image)
+        }
+        try {
+             stripAdLayoutBinding.root.setBackgroundColor(backgroundColorStr?.toColorInt() ?: Color.TRANSPARENT)
+        } catch (e: Exception) {
+             stripAdLayoutBinding.root.setBackgroundColor(Color.TRANSPARENT)
         }
     }
+
+    // دالة عرض الإعلان المدمج (مُعدلة بالكامل)
+    private fun displayNativeAd(adContainer: FrameLayout, ad: NativeAd) { // استخدم FrameLayout أو ViewGroup
+        val context = adContainer.context
+        val inflater = LayoutInflater.from(context)
+
+        // 1. تضخيم تخطيط الإعلان المدمج المخصص (native_ad_layout.xml)
+        val adView = inflater.inflate(R.layout.native_ad_layout, null) as NativeAdView
+
+        // 2. ربط الـ Views داخل تخطيط الإعلان المدمج
+        adView.mediaView = adView.findViewById(R.id.ad_media) // MediaView
+        adView.headlineView = adView.findViewById(R.id.ad_headline) // TextView
+        adView.bodyView = adView.findViewById(R.id.ad_body) // TextView
+        adView.callToActionView = adView.findViewById(R.id.ad_call_to_action) // Button
+        adView.iconView = adView.findViewById(R.id.ad_app_icon) // ImageView
+        adView.advertiserView = adView.findViewById(R.id.ad_advertiser) // TextView (اختياري)
+        // ... (أضف أي views أخرى قمت بتعريفها مثل price, store, star rating)
+
+        // 3. تعبئة الـ Views ببيانات الإعلان
+        (adView.headlineView as? TextView)?.text = ad.headline
+        adView.mediaView?.setMediaContent(ad.mediaContent ?: return) // هام: التعامل مع mediaContent
+        adView.mediaView?.setImageScaleType(ImageView.ScaleType.CENTER_CROP) // أو FitCenter حسب تصميمك
+
+        if (ad.body == null) {
+            adView.bodyView?.visibility = View.INVISIBLE
+        } else {
+            adView.bodyView?.visibility = View.VISIBLE
+            (adView.bodyView as? TextView)?.text = ad.body
+        }
+
+        if (ad.callToAction == null) {
+            adView.callToActionView?.visibility = View.INVISIBLE
+        } else {
+            adView.callToActionView?.visibility = View.VISIBLE
+            (adView.callToActionView as? Button)?.text = ad.callToAction
+        }
+
+        if (ad.icon == null) {
+            adView.iconView?.visibility = View.GONE // أو INVISIBLE
+        } else {
+            (adView.iconView as? ImageView)?.setImageDrawable(ad.icon?.drawable)
+            adView.iconView?.visibility = View.VISIBLE
+        }
+
+        if (ad.advertiser == null) {
+            adView.advertiserView?.visibility = View.INVISIBLE
+        } else {
+            (adView.advertiserView as? TextView)?.text = ad.advertiser
+            adView.advertiserView?.visibility = View.VISIBLE
+        }
+
+        // ... (قم بتعبئة أي views أخرى)
+
+        // 4. تسجيل كائن الإعلان مع الـ NativeAdView
+        adView.setNativeAd(ad)
+
+        // 5. إضافة تخطيط الإعلان المُعبأ إلى الحاوية المخصصة
+        adContainer.removeAllViews() // إزالة أي إعلان قديم من الحاوية
+        adContainer.addView(adView)  // إضافة الإعلان الجديد
+        adContainer.visibility = View.VISIBLE // تأكد من أن الحاوية مرئية
+        Log.d(TAG, "Native Ad displayed in container")
+    }
+
+    // دالة الربط الرئيسية
+    fun bind(model: HomePageModel) {
+        if (model.isAd) {
+            Log.d(TAG, "Binding Ad at position: $adapterPosition")
+            // إظهار حاوية الإعلان وإخفاء الصورة
+            stripAdLayoutBinding.stripAdImage.visibility = View.GONE
+            stripAdLayoutBinding.adViewContainer.visibility = View.VISIBLE // إظهار مبدئي للحاوية
+
+            // ---- استراتيجية تحميل محسنة (مثال بسيط) ----
+            // تحميل الإعلان فقط إذا لم يكن هناك إعلان محمل حاليًا لهذا الـ ViewHolder
+            if (currentNativeAd == null && (adLoader == null || !adLoader!!.isLoading)) {
+                 Log.d(TAG, "No current ad or loader not loading. Requesting new ad.")
+                 // تأكد من بناء AdLoader إذا لم يكن موجودًا
+                 if (adLoader == null) {
+                     adLoader = buildAdLoader()
+                 }
+                 adLoader?.loadAd(AdRequest.Builder().build())
+            } else if (currentNativeAd != null) {
+                 // إذا كان هناك إعلان محمل بالفعل، فقط اعرضه مرة أخرى
+                 Log.d(TAG, "Re-displaying previously loaded native ad.")
+                 displayNativeAd(stripAdLayoutBinding.adViewContainer, currentNativeAd!!)
+            } else {
+                 Log.d(TAG, "AdLoader is currently loading.")
+                 // لا تفعل شيئًا، انتظر نتيجة التحميل من الـ listener/callback
+                 // قد ترغب في عرض placeholder مؤقت هنا
+            }
+            // ---- نهاية الاستراتيجية المحسنة ----
+
+            /* // --- الكود القديم (تحميل في كل مرة bind) ---
+            stripAdLayoutBinding.adViewContainer.visibility = View.VISIBLE
+            // تأكد من بناء AdLoader إذا لم يكن موجودًا
+            if (adLoader == null) {
+                 adLoader = buildAdLoader()
+            }
+            // تحقق مما إذا كان AdLoader لا يزال يقوم بالتحميل لتجنب الطلبات المتعددة بسرعة
+            if (!adLoader!!.isLoading) {
+                Log.d(TAG, "Requesting Ad in Bind")
+                adLoader!!.loadAd(AdRequest.Builder().build())
+            } else {
+                Log.d(TAG, "AdLoader is already loading in Bind")
+            }
+            */
+
+        } else {
+            Log.d(TAG, "Binding Image at position: $adapterPosition")
+            // إظهار الصورة وإخفاء حاوية الإعلان
+            stripAdLayoutBinding.adViewContainer.visibility = View.GONE
+            stripAdLayoutBinding.stripAdImage.visibility = View.VISIBLE // <<< تأكد من إظهار ImageView
+            setStripAd(model.image, model.backgroundColor)
+            // قم بتنظيف الإعلان القديم عند عرض صورة
+            currentNativeAd?.destroy()
+            currentNativeAd = null
+        }
+    }
+
+    // دالة التنظيف عند إعادة التدوير
+     fun clearResources() {
+         Log.d(TAG, "Clearing resources for position: $adapterPosition")
+         // تدمير الإعلان المدمج الحالي
+         currentNativeAd?.destroy()
+         currentNativeAd = null
+         // إزالة Views من حاوية الإعلان (احتياطي)
+         stripAdLayoutBinding.adViewContainer.removeAllViews()
+         // تنظيف Glide
+         Glide.with(stripAdLayoutBinding.root.context).clear(stripAdLayoutBinding.stripAdImage)
+         stripAdLayoutBinding.stripAdImage.setImageDrawable(null)
+         // إعادة تعيين الرؤية
+         stripAdLayoutBinding.adViewContainer.visibility = View.GONE
+         stripAdLayoutBinding.stripAdImage.visibility = View.GONE
+     }
+} // نهاية StripAdBannerViewHolder
 
     private inner class HorizontalProductViewHolder(private val binding: HorizontalScrollLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -301,7 +502,10 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
             color: String
         ) {
             binding.horizontalScrollLayoutTitle.text = title
-            binding.container.backgroundTintList = ColorStateList.valueOf(Color.parseColor(color))
+
+            Log.v(TAG, "setHorizontalProductsLayout: title is $title")
+
+            binding.container.backgroundTintList = ColorStateList.valueOf(color.toColorInt())
             if (productScrollModelList.size > 8) {
                 binding.hsViewAllButton.visibility = View.VISIBLE
 
@@ -353,16 +557,24 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
         ) {
 
             binding.titleTV.text = title
+
+            Log.v(TAG, "setGridProductLayout: $title")
+
             binding.container.backgroundTintList = ColorStateList.valueOf(
-                Color.parseColor(
-                    backgroundColor
-                )
+                backgroundColor.toColorInt()
             )
 
 
 //            binding.productsGridView
 //                    .setAdapter(new GridProductAdapter(horizontalProductScrollModelList));
             for (i in 0..3) {
+                Log.d(
+                    TAG,
+                    "Product [$i]: ID = ${horizontalProductScrollModelList[i].productID}, " +
+                            "Name = ${horizontalProductScrollModelList[i].productName}"
+                )
+
+
                 val hsProductImage: ImageView =
                     binding.gridLayout.getChildAt(i).findViewById(R.id.hsProductImage)
                 val hsProductName: TextView =
@@ -380,7 +592,10 @@ class HomePageAdapter(homePageModelList: ArrayList<HomePageModel>) :
                     .into(hsProductImage)
                 hsProductName.text = horizontalProductScrollModelList[i].productName
                 hsProductDescription.text = horizontalProductScrollModelList[i].productSubtitle
-                hsProductPrice.text = "EGP. ${horizontalProductScrollModelList[i].productPrice} /-"
+                hsProductPrice.text = binding.root.resources.getString(
+                    R.string.egp_price,
+                    horizontalProductScrollModelList[i].productPrice
+                )
                 val productID: String = horizontalProductScrollModelList[i].productID.toString()
 
                 binding.gridLayout.getChildAt(i).setOnClickListener {

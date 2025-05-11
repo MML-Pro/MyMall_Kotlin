@@ -43,6 +43,9 @@ class ProductSpecsAdapter() : RecyclerView.Adapter<ProductSpecsAdapter.ViewHolde
                 val titleTv = TextView(parent.context)
                 titleTv.setTypeface(null, Typeface.BOLD)
                 titleTv.setTextColor(parent.resources.getColor(R.color.spacesTitleTextColor))
+
+                titleTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f) // Set the desired title size here
+
                 val layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
                 )

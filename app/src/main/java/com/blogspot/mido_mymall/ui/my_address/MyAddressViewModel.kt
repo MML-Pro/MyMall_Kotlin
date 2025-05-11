@@ -47,12 +47,18 @@ class MyAddressViewModel @Inject constructor(
         }
     }
 
-    fun removeAddress(addressesModelList: ArrayList<AddressesModel>, position: Int) {
+    fun removeAddress(addressesModelList:List<AddressesModel>, position: Int, selectedCurrentIndex: Int ) {
 
         viewModelScope.launch {
-            removeAddressUseCase(addressesModelList, position).collect{
+            removeAddressUseCase(addressesModelList, position, selectedCurrentIndex).collect{
                 _removeAddressState.emit(it)
             }
         }
     }
+
+
+    fun resetUpdateAddressState() {
+        _updateSelectedAddressState.value = Resource.Ideal() // أو أي قيمة تمثل الحالة الأولية/الفارغة
+    }
+
 }

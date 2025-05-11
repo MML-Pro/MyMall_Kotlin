@@ -1,79 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/_120sdp"
-    android:layout_height="@dimen/_190sdp"
-    android:layout_margin="4dp"
-    android:elevation="3dp"
+    android:layout_width="@dimen/_140sdp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:background="@color/detailsBackgroundColor"
-    app:strokeWidth="2dp">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/hsProductImage"
-        android:layout_width="@dimen/_75sdp"
-        android:layout_height="@dimen/_75sdp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
         android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/placeholder_image" />
+
 
     <TextView
         android:id="@+id/hsProductName"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_margin="6dp"
         android:fontFamily="@font/arial"
         android:gravity="center"
         android:maxLines="2"
         android:text="Redmi 5A"
         android:textAlignment="center"
         android:textColor="@color/productDetailsTextColor"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hsProductImage" />
+        android:textSize="@dimen/_12ssp" />
 
     <TextView
         android:id="@+id/hsProductDescription"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:maxLines="2"
-        android:fontFamily="@font/arial"
+        android:layout_margin="4dp"
         android:ellipsize="end"
+        android:fontFamily="@font/arial"
         android:gravity="center"
+        android:maxLines="2"
         android:text="SD 425 Processor"
         android:textAlignment="center"
         android:textColor="@color/subtitleTextColor"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@+id/hsProductPrice"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hsProductName" />
+        android:textSize="@dimen/_12ssp" />
 
     <TextView
         android:id="@+id/hsProductPrice"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="4dp"
+        android:paddingBottom="4dp"
         android:fontFamily="@font/arial"
         android:gravity="center"
         android:text="From EGP.5999"
+        android:maxLines="1"
         android:textAlignment="center"
         android:textColor="@color/hrScrollProductPriceTextColor"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textSize="@dimen/_12ssp" />
+
+</LinearLayout>

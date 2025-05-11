@@ -2,18 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_search"
-        android:title="Search"
-        android:icon="@drawable/ic_search"
-        app:showAsAction="always"
-
-        />
 
 
     <item
         android:id="@+id/action_cart"
-        android:title="Cart"
+        android:title="@string/my_cart"
         android:icon="@drawable/baseline_shopping_cart"
         app:actionLayout="@layout/cart_badge_layout"
         app:showAsAction="always"

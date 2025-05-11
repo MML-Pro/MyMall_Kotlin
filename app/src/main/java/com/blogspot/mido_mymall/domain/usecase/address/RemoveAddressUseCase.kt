@@ -7,7 +7,8 @@ import javax.inject.Inject
 class RemoveAddressUseCase @Inject constructor(private val addressRepo: AddressRepo) {
 
     suspend operator fun invoke(
-        addressesModelList: ArrayList<AddressesModel>,
-        position: Int
-    ) = addressRepo.removeAddress(addressesModelList, position)
+        addressesModelList: List<AddressesModel>,
+        position: Int,
+        selectedCurrentIndex: Int
+    ) = addressRepo.removeAddress(addressesModelList, position,selectedCurrentIndex)
 }

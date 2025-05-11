@@ -1,12 +1,12 @@
 package com.blogspot.mido_mymall.ui.my_cart
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.data.CartDataManager
 import com.blogspot.mido_mymall.databinding.FragmentMyCartBinding
 import com.blogspot.mido_mymall.domain.models.CartItemModel
@@ -22,6 +23,7 @@ import com.blogspot.mido_mymall.domain.models.RewardModel
 import com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment
 import com.blogspot.mido_mymall.util.Constants
 import com.blogspot.mido_mymall.util.Resource
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +40,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
     private var _binding: FragmentMyCartBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var cartAdapter: CartAdapter
+    private var cartAdapter: CartAdapter? = null
 
     private var myCartListIds = arrayListOf<String>()
     private var cartItemModelList = arrayListOf<CartItemModel>()
@@ -51,11 +53,11 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
 //    private val myAddressesList = arrayListOf<AddressesModel>()
 
-    private var dialog: AlertDialog? = null
+    private var loadingDialog: Dialog? = null
 
     private val rewardModelList = arrayListOf<RewardModel>()
 
-    private var fromCart = true
+//    private var fromCart = true
 
     private var totalAmount = 0.0
 
@@ -73,7 +75,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
         cartAdapter = CartAdapter(true, this, isDeliveryFragment = false)
 
-        dialog = Constants.setProgressDialog(requireContext())
+        loadingDialog = Constants.setProgressDialog(requireContext())
 
         return binding.root
     }
@@ -85,11 +87,20 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
 //        cartItemModelList.add(CartItemModel(1,"Price (3 items)","Rs.16999","Free","Rs.5999/-"))
 
-
-        myCartViewModel.getMyCartListIds()
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            myCartViewModel.getMyCartListIds()
+        } else {
+            binding.emptyCartIV.visibility = View.VISIBLE
+            Constants.signInSignUpDialog(
+                requireContext(),
+                R.id.nav_my_cart,
+                layoutInflater,
+                requireView()
+            )
+        }
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 myCartViewModel.myCartListIds.collect { response ->
                     when (response) {
 
@@ -131,24 +142,28 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
                             }
 
+
                             val results = deferredResults.awaitAll()
 
-                            for (result: Resource<DocumentSnapshot> in results) {
+                            // ---- بداية التغيير ----
+                            // متغير لتتبع ما إذا كانت العملية ناجحة لجميع العناصر
+                            var allItemsLoadedSuccessfully = true
 
+                            // قم بتجميع العناصر أولاً
+                            for (result: Resource<DocumentSnapshot> in results) {
                                 when (result) {
                                     is Resource.Success -> {
                                         val documentSnapshot = result.data!!
-                                        // Create CartItemModel and add it to cartItemModelList
-
                                         cartItemModelList.add(
                                             CartItemModel(
+                                                // ... بيانات المنتج ...
                                                 productId = documentSnapshot.id,
                                                 productImage = documentSnapshot["product_image_1"].toString(),
                                                 productName = documentSnapshot["product_name"].toString(),
                                                 freeCoupons = documentSnapshot["free_coupons"] as Long,
                                                 productPrice = documentSnapshot["product_price"].toString(),
                                                 cuttedPrice = documentSnapshot["cutted_price"].toString(),
-                                                productQuantity = 1,
+                                                productQuantity = 1, // قيمة أولية، قد تتغير لاحقًا
                                                 maxQuantity = documentSnapshot["max_quantity"] as Long,
                                                 stockQuantity = documentSnapshot["stock_quantity"] as Long,
                                                 offersApply = documentSnapshot["offers_applied"] as Long,
@@ -156,44 +171,71 @@ class MyCartFragment : Fragment(), MyCartUtil {
                                                 inStock = documentSnapshot["in_stock"] as Boolean,
                                                 qtyIDs = arrayListOf(),
                                                 selectedCouponId = null,
-                                                discountedPrice = null
+                                                discountedPrice = null,
+                                                productRating = 0
                                             )
-                                        ).also {
-                                            val cartSummary =
-                                                cartDataManager.calculateTotalAmount(
-                                                    cartItemModelList
-                                                )
-
-                                            this@MyCartFragment.totalAmount =
-                                                cartSummary.totalAmount
-
-                                            cartAdapter.asyncListDiffer.submitList(cartItemModelList)
-
-                                            binding.apply {
-                                                cartSummaryLayout.visibility = View.VISIBLE
-                                                totalAmountAndContinue.visibility = View.VISIBLE
-
-                                                submitCartSummaryData(cartSummary)
-
-                                                binding.progressBar.visibility = View.GONE
-//                                        val totalAmountParent =
-//                                            cartTotalAmount?.parent?.parent as? LinearLayout
-
-
-                                            }
-                                        }
+                                        )
                                     }
 
                                     is Resource.Error -> {
-                                        // Handle error case
-                                        binding.progressBar.visibility = View.GONE
-
-                                        Log.e(TAG, "onViewCreated: ${response.message.toString()}")
+                                        allItemsLoadedSuccessfully =
+                                            false // حدث خطأ في تحميل أحد العناصر
+                                        Log.e(
+                                            TAG,
+                                            "Error loading cart item details: ${result.message}"
+                                        )
+                                        // يمكنك إظهار رسالة خطأ للمستخدم هنا إذا أردت
                                     }
 
-                                    else -> {}
+                                    else -> { /* تجاهل حالات أخرى مثل Loading هنا */
+                                    }
                                 }
                             }
+
+                            // الآن، بعد انتهاء الحلقة واكتمال القائمة (إذا لم تحدث أخطاء)
+                            // قم بالحساب والتحديث مرة واحدة فقط
+                            if (cartItemModelList.isNotEmpty() && allItemsLoadedSuccessfully) {
+
+                                val cartSummary =
+                                    cartDataManager.calculateTotalAmount(cartItemModelList)
+
+                                this@MyCartFragment.totalAmount = cartSummary.totalAmount
+
+                                // تحديث الـ Adapter بالقائمة الكاملة
+
+                                cartAdapter?.asyncListDiffer?.submitList(cartItemModelList.toList()) // مرر نسخة من القائمة
+
+
+                                // تحديث واجهة المستخدم بالملخص النهائي
+                                binding.apply {
+                                    cartSummaryLayout.visibility = View.VISIBLE
+                                    totalAmountAndContinue.visibility = View.VISIBLE
+                                    submitCartSummaryData(cartSummary)
+                                    progressBar.visibility = View.GONE // إخفاء مؤشر التحميل النهائي
+                                }
+                            } else if (cartItemModelList.isEmpty() && listSize > 0 && !allItemsLoadedSuccessfully) {
+                                // حالة خاصة: فشل تحميل كل العناصر ولم تتم إضافة أي شيء للقائمة
+                                binding.progressBar.visibility = View.GONE
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Failed to load cart details",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                // قد تحتاج لإظهار حالة خطأ أو زر إعادة محاولة هنا
+                            } else if (cartItemModelList.isEmpty() && listSize == 0L) {
+                                // حالة السلة فارغة أصلًا (تم التعامل معها سابقًا، لكن للتأكيد)
+                                binding.apply {
+                                    cartItemsRecyclerView.visibility = View.GONE
+                                    progressBar.visibility = View.GONE
+                                    emptyCartIV.visibility = View.VISIBLE
+                                    cartSummaryLayout.visibility = View.GONE // تأكد من إخفاء الملخص
+                                    totalAmountAndContinue.visibility =
+                                        View.GONE // تأكد من إخفاء زر المتابعة
+                                }
+                            }
+                            // ---- نهاية التغيير ----
+
+// ... بقية الكود في Resource.Success للـ myCartListIds ...
 
                         }
 
@@ -344,7 +386,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
                         is Resource.Success -> {
 
-                            dialog?.cancel()
+                            loadingDialog?.cancel()
 
                             response.data?.let {
                                 val listSize = it["list_size"] as Long
@@ -353,11 +395,10 @@ class MyCartFragment : Fragment(), MyCartUtil {
                                     findNavController().navigate(
                                         MyCartFragmentDirections
                                             .actionNavMyCartToAddAddressFragment(
-                                                "deliveryIntent",
+                                                "add_new_address",
                                                 cartListIds = myCartListIds.toTypedArray(),
                                                 cartItemModelList = cartItemModelList.toTypedArray(),
-                                                fromCart = fromCart,
-                                                totalAmount = totalAmount.toFloat()
+                                                fromCart = true
                                             )
                                     )
                                 } else {
@@ -366,8 +407,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
                                             .actionNavMyCartToDeliveryFragment(
                                                 cartListIds = myCartListIds.toTypedArray(),
                                                 cartItemModelList = cartItemModelList.toTypedArray(),
-                                                fromCart = fromCart,
-                                                totalAmount = totalAmount.toFloat()
+                                                fromCart = true,
                                             )
                                     )
                                 }
@@ -377,7 +417,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
                         }
 
                         is Resource.Error -> {
-                            dialog?.cancel()
+                            loadingDialog?.cancel()
                             Log.e(TAG, "myAddresses: ${response.message.toString()}")
                             Toast.makeText(
                                 requireContext(),
@@ -406,31 +446,45 @@ class MyCartFragment : Fragment(), MyCartUtil {
 //            Log.d(TAG, "submitCartSummaryData: totalAmount ${cartSummary.totalAmount}")
 //            Log.d(TAG, "submitCartSummaryData: savedAmount ${cartSummary.savedAmount}")
 
-            totalItems.text = "Price (${cartSummary.totalItems} items)"
-            cartSummaryTotalItemsPrice.text = "EGP.${
-                String.format(
-                    locale = Locale.ENGLISH,
-                    "%.2f",
-                    cartSummary.totalItemsPrice
-                )
-            }/-"
+            val formattedTotalItemsPrice = String.format(
+                locale = Locale.ENGLISH,
+                "%.2f",
+                cartSummary.totalItemsPrice
+            )
+
+
+            totalItems.text = getString(R.string.price_number_items, cartSummary.totalItems)
+
+            Log.d(
+                TAG,
+                "submitCartSummaryData formattedTotalItemsPrice is: $formattedTotalItemsPrice"
+            )
+
+            cartSummaryTotalItemsPrice.text =
+                getString(R.string.egp_price, formattedTotalItemsPrice)
+
 
             if (cartSummary.deliveryPrice == "Free") {
-                cartSummaryDeliveryPrice.text = cartSummary.deliveryPrice
+                cartSummaryDeliveryPrice.text = getString(R.string.free)
             } else {
-                cartSummaryDeliveryPrice.text = "EGP.${cartSummary.deliveryPrice}/-"
+                cartSummaryDeliveryPrice.text =
+                    getString(R.string.egp_price, cartSummary.deliveryPrice)
             }
-            totalPriceTV.text = "EGP.${cartSummary.totalAmount}/-"
 
-            cartSummaryTotalAmountTV.text = "EGP.${cartSummary.totalAmount}/-"
+            Log.d(TAG, "submitCartSummaryData: total price in button ${cartSummary.totalAmount}")
 
-            savedAmount.text = "You saved EGP.${
-                String.format(
-                    locale = Locale.ENGLISH,
-                    "%.2f",
-                    cartSummary.savedAmount
-                )
-            }/- on this order"
+            totalPriceTV.text = getString(R.string.egp_price, cartSummary.totalAmount.toString())
+
+            cartSummaryTotalAmountTV.text =
+                getString(R.string.egp_price, cartSummary.totalAmount.toString())
+
+            val savedAmountValue = String.format(
+                locale = Locale.ENGLISH,
+                "%.2f",
+                cartSummary.savedAmount
+            )
+
+            savedAmount.text = getString(R.string.saved_amount, savedAmountValue)
         }
     }
 
@@ -443,19 +497,20 @@ class MyCartFragment : Fragment(), MyCartUtil {
         if (myCartListIds.isNotEmpty() && cartItemModelList.isNotEmpty()) {
             myCartViewModel.removeFromCartList(myCartListIds, position)
 
-            val newList = cartAdapter.asyncListDiffer.currentList.toMutableList()
-            newList.removeAt(position).also {
+            val newList = cartAdapter?.asyncListDiffer?.currentList?.toMutableList()
+            newList?.removeAt(position).also {
 
-                cartAdapter.asyncListDiffer.submitList(newList)
+                cartAdapter?.asyncListDiffer?.submitList(newList)
                 Log.d(TAG, "deleteItem: also called")
 
-                val cartSummary = cartDataManager.calculateTotalAmount(newList)
-
-                submitCartSummaryData(cartSummary)
+                if (newList != null) {
+                    val cartSummary = cartDataManager.calculateTotalAmount(newList)
+                    submitCartSummaryData(cartSummary)
+                }
 
             }
 
-            if (newList.isEmpty()) {
+            if (newList.isNullOrEmpty()) {
                 binding.apply {
                     cartSummaryLayout.visibility = View.GONE
                     totalAmountAndContinue.visibility = View.GONE
@@ -466,7 +521,10 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
 //            cartAdapter.notifyItemRemoved(position)
 
-            Toast.makeText(requireContext(), "Item deleted from cart list", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.item_removed_from_cart_list), Toast.LENGTH_SHORT
+            )
                 .show()
 
 
@@ -541,6 +599,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
 //        cartAdapter.asyncListDiffer.submitList(cartItemModelList)
 //    }
 
+
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: cart size ${cartItemModelList.size}")
@@ -550,6 +609,7 @@ class MyCartFragment : Fragment(), MyCartUtil {
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume: called")
         Log.d(TAG, "onResume: cart size ${cartItemModelList.size}")
     }
 
@@ -558,10 +618,50 @@ class MyCartFragment : Fragment(), MyCartUtil {
         Log.d(TAG, "getTotalAmount: $totalAmount")
     }
 
+    // داخل كلاس MyCartFragment
+    override fun onQuantityChanged(position: Int, newQuantity: Long) {
+        Log.d(TAG, "onQuantityChanged: Position $position, New Quantity: $newQuantity")
+
+        // 1. الحصول على القائمة المحدثة من الـ Adapter
+        //    Adapter هو المصدر الموثوق للبيانات الحالية بعد التعديل
+        val currentList = cartAdapter?.asyncListDiffer?.currentList
+
+        if (currentList != null && currentList.isNotEmpty()) {
+            // 2. إعادة حساب ملخص السلة باستخدام القائمة المحدثة
+            //    تأكد من أن CartItemModel في القائمة يعكس الكمية الجديدة (وهو ما تم في خطوة 2)
+            val cartSummary = cartDataManager.calculateTotalAmount(currentList)
+
+            // 3. تحديث متغير الإجمالي في الـ Fragment (إذا كنت تستخدمه لاحقًا)
+            this.totalAmount = cartSummary.totalAmount
+
+            // 4. تحديث واجهة المستخدم الخاصة بملخص السلة
+            submitCartSummaryData(cartSummary)
+
+
+
+            Log.d(TAG, "Summary updated. New Total: ${cartSummary.totalAmount}")
+
+            Log.d(TAG, "onQuantityChanged: ${cartSummary.savedAmount}")
+
+
+        } else {
+            // التعامل مع حالة أن القائمة أصبحت فارغة أو الـ adapter غير موجود
+            Log.d(TAG, "List is empty or adapter is null after quantity change.")
+            binding.cartSummaryLayout.visibility = View.GONE
+            binding.totalAmountAndContinue.visibility = View.GONE
+            if (listSize > 0) { // إذا كانت القائمة الأصلية غير فارغة، قد يعني هذا خطأ ما
+                // يمكنك إضافة منطق إضافي هنا إذا لزم الأمر
+            } else { // إذا كانت القائمة فارغة أصلًا
+                binding.emptyCartIV.visibility = View.VISIBLE
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         myCartListIds.clear()
         cartItemModelList.clear()
+        cartAdapter = null
         rewardModelList.clear()
         _binding = null
     }

@@ -4,6 +4,8 @@ class HomePageModel {
     var type: Int
     var backgroundColor: String? = null
     var sliderModelList: ArrayList<SliderModel>? = null
+    var isAd: Boolean = false // <-- تمت إضافة هذا الحقل (القيمة الافتراضية false تعني صورة)
+
 
     constructor(type: Int, sliderModelList: ArrayList<SliderModel>) {
         this.type = type
@@ -22,6 +24,18 @@ class HomePageModel {
     var productName: String? = null
 
     var horizontalProductScrollModelList: ArrayList<HorizontalProductScrollModel>? = null
+
+
+    // *** كونستركتور جديد لـ Strip Ad Banner ***
+    constructor(type: Int, forAdFlag: Boolean) { // استخدم boolean لتمييز الكونستركتور
+        // التحقق من أن النوع صحيح وأن العلم صحيح (للأمان)
+        require(type == STRIP_AD_BANNER) { "Type must be STRIP_AD_BANNER for Ad constructor" }
+        require(forAdFlag) { "forAdFlag must be true for Ad constructor" }
+        this.type = type
+        this.isAd = true // <<< تحديد أن هذا العنصر هو إعلان
+        // image و backgroundColor سيبقيان null (أو قيمتهما الافتراضية)
+    }
+
 
     //################ Horizontal Products View ####################
     var viewAllProductList: ArrayList<WishListModel> = ArrayList()

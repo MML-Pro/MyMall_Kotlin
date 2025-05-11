@@ -11,16 +11,27 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blogspot.mido_mymall.R
 import com.blogspot.mido_mymall.databinding.FragmentMyWishlistBinding
 import com.blogspot.mido_mymall.domain.models.WishListModel
+import com.blogspot.mido_mymall.ui.MainActivity
+import com.blogspot.mido_mymall.ui.home.HomeFragmentDirections
 import com.blogspot.mido_mymall.ui.product_details.ProductDetailsFragment
+import com.blogspot.mido_mymall.ui.view_all.ViewAllFragmentDirections
 import com.blogspot.mido_mymall.util.Resource
+import com.blogspot.mido_mymall.util.addItemClickSupport
+import com.blogspot.mido_mymall.util.onItemClick
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "MyWishlistFragment"
@@ -53,24 +64,69 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        Log.d(TAG, "onCreate: called")
+
+    }
+//
+//
+//    fun observWishlist(){
+//
+//    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        myWishlistViewModel.getWishListIds()
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            myWishlistViewModel.getWishListIds()
+            binding.myWishListRV.visibility = View.VISIBLE
+        } else {
+            binding.apply {
+                emptyWishlistIV.visibility = View.VISIBLE
+                emptyWishlistTV.visibility = View.VISIBLE
+                myWishListRV.visibility = View.GONE
+            }
+        }
 
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 myWishlistViewModel.wishListIds.collect { response ->
+
+
                     when (response) {
+
+                        is Resource.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            Log.d(TAG, "loading called")
+                        }
+
+
                         is Resource.Success -> {
                             listSize = response.data?.get("list_size") as Long
+
+                            if (listSize == 0L) {
+                                binding.apply {
+                                    emptyWishlistIV.visibility = View.VISIBLE
+                                    emptyWishlistTV.visibility = View.VISIBLE
+                                    myWishListRV.visibility = View.GONE
+                                }
+                            } else {
+                                binding.apply {
+                                    emptyWishlistIV.visibility = View.GONE
+                                    emptyWishlistTV.visibility = View.GONE
+                                    myWishListRV.visibility = View.VISIBLE
+                                }
+                            }
 
                             for (i in 0 until listSize) {
                                 wishListIds.add(response.data["product_id_$i"].toString())
                             }
 
-                            val deferredResults = wishListIds.map {productId->
+                            val deferredResults = wishListIds.map { productId ->
 
                                 async(Dispatchers.IO) {
                                     myWishlistViewModel.loadWishList(productId)
@@ -80,15 +136,14 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
                             val results = deferredResults.awaitAll()
 
-                            for (result: Resource<DocumentSnapshot> in results) {
+                            val newWishListItems =
+                                mutableListOf<WishListModel>() // Create a separate list for new items
 
+                            for (result: Resource<DocumentSnapshot> in results) {
                                 when (result) {
                                     is Resource.Success -> {
-//                                        val documentSnapshot = result.data!!
-
                                         result.data?.let { documentSnapshot ->
-
-                                            wishListModelList.add(
+                                            newWishListItems.add(
                                                 WishListModel(
                                                     productID = documentSnapshot.id,
                                                     productImage = documentSnapshot["product_image_1"].toString(),
@@ -101,20 +156,12 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
                                                     isCOD = documentSnapshot["COD"] as Boolean,
                                                     isInStock = documentSnapshot["in_stock"] as Boolean
                                                 )
-                                            ).also {
-                                                wishlistAdapter.asyncListDiffer.submitList(
-                                                    wishListModelList
-                                                )
-                                            }
+                                            )
                                         }
-
-
                                     }
 
                                     is Resource.Error -> {
                                         // Handle error case
-//                                        binding.progressBar.visibility = View.GONE
-
                                         Log.e(TAG, "onViewCreated: ${response.message.toString()}")
                                     }
 
@@ -123,14 +170,23 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
                             }
 
 
-                            // Remove the initial wishlist items from the list
-//                            if (wishlistSize > 0) {
-//                                wishListModelList.removeAll(wishListModelList.subList(0, wishlistSize)
-//                                    .toSet())
-//                            }
+                            wishListModelList.addAll(newWishListItems) // Add all new items to the wishListModelList
+                            wishlistAdapter.asyncListDiffer.submitList(wishListModelList).also {
+                                Log.d(TAG, "wishListModelList size: ${wishListModelList.size}")
+                                Log.d(
+                                    TAG,
+                                    "asyncListDiffer size: ${wishlistAdapter.asyncListDiffer.currentList.size}"
+                                )
+
+                                binding.progressBar.visibility = View.GONE
+
+                                wishlistAdapter.notifyDataSetChanged()
+
+                            }
                         }
 
                         is Resource.Error -> {
+                            binding.progressBar.visibility = View.GONE
                             Log.e(
                                 TAG,
                                 "onViewCreated: ${response.message.toString()}"
@@ -142,6 +198,33 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
                 }
             }
         }
+
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myWishlistViewModel.removeWishListState.collect { response ->
+
+                    if (response is Resource.Success) {
+
+
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.product_removed_from_wishlist),
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+
+                    } else if (response is Resource.Error) {
+                        Log.e(TAG, "onViewCreated: ${response.message.toString()}")
+                    }
+
+                }
+            }
+        }
+
+
+//        observWishlist()
+
 
 //        lifecycleScope.launch {
 //            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -163,6 +246,47 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             adapter = wishlistAdapter
+
+            onItemClick { _, position, _ ->
+
+                when (findNavController().currentDestination?.id) {
+
+
+                    R.id.nav_my_wishlist -> {
+
+
+                        Navigation.findNavController(binding.root)
+                            .navigate(
+                                MyWishlistFragmentDirections
+                                    .actionNavMyWishlistToProductDetailsFragment(wishListModelList[position].productID!!)
+                            )
+                    }
+
+
+//                    R.id.homeFragment -> {
+//
+//                        val navOption =
+//                            NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build()
+//
+//
+//                        Navigation.findNavController(binding.root).navigate(
+//                            HomeFragmentDirections
+//                                .actionHomeFragmentToProductDetailsFragment(wishListModel.productID!!),
+//                            navOption
+//                        )
+//                    }
+//
+//                    else -> {
+//                        Navigation.findNavController(binding.root)
+//                            .navigate(
+//                                ViewAllFragmentDirections
+//                                    .actionViewAllFragmentToProductDetailsFragment(wishListModel.productID!!)
+//                            )
+//
+//                    }
+                }
+
+            }
         }
 
 
@@ -184,14 +308,26 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).apply {
+            supportActionBar?.title = getString(R.string.my_wishlist)
+            title = getString(R.string.my_wishlist)
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
 //        wishlistAdapter.asyncListDiffer.submitList(null)
+
+        Log.d(TAG, "onDestroyView: called")
+
         wishListIds.clear()
         wishListModelList.clear()
         _binding = null
     }
+
 
     override fun deleteItem(position: Int) {
 
@@ -202,8 +338,8 @@ class MyWishlistFragment : Fragment(), WishlistUtil {
             }
             myWishlistViewModel.removeFromWishList(wishListIds, position)
             wishlistAdapter.notifyDataSetChanged()
-            Toast.makeText(requireContext(), "Item deleted from wishlist", Toast.LENGTH_SHORT)
-                .show()
+//            Toast.makeText(requireContext(), "Item deleted from wishlist", Toast.LENGTH_SHORT)
+//                .show()
         }
     }
 }

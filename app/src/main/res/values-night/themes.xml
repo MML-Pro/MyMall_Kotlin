@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MyMallKotlin" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.MyMall" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/black</item>
 
         <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
 
@@ -15,6 +15,15 @@
                 The toolbar is transparent by default so you will see this color through the toolbar. -->
         <item name="android:background">@color/colorPrimary</item>
 <!--        <item name="colorControlNormal">@color/white</item>-->
+    </style>
+
+
+    <style name="Theme.SplashScreen" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">

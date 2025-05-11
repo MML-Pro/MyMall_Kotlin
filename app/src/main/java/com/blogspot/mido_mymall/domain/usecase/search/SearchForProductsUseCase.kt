@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class SearchForProductsUseCase @Inject constructor(private val searchRepo: SearchRepo) {
 
-    suspend operator fun invoke(searchQuery:String) = searchRepo.searchForProducts(searchQuery)
+    suspend operator fun invoke(searchTerms: List<String>) = searchRepo.searchForProducts(searchTerms)
 }

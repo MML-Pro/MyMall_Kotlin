@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
@@ -15,7 +14,7 @@
         android:layout_width="@dimen/_65sdp"
         android:layout_height="@dimen/_65sdp"
         app:contentPadding="0dp"
-        android:contentDescription="@string/nav_header_desc"
+        android:contentDescription="@string/default_profile_image"
         android:src="@drawable/account"
         app:layout_constraintBottom_toTopOf="@+id/mainUserName"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Not signed in"
+        android:text="@string/not_signed_in"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="@dimen/_16ssp"
         app:layout_constraintBottom_toTopOf="@+id/mainEmail"
@@ -37,7 +36,6 @@
         android:id="@+id/mainEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nav_header_subtitle"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

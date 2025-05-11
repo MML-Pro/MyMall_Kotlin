@@ -41,14 +41,14 @@ class ProductDetailsViewModel @Inject constructor(
     private var _productDetails = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val productDetails: Flow<Resource<DocumentSnapshot>> get() = _productDetails
 
-    private var _wishListIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
-    val wishListIds: Flow<Resource<DocumentSnapshot>> get() = _wishListIds
+    private var _wishListIds = MutableSharedFlow<Resource<DocumentSnapshot>>()
+    val wishListIds get() = _wishListIds.asSharedFlow()
 
-    private var _saveWishListIdsState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
-    val saveWishListIdsState: Flow<Resource<Boolean>> get() = _saveWishListIdsState
+    private var _saveWishListIdsState = MutableSharedFlow<Resource<Boolean>>()
+    val saveWishListIdsState get() = _saveWishListIdsState.asSharedFlow()
 
-    private var _removeWishListState = MutableStateFlow<Resource<Boolean>>(Resource.Ideal())
-    val removeWishListState: Flow<Resource<Boolean>> get() = _removeWishListState
+    private var _removeWishListState = MutableSharedFlow<Resource<Boolean>>()
+    val removeWishListState get() = _removeWishListState.asSharedFlow()
 
     private var _ratingsIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val ratingsIds: Flow<Resource<DocumentSnapshot>> get() = _ratingsIds
@@ -78,17 +78,16 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun getWishListIds() {
         viewModelScope.launch {
-            getWishListIdsUseCase().collect {
-                _wishListIds.emit(it)
-            }
+            _wishListIds.emit(Resource.Loading())
+            _wishListIds.emit(getWishListIdsUseCase())
         }
     }
 
     fun saveWishListIds(productID: String, wishListSize: Int) {
         viewModelScope.launch {
-            saveWishListIdsUseCase(productID, wishListSize).collect {
-                _saveWishListIdsState.emit(it)
-            }
+            _saveWishListIdsState.emit(Resource.Loading())
+            _saveWishListIdsState.emit(saveWishListIdsUseCase(productID, wishListSize))
+
         }
     }
 
@@ -98,10 +97,17 @@ class ProductDetailsViewModel @Inject constructor(
         index: Int
     ) {
         viewModelScope.launch {
-            removeFromWishListUseCase(wishListIds, wishListModelList, index).collect {
-                _removeWishListState.emit(it)
-            }
+            _removeWishListState.emit(Resource.Loading())
+
+            _removeWishListState.emit(
+                removeFromWishListUseCase(
+                    wishListIds,
+                    wishListModelList,
+                    index
+                )
+            )
         }
+
     }
 
     fun getRatings() {

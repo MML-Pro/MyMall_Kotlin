@@ -15,7 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/arial"
-        android:text="Ratings"
+        android:text="@string/ratings"
         android:textColor="@color/productDetailsTextColor"
         android:textSize="@dimen/_20ssp"
         android:textStyle="bold"

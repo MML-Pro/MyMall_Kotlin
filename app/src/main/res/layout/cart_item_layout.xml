@@ -41,10 +41,11 @@
         android:layout_width="@dimen/_15sdp"
         android:layout_height="@dimen/_15sdp"
         android:visibility="invisible"
+        android:src="@drawable/ic_local_offer_24px"
         app:layout_constraintBottom_toBottomOf="@+id/freeCouponTV"
         app:layout_constraintStart_toStartOf="@+id/productName"
         app:layout_constraintTop_toTopOf="@+id/freeCouponTV"
-        app:srcCompat="@drawable/ic_local_offer_24px" />
+         />
 
     <TextView
         android:id="@+id/freeCouponTV"
@@ -52,7 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/arial"
-        android:text="Free 3 Coupons"
         android:textColor="#8000FF"
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/freeCouponIcon"
@@ -134,18 +134,18 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/border_background"
-        android:backgroundTint="@color/black"
-        android:drawableEnd="@drawable/ic_rrow_drop_down"
+        android:backgroundTint="@color/productDetailsTextColor"
         android:drawablePadding="6dp"
         android:fontFamily="@font/arial"
         android:gravity="center"
         android:padding="3dp"
-        android:text="Qty: 1"
+        android:text="@string/qty_number"
         android:textColor="@color/productDetailsTextColor"
         app:layout_constraintBottom_toTopOf="@+id/removeItemButton"
         app:layout_constraintStart_toEndOf="@+id/productImage"
         app:layout_constraintTop_toBottomOf="@+id/cuttedPrice"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:drawableEndCompat="@drawable/ic_rrow_drop_down" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -206,8 +206,10 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/_56sdp"
         android:layout_marginTop="1dp"
-        android:background="@color/detailsBackgroundColor"
+        android:background="?android:attr/selectableItemBackground"
         android:elevation="3dp"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -218,13 +220,13 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawablePadding="@dimen/_4sdp"
-            android:drawableTint="@color/productDetailsTextColor"
             android:fontFamily="@font/arial"
             android:gravity="center"
-            android:text="Remove Item"
+            android:text="@string/remove_item"
             android:textColor="@color/productDetailsTextColor"
             android:textSize="@dimen/_12ssp"
-            app:drawableStartCompat="@drawable/ic_baseline_delete">
+            app:drawableStartCompat="@drawable/ic_baseline_delete"
+            app:drawableTint="@color/productDetailsTextColor">
 
 
         </TextView>

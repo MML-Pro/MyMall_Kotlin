@@ -16,13 +16,13 @@
             android:id="@+id/profileDataLayout"
             layout="@layout/profile_data_layout" />
 
-        <include
-            android:id="@+id/orderStatusLayout"
-            layout="@layout/order_status_layout" />
+<!--        <include-->
+<!--            android:id="@+id/orderStatusLayout"-->
+<!--            layout="@layout/order_status_layout" />-->
 
-        <include
-            android:id="@+id/yourRecentOrdersLayout"
-            layout="@layout/your_recent_orders_layout" />
+<!--        <include-->
+<!--            android:id="@+id/yourRecentOrdersLayout"-->
+<!--            layout="@layout/your_recent_orders_layout" />-->
 
         <include
             android:id="@+id/myAddressLayout"
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Sign out"
+            android:text="@string/sign_out"
             android:backgroundTint="@color/buttonColor"
             android:textColor="@color/white"
             android:textStyle="bold"

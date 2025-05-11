@@ -46,6 +46,7 @@ class CredentialsRepositoryImpl @Inject constructor(
         emit(Resource.Success(createUser.user))
         saveUserInfo(createUser.user!!.uid, user.userName, user.email)
     }.catch {
+        Log.e(TAG, "createUserWithEmailAndPassword: ${it.toString()}" )
         emit(Resource.Error(it.message.toString()))
     }
 

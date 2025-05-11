@@ -21,18 +21,28 @@ class MyOrdersViewModel @Inject constructor(
     ViewModel() {
 
 
-    private var _myOrders = MutableStateFlow<Resource<QuerySnapshot>>(Resource.Ideal())
-    val myOrders: Flow<Resource<QuerySnapshot>> get() = _myOrders
+//    private var _myOrders = MutableStateFlow<Resource<QuerySnapshot>>(Resource.Ideal())
+//    val myOrders: Flow<Resource<QuerySnapshot>> get() = _myOrders
 
     private var _ratingsIds = MutableStateFlow<Resource<DocumentSnapshot>>(Resource.Ideal())
     val ratingsIds: Flow<Resource<DocumentSnapshot>> get() = _ratingsIds
 
+    private var _userOrders = MutableStateFlow<Resource<QuerySnapshot>>(Resource.Ideal())
+    val userOrders: Flow<Resource<QuerySnapshot>> get() = _userOrders
 
-    fun getMyOrders() {
+//    fun getMyOrders() {
+//        _myOrders.value = Resource.Loading()
+//        viewModelScope.launch {
+//
+//            _myOrders.emit(getMyOrdersUseCase())
+//
+//        }
+//    }
+
+    fun getUserOrders(userId: String){
+        _userOrders.value = Resource.Loading()
         viewModelScope.launch {
-            getMyOrdersUseCase().collect {
-                _myOrders.emit(it)
-            }
+            _userOrders.emit(getMyOrdersUseCase(userId))
         }
     }
 
