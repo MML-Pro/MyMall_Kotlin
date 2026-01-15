@@ -24,6 +24,7 @@ This is an open-sourced & full-stack E-Commerce App. I started this project out 
 - Add and delete products in the wishlist.
 - Add and delete products in the cart list.
 - Added Arabic translations for product details.
+- Users can rate products and view average ratings in real-time.
 
 ### User Management
 - Create a regular user (email & password) or sign in with one touch via Google, and save user info.
@@ -39,10 +40,6 @@ This is an open-sourced & full-stack E-Commerce App. I started this project out 
 - Improved price display precision and order summary.
 - Resolved bugs in address deletion and delivery screen.
 
-### New Features
-- Added App Open ads, In-content Native ads, and banner ads.
-- Fixed crashes in Cart, Notifications, Sign Up, and more.
-- Improved UI in My Cart, Account, and Product Details.
 
 ## Tech Stack & Open-source Libraries
 
@@ -60,10 +57,6 @@ This is an open-sourced & full-stack E-Commerce App. I started this project out 
   - Navigation Component: Makes it easier to navigate between different screens and pass data in a type-safe way.
 - **Architecture**: Android Clean Architecture (Onion-Arch) with Repository pattern.
 
-## Known Issues
-
-- Currently, ratings are displayed only, and product rating is not available due to wrong and complicated mathematical calculations and issues in averaging new ratings.
-- I am actively searching for a better rating system to replace the current one.
 
 # Preview
 <p>
